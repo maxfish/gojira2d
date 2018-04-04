@@ -5,6 +5,13 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
+type Drawable interface {
+	Texture() (*Texture)
+	Shader() (*ShaderProgram)
+	Draw(context *Context)
+	drawInBatch(context *Context)
+}
+
 type Context struct {
 	projectionMatrix     mgl32.Mat4
 	viewMatrix           mgl32.Mat4

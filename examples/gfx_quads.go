@@ -11,13 +11,13 @@ func main() {
 	app := a.InitApp(800, 600, false, "Quads")
 	defer a.TerminateApp()
 
-	quads := make([]*g.Quad2DPrimitive, 0, 12)
+		quads := make([]*g.Primitive2D, 0, 12)
 	texture := g.NewTextureFromFile("examples/assets/texture.png")
 
 	// Creates 12 quads in a grid 4x3
 	for y := 0; y < 3; y++ {
 		for x := 0; x < 4; x++ {
-			quad := g.NewQuad2DPrimitive(mgl32.Vec3{float32(100 + x*200), float32(100 + y*200), 0}, mgl32.Vec2{120, 120})
+			quad := g.NewQuadPrimitive(mgl32.Vec3{float32(100 + x*200), float32(100 + y*200), 0}, mgl32.Vec2{120, 120})
 			quad.SetTexture(texture)
 			quad.SetAnchorToCenter()
 			quads = append(quads, quad)
