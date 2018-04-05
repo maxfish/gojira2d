@@ -25,7 +25,7 @@ func NewDefaultShaderProgram() (*ShaderProgram) {
 	s.id = gl.CreateProgram()
 
 	s.AttachShader(VertexShaderBase, VERTEX)
-	s.AttachShader(FragmentShaderBase, FRAGMENT)
+	s.AttachShader(FragmentShaderSolidColor, FRAGMENT)
 
 	s.Link()
 	return &s
@@ -142,7 +142,7 @@ const (
         }
         ` + "\x00"
 
-	FragmentShaderBase = `
+	FragmentShaderSolidColor = `
         #version 410 core
 
         in vec2 uv_out;

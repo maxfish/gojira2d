@@ -3,6 +3,7 @@ package graphics
 import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/go-gl/gl/v4.1-core/gl"
+	"gojira2d/pkg/utils"
 )
 
 type Matrix struct {
@@ -170,6 +171,50 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) (*Primitive2D) {
 	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoordinates)*4, gl.Ptr(uvCoordinates), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(1)
 	gl.VertexAttribPointer(1, 4, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
+
+	gl.BindVertexArray(0)
+	return &q
+}
+
+func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments int, showRotation bool) (*Primitive2D) {
+	circlePoints := utils.CircleToPolygon(mgl32.Vec2{0, 0}, 0.5, numSegments, 0)
+
+	q := Primitive2D{}
+	q.position = position
+	q.size = mgl32.Vec2{radius * 2, radius * 2}
+	q.scale = mgl32.Vec2{1, 1}
+	q.shaderProgram = NewShaderProgram(vertexShaderPrimitive2D, "", FragmentShaderSolidColor)
+	q.invalidateMatrices()
+
+	// Vertices
+	vertices := make([]float32, 0, numSegments*2)
+	for _, v := range circlePoints {
+		vertices = append(vertices, v[0])
+		vertices = append(vertices, v[1])
+	}
+	// Add one vertex for the last line
+	vertices = append(vertices, circlePoints[0][0])
+	vertices = append(vertices, circlePoints[0][1])
+	// To show the rotation adds a line to the center
+	if showRotation {
+		vertices = append(vertices, 0)
+		vertices = append(vertices, 0)
+	}
+
+	q.arrayMode = gl.LINE_STRIP
+	q.arraySize = int32(len(vertices) / 2)
+
+	// Build the VAO
+	gl.GenVertexArrays(1, &q.vaoId)
+	gl.BindVertexArray(q.vaoId)
+	var vbo uint32
+	gl.GenBuffers(1, &vbo)
+	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
+
+	// 4 -> magic constant for float32 size
+	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*4, gl.Ptr(vertices), gl.STATIC_DRAW)
+	gl.EnableVertexAttribArray(0)
+	gl.VertexAttribPointer(0, 4, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
 
 	gl.BindVertexArray(0)
 	return &q
