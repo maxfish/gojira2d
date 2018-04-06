@@ -74,7 +74,7 @@ func (p *Primitive2D) Draw(context *Context) {
 	shaderId := p.shaderProgram.Id()
 	gl.BindTexture(gl.TEXTURE_2D, p.texture.Id())
 	gl.UseProgram(shaderId)
-	p.shaderProgram.SetUniform4fv("mProjection", &context.projectionMatrix)
+	p.shaderProgram.SetUniformM4fv("mProjection", &context.projectionMatrix)
 	p.SetMatrices()
 	gl.BindVertexArray(p.vaoId)
 	gl.DrawArrays(p.arrayMode, 0, p.arraySize)
@@ -110,7 +110,7 @@ func (p *Primitive2D) SetMatrices() {
 	if p.matrixTranslation.Dirty {
 		p.matrixTranslation.Matrix = mgl32.Translate3D(p.position.X(), p.position.Y(), p.position.Z())
 		p.matrixTranslation.Dirty = false
-		p.shaderProgram.SetUniform4fv("mTranslate", &p.matrixTranslation.Matrix)
+		p.shaderProgram.SetUniformM4fv("mTranslate", &p.matrixTranslation.Matrix)
 	}
 	if p.matrixScale.Dirty {
 		scaleX := p.scale.X()
@@ -122,19 +122,19 @@ func (p *Primitive2D) SetMatrices() {
 			scaleY *= -1
 		}
 		p.matrixScale.Matrix = mgl32.Scale3D(scaleX, scaleY, 1)
-		p.shaderProgram.SetUniform4fv("mScale", &p.matrixScale.Matrix)
+		p.shaderProgram.SetUniformM4fv("mScale", &p.matrixScale.Matrix)
 	}
 	if p.matrixSize.Dirty {
 		p.matrixSize.Matrix = mgl32.Scale3D(p.size.X(), p.size.Y(), 1)
-		p.shaderProgram.SetUniform4fv("mSize", &p.matrixSize.Matrix)
+		p.shaderProgram.SetUniformM4fv("mSize", &p.matrixSize.Matrix)
 	}
 	if p.matrixRotation.Dirty {
 		p.matrixRotation.Matrix = mgl32.HomogRotate3DZ(p.angle)
-		p.shaderProgram.SetUniform4fv("mRotation", &p.matrixRotation.Matrix)
+		p.shaderProgram.SetUniformM4fv("mRotation", &p.matrixRotation.Matrix)
 	}
 	if p.matrixRotation.Dirty {
 		p.matrixAnchor.Matrix = mgl32.Translate3D(-p.anchor.X(), -p.anchor.Y(), 0)
-		p.shaderProgram.SetUniform4fv("mAnchor", &p.matrixAnchor.Matrix)
+		p.shaderProgram.SetUniformM4fv("mAnchor", &p.matrixAnchor.Matrix)
 	}
 }
 
@@ -143,7 +143,7 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) (*Primitive2D) {
 	q.position = position
 	q.size = size
 	q.scale = mgl32.Vec2{1, 1}
-	q.shaderProgram = NewShaderProgram(vertexShaderPrimitive2D, "", FragmentShaderTexture)
+	q.shaderProgram = NewShaderProgram(VertexShaderPrimitive2D, "", FragmentShaderTexture)
 	q.invalidateMatrices()
 
 	q.arrayMode = gl.TRIANGLE_FAN
@@ -183,7 +183,7 @@ func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments
 	q.position = position
 	q.size = mgl32.Vec2{radius * 2, radius * 2}
 	q.scale = mgl32.Vec2{1, 1}
-	q.shaderProgram = NewShaderProgram(vertexShaderPrimitive2D, "", FragmentShaderSolidColor)
+	q.shaderProgram = NewShaderProgram(VertexShaderPrimitive2D, "", FragmentShaderSolidColor)
 	q.invalidateMatrices()
 
 	// Vertices
@@ -220,23 +220,19 @@ func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments
 	return q
 }
 
-func NewTriangleStrip(
+func NewTriangles(
 	vertices []float32,
 	uvCoords []float32,
 	texture *Texture,
 	position mgl32.Vec3,
 	size mgl32.Vec2,
+	shaderProgram *ShaderProgram,
 ) *Primitive2D {
 	p := &Primitive2D{}
-	p.arrayMode = gl.TRIANGLE_STRIP
+	p.arrayMode = gl.TRIANGLES
 	p.arraySize = int32(len(vertices) / 2)
 	p.texture = texture
-	p.shaderProgram = NewShaderProgram(
-		vertexShaderPrimitive2D,
-		"",
-		FragmentShaderTexture,
-		//FragmentShaderSolidColor,
-	)
+	p.shaderProgram = shaderProgram
 	p.invalidateMatrices()
 
 	gl.GenVertexArrays(1, &p.vaoId)
@@ -267,7 +263,7 @@ func NewTriangleStrip(
 }
 
 const (
-	vertexShaderPrimitive2D = `
+	VertexShaderPrimitive2D = `
         #version 410 core
 
         uniform mat4 mProjection;
