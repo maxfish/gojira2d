@@ -139,7 +139,7 @@ func (p *Primitive2D) SetMatrices() {
 }
 
 func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) (*Primitive2D) {
-	q := Primitive2D{}
+	q := &Primitive2D{}
 	q.position = position
 	q.size = size
 	q.scale = mgl32.Vec2{1, 1}
@@ -173,13 +173,13 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) (*Primitive2D) {
 	gl.VertexAttribPointer(1, 4, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
 
 	gl.BindVertexArray(0)
-	return &q
+	return q
 }
 
 func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments int, showRotation bool) (*Primitive2D) {
 	circlePoints := utils.CircleToPolygon(mgl32.Vec2{0, 0}, 0.5, numSegments, 0)
 
-	q := Primitive2D{}
+	q := &Primitive2D{}
 	q.position = position
 	q.size = mgl32.Vec2{radius * 2, radius * 2}
 	q.scale = mgl32.Vec2{1, 1}
@@ -217,7 +217,53 @@ func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments
 	gl.VertexAttribPointer(0, 4, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
 
 	gl.BindVertexArray(0)
-	return &q
+	return q
+}
+
+func NewTriangleStrip(
+	vertices []float32,
+	uvCoords []float32,
+	texture *Texture,
+	position mgl32.Vec3,
+	size mgl32.Vec2,
+) *Primitive2D {
+	p := &Primitive2D{}
+	p.arrayMode = gl.TRIANGLE_STRIP
+	p.arraySize = int32(len(vertices) / 2)
+	p.texture = texture
+	p.shaderProgram = NewShaderProgram(
+		vertexShaderPrimitive2D,
+		"",
+		FragmentShaderTexture,
+		//FragmentShaderSolidColor,
+	)
+	p.invalidateMatrices()
+
+	gl.GenVertexArrays(1, &p.vaoId)
+	gl.BindVertexArray(p.vaoId)
+
+	// Vertices
+	var vbo uint32
+	gl.GenBuffers(1, &vbo)
+	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
+	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*4, gl.Ptr(vertices), gl.STATIC_DRAW)
+	gl.EnableVertexAttribArray(0)
+	gl.VertexAttribPointer(0, 4, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
+
+	// Texture coordinates
+	var vboUV uint32
+	gl.GenBuffers(1, &vboUV)
+	gl.BindBuffer(gl.ARRAY_BUFFER, vboUV)
+	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoords)*4, gl.Ptr(uvCoords), gl.STATIC_DRAW)
+	gl.EnableVertexAttribArray(1)
+	gl.VertexAttribPointer(1, 4, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
+
+	gl.BindVertexArray(0)
+
+	p.position = position
+	p.scale = mgl32.Vec2{1,1}
+	p.size = size
+	return p
 }
 
 const (

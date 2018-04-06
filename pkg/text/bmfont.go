@@ -1,5 +1,6 @@
-package importers
-// Bitmap font loader. The format is the one described here http://www.angelcode.com/products/bmfont/doc/file_format.html
+package text
+// Bitmap font loader. The format is the one described here
+// http://www.angelcode.com/products/bmfont/doc/file_format.html
 
 import (
 	"io/ioutil"
@@ -51,7 +52,9 @@ type BmFont struct {
 	charactersCount int
 }
 
-func (f *BmFont) LoadFromFile(fileName string) {
+func NewBmFontFromFile(fileName string) *BmFont {
+	f := &BmFont{}
+
 	f.pageFiles = make(map[int]string)
 	f.Characters = make(map[string]BmChar)
 
@@ -73,6 +76,8 @@ func (f *BmFont) LoadFromFile(fileName string) {
 			f.parseCharSection(keyValues)
 		}
 	}
+
+	return f
 }
 
 func (f *BmFont) parseInfoSection(keyValues map[string]string) {
@@ -114,7 +119,13 @@ func (f *BmFont) parseCharSection(keyValues map[string]string) {
 	c.advanceX, _ = strconv.Atoi(keyValues["xadvance"])
 	c.pageIndex, _ = strconv.Atoi(keyValues["page"])
 	c.textureChannel, _ = strconv.Atoi(keyValues["chnl"])
-	c.letter, _ = keyValues["letter"]
+
+	if letter, ok := keyValues["letter"]; ok {
+		c.letter = letter
+	} else {
+		c.letter = string(c.id)
+	}
+
 	if c.letter == "space" {
 		c.letter = " "
 	}
