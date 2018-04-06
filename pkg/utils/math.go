@@ -18,3 +18,27 @@ func CircleToPolygon(center mgl32.Vec2, radius float32, numSegments int, startAn
 
 	return vertices
 }
+
+func GetBoundingBox(points []mgl32.Vec2) (mgl32.Vec2, mgl32.Vec2){
+	var minX, minY, maxX, maxY float32
+	minX = math.MaxFloat32
+	minY = math.MaxFloat32
+	maxX = -math.MaxFloat32
+	maxY = -math.MaxFloat32
+	for _, p := range points {
+		if p.X() < minX {
+			minX = p.X()
+		}
+		if p.Y() > maxX {
+			maxX = p.X()
+		}
+		if p.Y() < minY {
+			minY = p.Y()
+		}
+		if p.Y() > maxY {
+			maxY = p.Y()
+		}
+	}
+
+	return mgl32.Vec2{minX, minY}, mgl32.Vec2{maxX, maxY}
+}

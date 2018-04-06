@@ -59,6 +59,9 @@ func (c *Context) EraseDrawableList() {
 }
 
 func (c *Context) BindTexture(texture *Texture) {
+	if texture == nil {
+		return
+	}
 	if c.currentTexture == nil || texture.id != c.currentTexture.id {
 		gl.BindTexture(gl.TEXTURE_2D, texture.id)
 		c.currentTexture = texture
