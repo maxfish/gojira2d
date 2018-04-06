@@ -6,7 +6,7 @@ import (
 	"gojira2d/pkg/utils"
 )
 
-const FLOAT32_SIZE  = 4
+const FLOAT32_SIZE = 4
 
 type Matrix struct {
 	Matrix mgl32.Mat4
@@ -22,6 +22,7 @@ type Primitive2D struct {
 	angle             float32
 	flipX             bool
 	flipY             bool
+	color             mgl32.Vec4
 	matrixSize        Matrix
 	matrixTranslation Matrix
 	matrixRotation    Matrix
@@ -64,6 +65,10 @@ func (p *Primitive2D) SetFlipY(flipY bool) {
 	p.matrixScale.Dirty = true
 }
 
+func (p *Primitive2D) SetColor(r, g, b, a float32) {
+	p.color = mgl32.Vec4{r, g, b, a}
+}
+
 func (p *Primitive2D) rebuildMatrices() {
 	p.matrixTranslation.Matrix = mgl32.Translate3D(p.position.X(), p.position.Y(), p.position.Z())
 	p.matrixScale.Matrix = mgl32.Scale3D(p.scale.X(), p.scale.Y(), 1)
@@ -77,7 +82,7 @@ func (p *Primitive2D) Draw(context *Context) {
 	gl.BindTexture(gl.TEXTURE_2D, p.texture.Id())
 	gl.UseProgram(shaderId)
 	p.shaderProgram.SetUniform4fv("mProjection", &context.projectionMatrix)
-	p.SetMatrices()
+	p.SetUniforms()
 	gl.BindVertexArray(p.vaoId)
 	gl.DrawArrays(p.arrayMode, 0, p.arraySize)
 }
@@ -89,7 +94,7 @@ func (p *Primitive2D) EnqueueForDrawing(context *Context) {
 // Texture and shaders are already set when this is called
 func (p *Primitive2D) drawInBatch(context *Context) {
 	// TODO: setup uniforms (including matrices)
-	p.SetMatrices()
+	p.SetUniforms()
 	gl.BindVertexArray(p.vaoId)
 	gl.DrawArrays(p.arrayMode, 0, p.arraySize)
 }
@@ -110,7 +115,7 @@ func (p *Primitive2D) invalidateMatrices() {
 	p.matrixAnchor.Dirty = true
 }
 
-func (p *Primitive2D) SetMatrices() {
+func (p *Primitive2D) SetUniforms() {
 	if p.matrixTranslation.Dirty {
 		p.matrixTranslation.Matrix = mgl32.Translate3D(p.position.X(), p.position.Y(), p.position.Z())
 		p.matrixTranslation.Dirty = false
@@ -140,6 +145,8 @@ func (p *Primitive2D) SetMatrices() {
 		p.matrixAnchor.Matrix = mgl32.Translate3D(-p.anchor.X(), -p.anchor.Y(), 0)
 		p.shaderProgram.SetUniform4fv("mAnchor", &p.matrixAnchor.Matrix)
 	}
+
+	p.shaderProgram.SetUniform4f("color", p.color)
 }
 
 func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) (*Primitive2D) {
@@ -259,7 +266,7 @@ func NewTriangleStrip(
 	gl.BindVertexArray(0)
 
 	p.position = position
-	p.scale = mgl32.Vec2{1,1}
+	p.scale = mgl32.Vec2{1, 1}
 	p.size = size
 	return p
 }

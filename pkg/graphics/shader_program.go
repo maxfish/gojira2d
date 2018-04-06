@@ -118,6 +118,11 @@ func (s *ShaderProgram) GetUniform(name string) int32 {
 	return uniform
 }
 
+func (s *ShaderProgram) SetUniform4f(name string, v mgl32.Vec4) {
+	uniform := s.GetUniform(name)
+	gl.Uniform4f(uniform, v[0], v[1], v[2], v[3])
+}
+
 func (s *ShaderProgram) SetUniform4fv(name string, matrix4 *mgl32.Mat4) {
 	uniform := s.GetUniform(name)
 	gl.UniformMatrix4fv(uniform, 1, false, &matrix4[0])
@@ -146,12 +151,13 @@ const (
         #version 410 core
 
         in vec2 uv_out;
-        out vec4 color;
+        out vec4 out_color;
+        uniform vec4 color;
 
         uniform sampler2D tex;
 
         void main() {
-            color = vec4(1,1,1,1);
+            out_color = color;
         }
         ` + "\x00"
 

@@ -8,21 +8,24 @@ import (
 )
 
 func main() {
-	app := a.InitApp(800, 600, false, "Shapes")
+	app := a.InitApp(640, 480, false, "Shapes")
 	defer a.TerminateApp()
 
 	primitives := []*g.Primitive2D{
-		g.NewRegularPolygonPrimitive(mgl32.Vec3{100, 100, 0}, 60, 5, false),
-		g.NewRegularPolygonPrimitive(mgl32.Vec3{300, 100, 0}, 60, 6, true),
-		g.NewRegularPolygonPrimitive(mgl32.Vec3{500, 100, 0}, 60, 8, false),
-		g.NewRegularPolygonPrimitive(mgl32.Vec3{700, 100, 0}, 60, 12, true),
-		g.NewPolylinePrimitive(mgl32.Vec3{50, 540, 0}, []mgl32.Vec2{{60, 20}, {20, 20}, {20, 70}, {60, 70}, {60, 45}, {40, 45}}, false),
-		g.NewPolylinePrimitive(mgl32.Vec3{110, 540, 0}, []mgl32.Vec2{{0, 0}, {0, 50}, {40, 50}}, false),
+		g.NewRegularPolygonPrimitive(mgl32.Vec3{100, 100, 0}, 50, 5, false),
+		g.NewRegularPolygonPrimitive(mgl32.Vec3{250, 100, 0}, 50, 6, true),
+		g.NewRegularPolygonPrimitive(mgl32.Vec3{400, 100, 0}, 50, 8, false),
+		g.NewRegularPolygonPrimitive(mgl32.Vec3{550, 100, 0}, 50, 12, true),
+		g.NewPolylinePrimitive(mgl32.Vec3{50, 420, 0}, []mgl32.Vec2{{60, 20}, {20, 20}, {20, 70}, {60, 70}, {60, 45}, {40, 45}}, false),
+		g.NewPolylinePrimitive(mgl32.Vec3{110, 420, 0}, []mgl32.Vec2{{0, 0}, {0, 50}, {40, 50}}, false),
 	}
 
 	for _, p := range primitives {
 		p.SetAnchorToCenter()
+		p.SetColor(1,1,1,1)
 	}
+
+	primitives[3].SetColor(1,0,0,1)
 
 	var animationAngle float32 = 0
 
