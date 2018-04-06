@@ -16,7 +16,7 @@ type Texture struct {
 	height int32
 }
 
-func NewTextureFromFile(filePath string) (*Texture) {
+func NewTextureFromFile(filePath string) *Texture {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Panicf("cannot find file: '%s'", filePath)
@@ -32,7 +32,7 @@ func NewTextureFromFile(filePath string) (*Texture) {
 	return NewTextureFromImage(decodedImage)
 }
 
-func NewTextureFromImage(imageData image.Image) (*Texture) {
+func NewTextureFromImage(imageData image.Image) *Texture {
 	switch imageData.(type) {
 	case *image.RGBA:
 	default:
@@ -45,7 +45,7 @@ func NewTextureFromImage(imageData image.Image) (*Texture) {
 		imageData = rgba
 	}
 
-	texture := Texture{
+	texture := &Texture{
 		width:  int32(imageData.Bounds().Dx()),
 		height: int32(imageData.Bounds().Dy()),
 	}
@@ -63,7 +63,7 @@ func NewTextureFromImage(imageData image.Image) (*Texture) {
 		0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(pixelData),
 	)
 
-	return &texture
+	return texture
 }
 
 func NewEmptyTexture(width int, height int) (*Texture, error) {
@@ -73,7 +73,7 @@ func NewEmptyTexture(width int, height int) (*Texture, error) {
 	}
 	imageData := image.NewRGBA(bounds)
 
-	texture := Texture{
+	texture := &Texture{
 		width:  int32(imageData.Bounds().Dx()),
 		height: int32(imageData.Bounds().Dy()),
 	}
@@ -89,7 +89,7 @@ func NewEmptyTexture(width int, height int) (*Texture, error) {
 		0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(imageData.Pix),
 	)
 
-	return &texture, nil
+	return texture, nil
 }
 
 func (t *Texture) Id() (uint32) {
