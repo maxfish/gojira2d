@@ -274,7 +274,7 @@ func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool)
 	primitive.position = position
 	primitive.size = bottomRight.Sub(topLeft)
 	primitive.scale = mgl32.Vec2{1, 1}
-	primitive.shaderProgram = NewShaderProgram(vertexShaderPrimitive2D, "", FragmentShaderSolidColor)
+	primitive.shaderProgram = NewShaderProgram(VertexShaderPrimitive2D, "", FragmentShaderSolidColor)
 	primitive.invalidateMatrices()
 
 	// Vertices
