@@ -9,6 +9,7 @@ import (
 
 func main() {
 	app := a.InitApp(800, 600, true, "Text")
+	app.Context.SetClearColor(0.3,0.3,0.3,1)
 	defer a.TerminateApp()
 
 	font := text.NewFontFromFiles(

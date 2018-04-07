@@ -17,14 +17,19 @@ type Context struct {
 	viewMatrix           mgl32.Mat4
 	currentTexture       *Texture
 	currentShaderProgram *ShaderProgram
+	clearColor           mgl32.Vec4
 	primitivesToDraw     map[uint32][]Drawable
 }
 
 func (c *Context) Clear() {
-	gl.ClearColor(0.3, 0.3, 0.3, 1.0)
+	gl.ClearColor(c.clearColor[0], c.clearColor[1], c.clearColor[2], c.clearColor[3])
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+}
+
+func (c *Context) SetClearColor(r, g, b, a float32) {
+	c.clearColor = mgl32.Vec4{r, g, b, a}
 }
 
 func (c *Context) enqueueForDrawing(drawable Drawable) {
