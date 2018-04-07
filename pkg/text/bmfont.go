@@ -28,7 +28,7 @@ type BmFont struct {
 	pageFiles      map[int]string
 	charactersList []BmChar
 	Characters     map[string]BmChar
-	Kernings       map[int]map[int]int
+	Kernings       map[int32]map[int32]int
 
 	// Info
 	face          string
@@ -58,7 +58,7 @@ func NewBmFontFromFile(fileName string) *BmFont {
 
 	f.pageFiles = make(map[int]string)
 	f.Characters = make(map[string]BmChar)
-	f.Kernings = make(map[int]map[int]int)
+	f.Kernings = make(map[int32]map[int32]int)
 
 	fileContent, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -137,15 +137,20 @@ func (f *BmFont) parseCharSection(keyValues map[string]string) {
 }
 
 func (f *BmFont) parseKerningSection(keyValues map[string]string) {
-	first, _ := strconv.Atoi(keyValues["first"])
-	second, _ := strconv.Atoi(keyValues["second"])
-	amount, _ := strconv.Atoi(keyValues["amount"])
-	fmap, ok := f.Kernings[first]
-	if !ok {
-		fmap = make(map[int]int)
-		f.Kernings[first] = fmap
+	first, err := strconv.Atoi(keyValues["first"])
+	second, err := strconv.Atoi(keyValues["second"])
+	amount, err := strconv.Atoi(keyValues["amount"])
+	if err != nil {
+		log.Printf("Error parsing kerning: %v", err)
+		return
 	}
-	fmap[second] = amount
+
+	fmap, ok := f.Kernings[int32(first)]
+	if !ok {
+		fmap = make(map[int32]int)
+		f.Kernings[int32(first)] = fmap
+	}
+	fmap[int32(second)] = amount
 }
 
 var BmSectionRex = regexp.MustCompile("^(\\w+) ")

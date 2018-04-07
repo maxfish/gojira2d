@@ -79,9 +79,9 @@ func (f *Font) RenderText(
 		}
 
 		kerning := 0
-		kl, ok := f.bm.Kernings[int(lastChar)]
+		kl, ok := f.bm.Kernings[lastChar]
 		if ok {
-			kc, ok := kl[int(char)]
+			kc, ok := kl[char]
 			if ok {
 				kerning = kc
 			}
