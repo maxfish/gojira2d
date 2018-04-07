@@ -22,7 +22,7 @@ type Primitive2D struct {
 	angle             float32
 	flipX             bool
 	flipY             bool
-	color             mgl32.Vec4
+	color             Color
 	matrixSize        Matrix
 	matrixTranslation Matrix
 	matrixRotation    Matrix
@@ -66,7 +66,7 @@ func (p *Primitive2D) SetFlipY(flipY bool) {
 }
 
 func (p *Primitive2D) SetColor(r, g, b, a float32) {
-	p.color = mgl32.Vec4{r, g, b, a}
+	p.color.Set(r,g,b,a)
 }
 
 func (p *Primitive2D) rebuildMatrices() {

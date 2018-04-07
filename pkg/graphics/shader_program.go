@@ -118,9 +118,9 @@ func (s *ShaderProgram) GetUniform(name string) int32 {
 	return uniform
 }
 
-func (s *ShaderProgram) SetUniform4f(name string, v mgl32.Vec4) {
+func (s *ShaderProgram) SetUniform4f(name string, value [4]float32) {
 	uniform := s.GetUniform(name)
-	gl.Uniform4f(uniform, v[0], v[1], v[2], v[3])
+	gl.Uniform4f(uniform, value[0], value[1], value[2], value[3])
 }
 
 func (s *ShaderProgram) SetUniformM4fv(name string, matrix4 *mgl32.Mat4) {
