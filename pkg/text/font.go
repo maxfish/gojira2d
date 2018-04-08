@@ -1,8 +1,9 @@
 package text
 
 import (
-	"log"
 	"gojira2d/pkg/graphics"
+	"log"
+
 	"github.com/go-gl/mathgl/mgl32"
 )
 
@@ -13,13 +14,13 @@ type Font struct {
 
 type FontProps struct {
 	StrokeWidth float32
-	StrokeEdge float32
-	Color mgl32.Vec4
+	StrokeEdge  float32
+	Color       mgl32.Vec4
 }
 
 var (
-	FontPropLarge = FontProps{0.8, 0.02, mgl32.Vec4{1,1,1,1}}
-	FontPropSmall = FontProps{0.5, 0.1, mgl32.Vec4{1,1,1,1}}
+	FontPropLarge = FontProps{0.8, 0.02, mgl32.Vec4{1, 1, 1, 1}}
+	FontPropSmall = FontProps{0.5, 0.1, mgl32.Vec4{1, 1, 1, 1}}
 )
 
 func NewFontFromFiles(bmpath, texpath string) *Font {
@@ -33,12 +34,12 @@ const CharVertices = 12
 
 func charQuad(offsetX, offsetY, width, height float32) []float32 {
 	q := [CharVertices]float32{
-		offsetX, offsetY+height,       // bl
-		offsetX+width, offsetY+height, // br
-		offsetX, offsetY,              // tl
-		offsetX, offsetY,              // tl
-		offsetX+width, offsetY+height, // br
-		offsetX+width, offsetY,        // tr
+		offsetX, offsetY + height, // bl
+		offsetX + width, offsetY + height, // br
+		offsetX, offsetY, // tl
+		offsetX, offsetY, // tl
+		offsetX + width, offsetY + height, // br
+		offsetX + width, offsetY, // tr
 	}
 	return q[:]
 }
@@ -50,13 +51,13 @@ func (f *Font) RenderText(
 	fp FontProps,
 ) *graphics.Primitive2D {
 	var (
-		vnum = len(txt)*CharVertices
-		vertices = make([]float32, vnum)
-		uvCoords = make([]float32, vnum)
-		idx = 0
-		cursorX float32 = 0
-		cursorY float32 = 0
-		lastChar int32 = 0
+		vnum             = len(txt) * CharVertices
+		vertices         = make([]float32, vnum)
+		uvCoords         = make([]float32, vnum)
+		idx              = 0
+		cursorX  float32 = 0
+		cursorY  float32 = 0
+		lastChar int32   = 0
 	)
 
 	for _, char := range txt {
