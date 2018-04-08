@@ -13,13 +13,13 @@ type Font struct {
 
 type FontProps struct {
 	StrokeWidth float32
-	StrokeEdge float32
-	Color mgl32.Vec4
+	StrokeEdge  float32
+	Color       graphics.Color
 }
 
 var (
-	FontPropLarge = FontProps{0.8, 0.02, mgl32.Vec4{1,1,1,1}}
-	FontPropSmall = FontProps{0.5, 0.1, mgl32.Vec4{1,1,1,1}}
+	FontPropLarge = FontProps{0.8, 0.02, graphics.Color{1, 1, 1, 1}}
+	FontPropSmall = FontProps{0.5, 0.1, graphics.Color{1, 1, 1, 1}}
 )
 
 func NewFontFromFiles(bmpath, texpath string) *Font {
@@ -33,12 +33,12 @@ const CharVertices = 12
 
 func charQuad(offsetX, offsetY, width, height float32) []float32 {
 	q := [CharVertices]float32{
-		offsetX, offsetY+height,       // bl
-		offsetX+width, offsetY+height, // br
-		offsetX, offsetY,              // tl
-		offsetX, offsetY,              // tl
-		offsetX+width, offsetY+height, // br
-		offsetX+width, offsetY,        // tr
+		offsetX, offsetY + height,         // bl
+		offsetX + width, offsetY + height, // br
+		offsetX, offsetY,                  // tl
+		offsetX, offsetY,                  // tl
+		offsetX + width, offsetY + height, // br
+		offsetX + width, offsetY,          // tr
 	}
 	return q[:]
 }
@@ -50,15 +50,15 @@ func (f *Font) RenderText(
 	fp FontProps,
 ) *graphics.Primitive2D {
 	var (
-		vnum = len(txt)*CharVertices
-		vertices = make([]float32, vnum)
-		uvCoords = make([]float32, vnum)
-		idx = 0
-		cursorX float32 = 0
-		cursorY float32 = 0
-		scale = 1.0/float32(f.bm.lineHeight)
-		uvscalex = 1.0/float32(f.bm.pageWidth)
-		uvscaley = 1.0/float32(f.bm.pageHeight)
+		vnum             = len(txt) * CharVertices
+		vertices         = make([]float32, vnum)
+		uvCoords         = make([]float32, vnum)
+		idx              = 0
+		cursorX  float32 = 0
+		cursorY  float32 = 0
+		scale            = 1.0 / float32(f.bm.lineHeight)
+		uvscalex         = 1.0 / float32(f.bm.pageWidth)
+		uvscaley         = 1.0 / float32(f.bm.pageHeight)
 	)
 
 	for _, char := range txt {
@@ -94,7 +94,7 @@ func (f *Font) RenderText(
 			),
 		)
 		idx += CharVertices
-		cursorX += float32(bmc.advanceX)*scale
+		cursorX += float32(bmc.advanceX) * scale
 	}
 
 	shaderProgram := graphics.NewShaderProgram(

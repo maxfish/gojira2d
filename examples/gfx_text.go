@@ -9,7 +9,7 @@ import (
 
 func main() {
 	app := a.InitApp(800, 600, true, "Text")
-	app.Context.SetClearColor(0.3,0.3,0.3,1)
+	app.Context.SetClearColor(graphics.Color{0.3, 0.3, 0.3, 1})
 	defer a.TerminateApp()
 
 	font := text.NewFontFromFiles(
@@ -28,15 +28,15 @@ func main() {
 	vo := float32(0)
 	for i := range tc {
 		j := float32(i)
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			f = font
 		} else {
 			f = font2
 		}
 		tc[i] = f.RenderText(
 			"The quick brown fox jumps over the lazy dog",
-			mgl32.Vec3{-400, -300+vo, 0},
-			mgl32.Vec2{j*8, j*8},
+			mgl32.Vec3{-400, -300 + vo, 0},
+			mgl32.Vec2{j * 8, j * 8},
 			text.FontPropSmall,
 		)
 		vo += j * 6
