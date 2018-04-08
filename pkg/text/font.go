@@ -56,9 +56,6 @@ func (f *Font) RenderText(
 		idx = 0
 		cursorX float32 = 0
 		cursorY float32 = 0
-		scale = 1.0/float32(f.bm.lineHeight)
-		uvscalex = 1.0/float32(f.bm.pageWidth)
-		uvscaley = 1.0/float32(f.bm.pageHeight)
 		lastChar int32 = 0
 	)
 
@@ -69,7 +66,7 @@ func (f *Font) RenderText(
 			lastChar = 0
 			continue
 		}
-		bmc, ok := f.bm.Characters[string(char)]
+		bmc, ok := f.bm.Characters[char]
 		if !ok {
 			log.Printf(
 				"ERR: char %v (%v) not found in font map",
@@ -78,35 +75,31 @@ func (f *Font) RenderText(
 			continue
 		}
 
-		kerning := 0
-		kl, ok := f.bm.Kernings[lastChar]
-		if ok {
-			kc, ok := kl[char]
-			if ok {
-				kerning = kc
-			}
+		kerning, ok := bmc.f32kernings[lastChar]
+		if !ok {
+			kerning = 0
 		}
 
 		copy(
 			vertices[idx:],
 			charQuad(
-				cursorX+float32(bmc.offsetX+kerning)*scale,
-				cursorY+float32(bmc.offsetY)*scale,
-				float32(bmc.width)*scale,
-				float32(bmc.height)*scale,
+				cursorX+bmc.f32offsetX+kerning,
+				cursorY+bmc.f32offsetY,
+				bmc.f32lineWidth,
+				bmc.f32lineHeight,
 			),
 		)
 		copy(
 			uvCoords[idx:],
 			charQuad(
-				float32(bmc.x)*uvscalex,
-				float32(bmc.y)*uvscaley,
-				float32(bmc.width)*uvscalex,
-				float32(bmc.height)*uvscaley,
+				bmc.f32x,
+				bmc.f32y,
+				bmc.f32width,
+				bmc.f32height,
 			),
 		)
 		idx += CharVertices
-		cursorX += float32(bmc.advanceX)*scale
+		cursorX += bmc.f32advanceX
 		lastChar = char
 	}
 

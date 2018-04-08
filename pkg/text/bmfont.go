@@ -11,7 +11,7 @@ import (
 )
 
 type BmChar struct {
-	id             int
+	id             int32
 	letter         string
 	x              int
 	y              int
@@ -22,13 +22,27 @@ type BmChar struct {
 	advanceX       int
 	pageIndex      int
 	textureChannel int
+	kernings       map[int32]int
+
+	// page-size scaled
+	f32x           float32
+	f32y           float32
+	f32width       float32
+	f32height      float32
+
+	// line-height scaled
+	f32lineWidth   float32
+	f32lineHeight  float32
+	f32offsetX     float32
+	f32offsetY     float32
+	f32advanceX    float32
+	f32kernings    map[int32]float32
 }
 
 type BmFont struct {
 	pageFiles      map[int]string
-	charactersList []BmChar
-	Characters     map[string]BmChar
-	Kernings       map[int32]map[int32]int
+	charactersList []*BmChar
+	Characters     map[int32]*BmChar
 
 	// Info
 	face          string
@@ -51,14 +65,17 @@ type BmFont struct {
 	numPages   int
 	// Chars
 	charactersCount int
+	// Pre-calculated f32 scale values
+	f32scaleLine  float32
+	f32scaleW     float32
+	f32scaleH     float32
 }
 
 func NewBmFontFromFile(fileName string) *BmFont {
 	f := &BmFont{}
 
 	f.pageFiles = make(map[int]string)
-	f.Characters = make(map[string]BmChar)
-	f.Kernings = make(map[int32]map[int32]int)
+	f.Characters = make(map[int32]*BmChar)
 
 	fileContent, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -104,6 +121,10 @@ func (f *BmFont) parseCommonSection(keyValues map[string]string) {
 	f.pageHeight, _ = strconv.Atoi(keyValues["scaleH"])
 	f.packed, _ = strconv.ParseBool(keyValues["packed"])
 	f.numPages, _ = strconv.Atoi(keyValues["pages"])
+
+	f.f32scaleLine = 1.0/float32(f.lineHeight)
+	f.f32scaleH = 1.0/float32(f.pageHeight)
+	f.f32scaleW = 1.0/float32(f.pageWidth)
 }
 
 func (f *BmFont) parsePageSection(keyValues map[string]string) {
@@ -112,8 +133,9 @@ func (f *BmFont) parsePageSection(keyValues map[string]string) {
 }
 
 func (f *BmFont) parseCharSection(keyValues map[string]string) {
-	c := BmChar{}
-	c.id, _ = strconv.Atoi(keyValues["id"])
+	c := &BmChar{}
+	id, _ := strconv.Atoi(keyValues["id"])
+	c.id = int32(id)
 	c.x, _ = strconv.Atoi(keyValues["x"])
 	c.y, _ = strconv.Atoi(keyValues["y"])
 	c.width, _ = strconv.Atoi(keyValues["width"])
@@ -124,6 +146,20 @@ func (f *BmFont) parseCharSection(keyValues map[string]string) {
 	c.pageIndex, _ = strconv.Atoi(keyValues["page"])
 	c.textureChannel, _ = strconv.Atoi(keyValues["chnl"])
 
+	c.f32x = float32(c.x) * f.f32scaleW
+	c.f32y = float32(c.y) * f.f32scaleH
+	c.f32width = float32(c.width) * f.f32scaleW
+	c.f32height = float32(c.height) * f.f32scaleH
+
+	c.f32lineWidth = float32(c.width) * f.f32scaleLine
+	c.f32lineHeight = float32(c.height) * f.f32scaleLine
+	c.f32offsetX = float32(c.offsetX) * f.f32scaleLine
+	c.f32offsetY = float32(c.offsetY) * f.f32scaleLine
+	c.f32advanceX = float32(c.advanceX) * f.f32scaleLine
+
+	c.kernings = make(map[int32]int)
+	c.f32kernings = make(map[int32]float32)
+
 	if letter, ok := keyValues["letter"]; ok {
 		c.letter = letter
 	} else {
@@ -133,7 +169,7 @@ func (f *BmFont) parseCharSection(keyValues map[string]string) {
 	if c.letter == "space" {
 		c.letter = " "
 	}
-	f.Characters[c.letter] = c
+	f.Characters[c.id] = c
 }
 
 func (f *BmFont) parseKerningSection(keyValues map[string]string) {
@@ -145,12 +181,12 @@ func (f *BmFont) parseKerningSection(keyValues map[string]string) {
 		return
 	}
 
-	fmap, ok := f.Kernings[int32(first)]
+	char, ok := f.Characters[int32(first)]
 	if !ok {
-		fmap = make(map[int32]int)
-		f.Kernings[int32(first)] = fmap
+		log.Printf("Kerning parse error: char %v not found", first)
 	}
-	fmap[int32(second)] = amount
+	char.kernings[int32(second)] = amount
+	char.f32kernings[int32(second)] = float32(amount)*f.f32scaleLine
 }
 
 var BmSectionRex = regexp.MustCompile("^(\\w+) ")
