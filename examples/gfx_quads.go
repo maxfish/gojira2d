@@ -11,7 +11,7 @@ func main() {
 	app := a.InitApp(800, 600, false, "Quads")
 	defer a.TerminateApp()
 
-		quads := make([]*g.Primitive2D, 0, 12)
+	quads := make([]*g.Primitive2D, 0, 12)
 	texture := g.NewTextureFromFile("examples/assets/texture.png")
 
 	// Creates 12 quads in a grid 4x3
