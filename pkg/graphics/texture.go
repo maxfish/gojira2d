@@ -19,7 +19,7 @@ type Texture struct {
 func NewTextureFromFile(filePath string) *Texture {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Panicf("cannot find file: '%s'", filePath)
+		log.Panicf("Loading texture. %s", err)
 		return nil
 	}
 	defer file.Close()
