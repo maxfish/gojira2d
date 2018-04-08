@@ -59,12 +59,14 @@ func (f *Font) RenderText(
 		scale = 1.0/float32(f.bm.lineHeight)
 		uvscalex = 1.0/float32(f.bm.pageWidth)
 		uvscaley = 1.0/float32(f.bm.pageHeight)
+		lastChar int32 = 0
 	)
 
 	for _, char := range txt {
 		if char == 0x0a {
 			cursorX = 0
 			cursorY += 1
+			lastChar = 0
 			continue
 		}
 		bmc, ok := f.bm.Characters[string(char)]
@@ -75,10 +77,20 @@ func (f *Font) RenderText(
 			)
 			continue
 		}
+
+		kerning := 0
+		kl, ok := f.bm.Kernings[lastChar]
+		if ok {
+			kc, ok := kl[char]
+			if ok {
+				kerning = kc
+			}
+		}
+
 		copy(
 			vertices[idx:],
 			charQuad(
-				cursorX+float32(bmc.offsetX)*scale,
+				cursorX+float32(bmc.offsetX+kerning)*scale,
 				cursorY+float32(bmc.offsetY)*scale,
 				float32(bmc.width)*scale,
 				float32(bmc.height)*scale,
@@ -95,6 +107,7 @@ func (f *Font) RenderText(
 		)
 		idx += CharVertices
 		cursorX += float32(bmc.advanceX)*scale
+		lastChar = char
 	}
 
 	shaderProgram := graphics.NewShaderProgram(

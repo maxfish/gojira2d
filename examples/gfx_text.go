@@ -13,13 +13,13 @@ func main() {
 	defer a.TerminateApp()
 
 	font := text.NewFontFromFiles(
-		"examples/assets/fonts/mono.fnt",
-		"examples/assets/fonts/mono.png",
+		"examples/assets/fonts/roboto-mono-regular.fnt",
+		"examples/assets/fonts/roboto-mono-regular.png",
 	)
 
 	font2 := text.NewFontFromFiles(
-		"examples/assets/fonts/regular.fnt",
-		"examples/assets/fonts/regular.png",
+		"examples/assets/fonts/roboto-regular.fnt",
+		"examples/assets/fonts/roboto-regular.png",
 	)
 
 	var f *text.Font
