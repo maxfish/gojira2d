@@ -1,13 +1,14 @@
 package text
+
 // Bitmap font loader. The format is the one described here
 // http://www.angelcode.com/products/bmfont/doc/file_format.html
 
 import (
 	"io/ioutil"
 	"log"
-	"strings"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type BmChar struct {
@@ -25,18 +26,18 @@ type BmChar struct {
 	kernings       map[int32]int
 
 	// page-size scaled
-	f32x           float32
-	f32y           float32
-	f32width       float32
-	f32height      float32
+	f32x      float32
+	f32y      float32
+	f32width  float32
+	f32height float32
 
 	// line-height scaled
-	f32lineWidth   float32
-	f32lineHeight  float32
-	f32offsetX     float32
-	f32offsetY     float32
-	f32advanceX    float32
-	f32kernings    map[int32]float32
+	f32lineWidth  float32
+	f32lineHeight float32
+	f32offsetX    float32
+	f32offsetY    float32
+	f32advanceX   float32
+	f32kernings   map[int32]float32
 }
 
 type BmFont struct {
@@ -66,9 +67,9 @@ type BmFont struct {
 	// Chars
 	charactersCount int
 	// Pre-calculated f32 scale values
-	f32scaleLine  float32
-	f32scaleW     float32
-	f32scaleH     float32
+	f32scaleLine float32
+	f32scaleW    float32
+	f32scaleH    float32
 }
 
 func NewBmFontFromFile(fileName string) *BmFont {
@@ -122,9 +123,9 @@ func (f *BmFont) parseCommonSection(keyValues map[string]string) {
 	f.packed, _ = strconv.ParseBool(keyValues["packed"])
 	f.numPages, _ = strconv.Atoi(keyValues["pages"])
 
-	f.f32scaleLine = 1.0/float32(f.lineHeight)
-	f.f32scaleH = 1.0/float32(f.pageHeight)
-	f.f32scaleW = 1.0/float32(f.pageWidth)
+	f.f32scaleLine = 1.0 / float32(f.lineHeight)
+	f.f32scaleH = 1.0 / float32(f.pageHeight)
+	f.f32scaleW = 1.0 / float32(f.pageWidth)
 }
 
 func (f *BmFont) parsePageSection(keyValues map[string]string) {
@@ -186,7 +187,7 @@ func (f *BmFont) parseKerningSection(keyValues map[string]string) {
 		log.Printf("Kerning parse error: char %v not found", first)
 	}
 	char.kernings[int32(second)] = amount
-	char.f32kernings[int32(second)] = float32(amount)*f.f32scaleLine
+	char.f32kernings[int32(second)] = float32(amount) * f.f32scaleLine
 }
 
 var BmSectionRex = regexp.MustCompile("^(\\w+) ")
