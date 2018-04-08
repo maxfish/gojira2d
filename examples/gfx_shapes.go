@@ -22,10 +22,10 @@ func main() {
 
 	for _, p := range primitives {
 		p.SetAnchorToCenter()
-		p.SetColor(1,1,1,1)
+		p.SetColor(g.Color{1,1,1,1})
 	}
 
-	primitives[3].SetColor(1,0,0,1)
+	primitives[3].SetColor(g.Color{1,0,0,1})
 
 	var animationAngle float32 = 0
 
