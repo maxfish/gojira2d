@@ -29,6 +29,7 @@ type BmFont struct {
 	pageFiles      map[int]string
 	charactersList []BmChar
 	Characters     map[string]BmChar
+	Kernings       map[int32]map[int32]int
 
 	// Info
 	face          string
@@ -58,6 +59,7 @@ func NewBmFontFromFile(fileName string) *BmFont {
 
 	f.pageFiles = make(map[int]string)
 	f.Characters = make(map[string]BmChar)
+	f.Kernings = make(map[int32]map[int32]int)
 
 	fileContent, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -75,6 +77,8 @@ func NewBmFontFromFile(fileName string) *BmFont {
 			f.parsePageSection(keyValues)
 		case "char":
 			f.parseCharSection(keyValues)
+		case "kerning":
+			f.parseKerningSection(keyValues)
 		}
 	}
 
@@ -133,15 +137,33 @@ func (f *BmFont) parseCharSection(keyValues map[string]string) {
 	f.Characters[c.letter] = c
 }
 
+func (f *BmFont) parseKerningSection(keyValues map[string]string) {
+	first, err := strconv.Atoi(keyValues["first"])
+	second, err := strconv.Atoi(keyValues["second"])
+	amount, err := strconv.Atoi(keyValues["amount"])
+	if err != nil {
+		log.Printf("Error parsing kerning: %v", err)
+		return
+	}
+
+	fmap, ok := f.Kernings[int32(first)]
+	if !ok {
+		fmap = make(map[int32]int)
+		f.Kernings[int32(first)] = fmap
+	}
+	fmap[int32(second)] = amount
+}
+
+var BmSectionRex = regexp.MustCompile("^(\\w+) ")
+var BmKeyValueRex = regexp.MustCompile("(\\w+)=\"?([\\w\\s ,._\\-]*)\"?( |$|\")")
+
 func (f *BmFont) tokenizeLine(line string) (string, map[string]string) {
-	sectionRex := regexp.MustCompile("^(\\w+) ")
-	keyValueRex := regexp.MustCompile("(\\w+)=\"?([\\w\\s ,._-]*)\"?[ |$|\"]")
-	sectionMatches := sectionRex.FindStringSubmatch(line)
+	sectionMatches := BmSectionRex.FindStringSubmatch(line)
 	if sectionMatches == nil {
 		return "", nil
 	}
 	sectionName := sectionMatches[1]
-	data := keyValueRex.FindAllStringSubmatch(line, -1)
+	data := BmKeyValueRex.FindAllStringSubmatch(line, -1)
 
 	keyValues := make(map[string]string)
 	for _, kv := range data {
