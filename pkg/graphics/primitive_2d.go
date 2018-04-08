@@ -65,8 +65,8 @@ func (p *Primitive2D) SetFlipY(flipY bool) {
 	p.matrixScale.Dirty = true
 }
 
-func (p *Primitive2D) SetColor(r, g, b, a float32) {
-	p.color.Set(r,g,b,a)
+func (p *Primitive2D) SetColor(color Color) {
+	p.color = color
 }
 
 func (p *Primitive2D) rebuildMatrices() {
