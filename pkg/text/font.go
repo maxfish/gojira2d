@@ -15,12 +15,12 @@ type Font struct {
 type FontProps struct {
 	StrokeWidth float32
 	StrokeEdge  float32
-	Color       mgl32.Vec4
+	Color       graphics.Color
 }
 
 var (
-	FontPropLarge = FontProps{0.8, 0.02, mgl32.Vec4{1, 1, 1, 1}}
-	FontPropSmall = FontProps{0.5, 0.1, mgl32.Vec4{1, 1, 1, 1}}
+	FontPropLarge = FontProps{0.8, 0.02, graphics.Color{1, 1, 1, 1}}
+	FontPropSmall = FontProps{0.5, 0.1, graphics.Color{1, 1, 1, 1}}
 )
 
 func NewFontFromFiles(bmpath, texpath string) *Font {

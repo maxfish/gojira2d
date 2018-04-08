@@ -1,9 +1,10 @@
 package graphics
 
 import (
-	"github.com/go-gl/mathgl/mgl32"
-	"github.com/go-gl/gl/v4.1-core/gl"
 	"gojira2d/pkg/utils"
+
+	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/go-gl/mathgl/mgl32"
 )
 
 const FLOAT32_SIZE = 4
@@ -65,8 +66,8 @@ func (p *Primitive2D) SetFlipY(flipY bool) {
 	p.matrixScale.Dirty = true
 }
 
-func (p *Primitive2D) SetColor(r, g, b, a float32) {
-	p.color.Set(r,g,b,a)
+func (p *Primitive2D) SetColor(color Color) {
+	p.color = color
 }
 
 func (p *Primitive2D) rebuildMatrices() {
@@ -149,7 +150,7 @@ func (p *Primitive2D) SetUniforms() {
 	p.shaderProgram.SetUniform4f("color", p.color)
 }
 
-func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) (*Primitive2D) {
+func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) *Primitive2D {
 	q := &Primitive2D{}
 	q.position = position
 	q.size = size
@@ -171,7 +172,7 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) (*Primitive2D) {
 	vertices := []float32{0, 0, 0, 1, 1, 1, 1, 0}
 	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*FLOAT32_SIZE, gl.Ptr(vertices), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(0)
-	gl.VertexAttribPointer(0, 4, gl.FLOAT, false, 2*FLOAT32_SIZE, gl.PtrOffset(0))
+	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	// Texture coordinates
 	var vboUV uint32
@@ -180,13 +181,13 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) (*Primitive2D) {
 	uvCoordinates := []float32{0, 0, 0, 1, 1, 1, 1, 0}
 	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoordinates)*FLOAT32_SIZE, gl.Ptr(uvCoordinates), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(1)
-	gl.VertexAttribPointer(1, 4, gl.FLOAT, false, 2*FLOAT32_SIZE, gl.PtrOffset(0))
+	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	gl.BindVertexArray(0)
 	return q
 }
 
-func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments int, filled bool) (*Primitive2D) {
+func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments int, filled bool) *Primitive2D {
 	circlePoints := utils.CircleToPolygon(mgl32.Vec2{0.5, 0.5}, 0.5, numSegments, 0)
 
 	q := &Primitive2D{}
@@ -219,7 +220,7 @@ func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*FLOAT32_SIZE, gl.Ptr(vertices), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(0)
-	gl.VertexAttribPointer(0, 4, gl.FLOAT, false, 2*FLOAT32_SIZE, gl.PtrOffset(0))
+	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	gl.BindVertexArray(0)
 	return q
@@ -249,7 +250,7 @@ func NewTriangles(
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*4, gl.Ptr(vertices), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(0)
-	gl.VertexAttribPointer(0, 4, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
+	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	// Texture coordinates
 	var vboUV uint32
@@ -257,7 +258,7 @@ func NewTriangles(
 	gl.BindBuffer(gl.ARRAY_BUFFER, vboUV)
 	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoords)*4, gl.Ptr(uvCoords), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(1)
-	gl.VertexAttribPointer(1, 4, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
+	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	gl.BindVertexArray(0)
 
@@ -267,7 +268,7 @@ func NewTriangles(
 	return p
 }
 
-func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool) (*Primitive2D) {
+func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool) *Primitive2D {
 	topLeft, bottomRight := utils.GetBoundingBox(points)
 
 	primitive := &Primitive2D{}
@@ -299,7 +300,7 @@ func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*FLOAT32_SIZE, gl.Ptr(vertices), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(0)
-	gl.VertexAttribPointer(0, 4, gl.FLOAT, false, 2*FLOAT32_SIZE, gl.PtrOffset(0))
+	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	gl.BindVertexArray(0)
 	return primitive

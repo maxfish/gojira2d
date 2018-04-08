@@ -28,8 +28,8 @@ func (c *Context) Clear() {
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 }
 
-func (c *Context) SetClearColor(r, g, b, a float32) {
-	c.clearColor.Set(r, g, b, a)
+func (c *Context) SetClearColor(color Color) {
+	c.clearColor = color
 }
 
 func (c *Context) enqueueForDrawing(drawable Drawable) {
