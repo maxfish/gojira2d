@@ -6,6 +6,7 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"runtime"
 	g "gojira2d/pkg/graphics"
+	"gojira2d/pkg/utils"
 )
 
 const (
@@ -16,15 +17,17 @@ const (
 type App struct {
 	Window  *glfw.Window
 	Context *g.Context
+	FpsCounter *utils.FPSCounter
 }
 
 func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) (*App) {
 	runtime.LockOSThread()
-	core := &App{}
-	core.Window = initWindow(windowWidth, windowHeight, windowTitle)
-	core.Context = &g.Context{}
-	core.Context.SetOrtho2DProjection(windowWidth, windowHeight, 1, windowCentered)
-	return core
+	app := &App{}
+	app.Window = initWindow(windowWidth, windowHeight, windowTitle)
+	app.Context = &g.Context{}
+	app.Context.SetOrtho2DProjection(windowWidth, windowHeight, 1, windowCentered)
+	app.FpsCounter = &utils.FPSCounter{}
+	return app
 }
 
 func TerminateApp() {
@@ -64,22 +67,24 @@ func initWindow(width, height int, title string) *glfw.Window {
 	return window
 }
 
-func (c *App) MainLoop(
+func (a *App) MainLoop(
 	update func(float64),
 	render func(),
 ) {
 	var newTime, oldTime float64
-	for !c.Window.ShouldClose() {
+	for !a.Window.ShouldClose() {
 		newTime = glfw.GetTime()
-		update(newTime - oldTime)
+		deltaTime := newTime - oldTime
+		update(deltaTime)
+		a.FpsCounter.Update(deltaTime, 1)
 		oldTime = newTime
 
-		c.Context.Clear()
+		a.Context.Clear()
 		render()
-		c.Context.RenderDrawableList()
-		c.Context.EraseDrawableList()
+		a.Context.RenderDrawableList()
+		a.Context.EraseDrawableList()
 
 		glfw.PollEvents()
-		c.Window.SwapBuffers()
+		a.Window.SwapBuffers()
 	}
 }
