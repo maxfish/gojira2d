@@ -53,8 +53,11 @@ func main() {
 		quads[11].SetScale(mgl32.Vec2{animationScale, animationScale})
 		quads[11].SetAngle(animationAngle)
 	}, func() {
-		for _, q := range quads {
-			q.EnqueueForDrawing(app.Context)
+		for i:=0; i<2000; i++ {
+			for _, q := range quads {
+				q.EnqueueForDrawing(app.Context)
+			}
 		}
+		println("FPS: ", app.FpsCounter.FPS())
 	})
 }
