@@ -2,9 +2,10 @@ package main
 
 import (
 	a "gojira2d/pkg/app"
-	"gojira2d/pkg/text"
-	"github.com/go-gl/mathgl/mgl32"
 	"gojira2d/pkg/graphics"
+	"gojira2d/pkg/text"
+
+	"github.com/go-gl/mathgl/mgl32"
 )
 
 func main() {
