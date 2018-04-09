@@ -53,7 +53,7 @@ func (c *Context) RenderDrawableList() {
 			shader := drawable.Shader()
 			c.BindShader(shader)
 			// TODO this should be done only once per frame via uniform buffers
-			shader.SetUniformM4fv("mProjection", &c.projectionMatrix)
+			shader.SetUniform("mProjection", &c.projectionMatrix)
 			drawable.(Drawable).drawInBatch(c)
 		}
 	}

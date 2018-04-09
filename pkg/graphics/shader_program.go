@@ -118,24 +118,28 @@ func (s *ShaderProgram) GetUniform(name string) int32 {
 	return uniform
 }
 
-func (s *ShaderProgram) SetUniform4f(name string, value [4]float32) {
+func (s *ShaderProgram) SetUniform(name string, val interface{}) {
 	uniform := s.GetUniform(name)
-	gl.Uniform4f(uniform, value[0], value[1], value[2], value[3])
-}
-
-func (s *ShaderProgram) SetUniformM4fv(name string, matrix4 *mgl32.Mat4) {
-	uniform := s.GetUniform(name)
-	gl.UniformMatrix4fv(uniform, 1, false, &matrix4[0])
-}
-
-func (s *ShaderProgram) SetUniformV4fv(name string, vec4 *mgl32.Vec4) {
-	uniform := s.GetUniform(name)
-	gl.Uniform4fv(uniform, 4, &vec4[0])
-}
-
-func (s *ShaderProgram) SetUniformV2f(name string, v0, v1 float32) {
-	uniform := s.GetUniform(name)
-	gl.Uniform2f(uniform, v0, v1)
+	switch v := val.(type) {
+	case *float32:
+		gl.Uniform1fv(uniform, 1, v)
+	case *mgl32.Vec2:
+		gl.Uniform2fv(uniform, 1, &(*v)[0])
+	case *mgl32.Vec3:
+		gl.Uniform3fv(uniform, 1, &(*v)[0])
+	case *mgl32.Vec4:
+		gl.Uniform4fv(uniform, 1, &(*v)[0])
+	case *mgl32.Mat2:
+		gl.UniformMatrix2fv(uniform, 1, false, &(*v)[0])
+	case *mgl32.Mat3:
+		gl.UniformMatrix3fv(uniform, 1, false, &(*v)[0])
+	case *mgl32.Mat4:
+		gl.UniformMatrix4fv(uniform, 1, false, &(*v)[0])
+	case *Color:
+		gl.Uniform4fv(uniform, 1, &(*v)[0])
+	default:
+		log.Panicf("unknown value type: %T %+v", val, val)
+	}
 }
 
 const (

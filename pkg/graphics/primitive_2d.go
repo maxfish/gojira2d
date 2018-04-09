@@ -82,7 +82,7 @@ func (p *Primitive2D) Draw(context *Context) {
 	shaderId := p.shaderProgram.Id()
 	gl.BindTexture(gl.TEXTURE_2D, p.texture.Id())
 	gl.UseProgram(shaderId)
-	p.shaderProgram.SetUniformM4fv("mProjection", &context.projectionMatrix)
+	p.shaderProgram.SetUniform("mProjection", &context.projectionMatrix)
 	p.SetUniforms()
 	gl.BindVertexArray(p.vaoId)
 	gl.DrawArrays(p.arrayMode, 0, p.arraySize)
@@ -120,7 +120,7 @@ func (p *Primitive2D) SetUniforms() {
 	if p.matrixTranslation.Dirty {
 		p.matrixTranslation.Matrix = mgl32.Translate3D(p.position.X(), p.position.Y(), p.position.Z())
 		p.matrixTranslation.Dirty = false
-		p.shaderProgram.SetUniformM4fv("mTranslate", &p.matrixTranslation.Matrix)
+		p.shaderProgram.SetUniform("mTranslate", &p.matrixTranslation.Matrix)
 	}
 	if p.matrixScale.Dirty {
 		scaleX := p.scale.X()
@@ -132,22 +132,22 @@ func (p *Primitive2D) SetUniforms() {
 			scaleY *= -1
 		}
 		p.matrixScale.Matrix = mgl32.Scale3D(scaleX, scaleY, 1)
-		p.shaderProgram.SetUniformM4fv("mScale", &p.matrixScale.Matrix)
+		p.shaderProgram.SetUniform("mScale", &p.matrixScale.Matrix)
 	}
 	if p.matrixSize.Dirty {
 		p.matrixSize.Matrix = mgl32.Scale3D(p.size.X(), p.size.Y(), 1)
-		p.shaderProgram.SetUniformM4fv("mSize", &p.matrixSize.Matrix)
+		p.shaderProgram.SetUniform("mSize", &p.matrixSize.Matrix)
 	}
 	if p.matrixRotation.Dirty {
 		p.matrixRotation.Matrix = mgl32.HomogRotate3DZ(p.angle)
-		p.shaderProgram.SetUniformM4fv("mRotation", &p.matrixRotation.Matrix)
+		p.shaderProgram.SetUniform("mRotation", &p.matrixRotation.Matrix)
 	}
 	if p.matrixRotation.Dirty {
 		p.matrixAnchor.Matrix = mgl32.Translate3D(-p.anchor.X(), -p.anchor.Y(), 0)
-		p.shaderProgram.SetUniformM4fv("mAnchor", &p.matrixAnchor.Matrix)
+		p.shaderProgram.SetUniform("mAnchor", &p.matrixAnchor.Matrix)
 	}
 
-	p.shaderProgram.SetUniform4f("color", p.color)
+	p.shaderProgram.SetUniform("color", &p.color)
 }
 
 func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) *Primitive2D {
