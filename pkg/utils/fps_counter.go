@@ -6,11 +6,11 @@ type FPSCounter struct {
 	fps         uint32
 }
 
-// deltaTime: milliseconds since the previous frame
+// deltaTime: seconds since the previous frame
 // updateRate: rate, in seconds, at which the FPS are computed
 func (f *FPSCounter) Update(deltaTime float64, updateRate uint32) {
 	f.frames ++
-	f.accumulator += deltaTime // ms
+	f.accumulator += deltaTime // seconds
 	if f.accumulator > float64(updateRate) {
 		f.fps = f.frames / updateRate
 		f.accumulator -= float64(updateRate)
