@@ -4,7 +4,6 @@ type GameController interface {
 	Connected() (bool)
 	NumButtons() (int)
 	NumAxis() (int)
-	NumBalls() (int)
 	ButtonPressed(buttonId int) (bool)
 	ButtonReleased(buttonId int) (bool)
 	ButtonDown(buttonId int) (bool)
