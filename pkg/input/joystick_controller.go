@@ -9,8 +9,6 @@ type JoystickController struct {
 	connected       bool
 	deviceIndex     glfw.Joystick
 	name            string
-	numAxes         int
-	numBalls        int
 	axes            []float32
 	rawButtons      []byte
 	buttonsPressed  []bool
