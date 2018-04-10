@@ -232,28 +232,11 @@ func NewTriangles(
 	p.position = position
 	p.scale = mgl32.Vec2{1, 1}
 	p.size = size
-
 	p.rebuildMatrices()
-
 	gl.GenVertexArrays(1, &p.vaoId)
 	gl.BindVertexArray(p.vaoId)
-
-	// Vertices
-	var vbo uint32
-	gl.GenBuffers(1, &vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*4, gl.Ptr(vertices), gl.STATIC_DRAW)
-	gl.EnableVertexAttribArray(0)
-	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
-
-	// Texture coordinates
-	var vboUV uint32
-	gl.GenBuffers(1, &vboUV)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vboUV)
-	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoords)*4, gl.Ptr(uvCoords), gl.STATIC_DRAW)
-	gl.EnableVertexAttribArray(1)
-	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
-
+	p.SetVertices(vertices)
+	p.SetUVCoords(uvCoords)
 	gl.BindVertexArray(0)
 	return p
 }
@@ -294,6 +277,29 @@ func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool)
 
 	gl.BindVertexArray(0)
 	return primitive
+}
+
+// SetVertices uploads new set of vertices into opengl buffer
+func (p *Primitive2D) SetVertices(vertices []float32) {
+	if p.vboVertices == 0 {
+		gl.GenBuffers(1, &p.vboVertices)
+	}
+	gl.BindBuffer(gl.ARRAY_BUFFER, p.vboVertices)
+	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*4, gl.Ptr(vertices), gl.STATIC_DRAW)
+	gl.EnableVertexAttribArray(0)
+	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
+	p.arraySize = int32(len(vertices) / 2)
+}
+
+// SetUVCoords uploads new UV coordinates
+func (p *Primitive2D) SetUVCoords(uvCoords []float32) {
+	if p.vboUVCoords == 0 {
+		gl.GenBuffers(1, &p.vboUVCoords)
+	}
+	gl.BindBuffer(gl.ARRAY_BUFFER, p.vboUVCoords)
+	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoords)*4, gl.Ptr(uvCoords), gl.STATIC_DRAW)
+	gl.EnableVertexAttribArray(1)
+	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 }
 
 const (

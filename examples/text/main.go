@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	a "gojira2d/pkg/app"
 	"gojira2d/pkg/graphics"
 	"gojira2d/pkg/ui"
+	"time"
 
 	"github.com/go-gl/mathgl/mgl32"
 )
@@ -43,9 +45,13 @@ func main() {
 		vo += j * 6
 	}
 
-	app.MainLoop(func(speed float64) {}, func() {
-		for _, t := range tc {
-			t.EnqueueForDrawing(app.Context)
-		}
-	})
+	app.MainLoop(
+		func(speed float64) {
+			tc[4].SetText(fmt.Sprintf("%v", time.Now()))
+		},
+		func() {
+			for _, t := range tc {
+				t.EnqueueForDrawing(app.Context)
+			}
+		})
 }

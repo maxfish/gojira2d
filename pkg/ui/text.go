@@ -14,9 +14,11 @@ type Text struct {
 	size      mgl32.Vec2
 	fontProps FontProps
 	text      string
+	font      *Font
 
 	// cached quad positions
-	charQuads [][]float32
+	charVertices []float32
+	charUVCoords []float32
 }
 
 const charVertices = 12
@@ -33,22 +35,17 @@ func charQuad(offsetX, offsetY, width, height float32) []float32 {
 	return q[:]
 }
 
-// NewText creates a Primitive2D with character quads for given string
-func (f *Font) NewText(
-	txt string,
-	position mgl32.Vec3,
-	size mgl32.Vec2,
-	fp FontProps,
-) *Text {
+func charQuads(txt string, font *Font) ([]float32, []float32) {
 	var (
 		vnum     = len(txt) * charVertices
-		vertices = make([]float32, vnum)
-		uvCoords = make([]float32, vnum)
 		idx      = 0
 		cursorX  float32
 		cursorY  float32
 		lastChar int32
 	)
+
+	vertices := make([]float32, vnum)
+	uvCoords := make([]float32, vnum)
 
 	for _, char := range txt {
 		if char == 0x0a {
@@ -57,7 +54,7 @@ func (f *Font) NewText(
 			lastChar = 0
 			continue
 		}
-		bmc, ok := f.bm.Characters[char]
+		bmc, ok := font.bm.Characters[char]
 		if !ok {
 			log.Printf(
 				"ERR: char %v (%v) not found in font map",
@@ -94,6 +91,20 @@ func (f *Font) NewText(
 		lastChar = char
 	}
 
+	return vertices, uvCoords
+}
+
+// NewText creates a Primitive2D with character quads for given string
+func (f *Font) NewText(
+	txt string,
+	position mgl32.Vec3,
+	size mgl32.Vec2,
+	fp FontProps,
+) *Text {
+
+	text := &Text{}
+	text.charVertices, text.charUVCoords = charQuads(txt, f)
+
 	shaderProgram := graphics.NewShaderProgram(
 		graphics.VertexShaderPrimitive2D, "", fragmentDistanceFieldFont,
 	)
@@ -102,14 +113,21 @@ func (f *Font) NewText(
 	//shaderProgram.SetUniformV4fv("textColor", &fp.Color)
 	//shaderProgram.SetUniformV2f("widthEdge", fp.StrokeWidth, fp.StrokeEdge)
 
-	text := &Text{}
-	text.drawable = graphics.NewTriangles(vertices, uvCoords, f.tx, position, size, shaderProgram)
+	text.drawable = graphics.NewTriangles(text.charVertices, text.charUVCoords, f.tx, position, size, shaderProgram)
 	text.position = position
 	text.fontProps = fp
 	text.size = size
 	text.text = txt
+	text.font = f
 
 	return text
+}
+
+// SetText changes the rendered string
+func (t *Text) SetText(txt string) {
+	t.charVertices, t.charUVCoords = charQuads(txt, t.font)
+	t.drawable.SetVertices(t.charVertices)
+	t.drawable.SetUVCoords(t.charUVCoords)
 }
 
 // EnqueueForDrawing see Drawable.EnqueueForDrawing
