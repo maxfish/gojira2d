@@ -25,7 +25,7 @@ func main() {
 
 	var f *ui.Font
 
-	tc := [20]*graphics.Primitive2D{}
+	tc := [20]*ui.Text{}
 	vo := float32(0)
 	for i := range tc {
 		j := float32(i)
@@ -34,7 +34,7 @@ func main() {
 		} else {
 			f = font2
 		}
-		tc[i] = f.RenderText(
+		tc[i] = f.NewText(
 			"The quick brown fox jumps over the lazy dog",
 			mgl32.Vec3{-400, -300 + vo, 0},
 			mgl32.Vec2{j * 8, j * 8},
