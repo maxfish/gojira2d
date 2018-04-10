@@ -1,4 +1,4 @@
-package text
+package ui
 
 import (
 	"gojira2d/pkg/graphics"
@@ -7,11 +7,13 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
+// Font structure contains BmFont metadata and the texture
 type Font struct {
 	bm *BmFont
 	tx *graphics.Texture
 }
 
+// FontProps holds various attributes that control text rendering
 type FontProps struct {
 	StrokeWidth float32
 	StrokeEdge  float32
@@ -19,10 +21,14 @@ type FontProps struct {
 }
 
 var (
+	// FontPropLarge should be used for large text
 	FontPropLarge = FontProps{0.8, 0.02, graphics.Color{1, 1, 1, 1}}
+
+	// FontPropSmall should be used for small text
 	FontPropSmall = FontProps{0.5, 0.1, graphics.Color{1, 1, 1, 1}}
 )
 
+// NewFontFromFiles create Font structure from metadata and texture files
 func NewFontFromFiles(bmpath, texpath string) *Font {
 	f := &Font{}
 	f.bm = NewBmFontFromFile(bmpath)
@@ -30,10 +36,10 @@ func NewFontFromFiles(bmpath, texpath string) *Font {
 	return f
 }
 
-const CharVertices = 12
+const charVertices = 12
 
 func charQuad(offsetX, offsetY, width, height float32) []float32 {
-	q := [CharVertices]float32{
+	q := [charVertices]float32{
 		offsetX, offsetY + height, // bl
 		offsetX + width, offsetY + height, // br
 		offsetX, offsetY, // tl
@@ -44,6 +50,7 @@ func charQuad(offsetX, offsetY, width, height float32) []float32 {
 	return q[:]
 }
 
+// RenderText creates a Primitive2D with character quads for given string
 func (f *Font) RenderText(
 	txt string,
 	position mgl32.Vec3,
@@ -51,19 +58,19 @@ func (f *Font) RenderText(
 	fp FontProps,
 ) *graphics.Primitive2D {
 	var (
-		vnum             = len(txt) * CharVertices
-		vertices         = make([]float32, vnum)
-		uvCoords         = make([]float32, vnum)
-		idx              = 0
-		cursorX  float32 = 0
-		cursorY  float32 = 0
-		lastChar int32   = 0
+		vnum     = len(txt) * charVertices
+		vertices = make([]float32, vnum)
+		uvCoords = make([]float32, vnum)
+		idx      = 0
+		cursorX  float32
+		cursorY  float32
+		lastChar int32
 	)
 
 	for _, char := range txt {
 		if char == 0x0a {
 			cursorX = 0
-			cursorY += 1
+			cursorY++
 			lastChar = 0
 			continue
 		}
@@ -99,15 +106,13 @@ func (f *Font) RenderText(
 				bmc.f32height,
 			),
 		)
-		idx += CharVertices
+		idx += charVertices
 		cursorX += bmc.f32advanceX
 		lastChar = char
 	}
 
 	shaderProgram := graphics.NewShaderProgram(
-		graphics.VertexShaderPrimitive2D,
-		"",
-		FragmentDistanceFieldFont,
+		graphics.VertexShaderPrimitive2D, "", fragmentDistanceFieldFont,
 	)
 
 	// TODO: this should be done in draw/drawInBatch?
@@ -118,7 +123,7 @@ func (f *Font) RenderText(
 }
 
 var (
-	FragmentDistanceFieldFont = `
+	fragmentDistanceFieldFont = `
         #version 410 core
 
         in vec2 uv_out;

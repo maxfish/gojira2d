@@ -3,7 +3,7 @@ package main
 import (
 	a "gojira2d/pkg/app"
 	"gojira2d/pkg/graphics"
-	"gojira2d/pkg/text"
+	"gojira2d/pkg/ui"
 
 	"github.com/go-gl/mathgl/mgl32"
 )
@@ -13,17 +13,17 @@ func main() {
 	app.Context.SetClearColor(graphics.Color{0.3, 0.3, 0.3, 1})
 	defer a.TerminateApp()
 
-	font := text.NewFontFromFiles(
+	font := ui.NewFontFromFiles(
 		"examples/assets/fonts/roboto-mono-regular.fnt",
 		"examples/assets/fonts/roboto-mono-regular.png",
 	)
 
-	font2 := text.NewFontFromFiles(
+	font2 := ui.NewFontFromFiles(
 		"examples/assets/fonts/roboto-regular.fnt",
 		"examples/assets/fonts/roboto-regular.png",
 	)
 
-	var f *text.Font
+	var f *ui.Font
 
 	tc := [20]*graphics.Primitive2D{}
 	vo := float32(0)
@@ -38,7 +38,7 @@ func main() {
 			"The quick brown fox jumps over the lazy dog",
 			mgl32.Vec3{-400, -300 + vo, 0},
 			mgl32.Vec2{j * 8, j * 8},
-			text.FontPropSmall,
+			ui.FontPropSmall,
 		)
 		vo += j * 6
 	}

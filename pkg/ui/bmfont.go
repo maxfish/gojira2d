@@ -1,4 +1,4 @@
-package text
+package ui
 
 // Bitmap font loader. The format is the one described here
 // http://www.angelcode.com/products/bmfont/doc/file_format.html
