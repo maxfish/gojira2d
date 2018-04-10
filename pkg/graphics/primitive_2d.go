@@ -132,7 +132,7 @@ func (p *Primitive2D) rebuildScaleMatrix() {
 	p.modelMatrix.dirty = true
 }
 
-func (p *Primitive2D)ModelMatrix() (*mgl32.Mat4) {
+func (p *Primitive2D) ModelMatrix() *mgl32.Mat4 {
 	if p.modelMatrix.dirty {
 		p.modelMatrix.Mat4 = p.modelMatrix.translation.Mul4(p.modelMatrix.rotation).Mul4(p.modelMatrix.scale).Mul4(p.modelMatrix.anchor).Mul4(p.modelMatrix.size)
 		//p.modelMatrix.Mat4 = p.modelMatrix.translation.Mul4(p.modelMatrix.size)
@@ -229,6 +229,10 @@ func NewTriangles(
 	p.arraySize = int32(len(vertices) / 2)
 	p.texture = texture
 	p.shaderProgram = shaderProgram
+	p.position = position
+	p.scale = mgl32.Vec2{1, 1}
+	p.size = size
+
 	p.rebuildMatrices()
 
 	gl.GenVertexArrays(1, &p.vaoId)
@@ -251,10 +255,6 @@ func NewTriangles(
 	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 
 	gl.BindVertexArray(0)
-
-	p.position = position
-	p.scale = mgl32.Vec2{1, 1}
-	p.size = size
 	return p
 }
 
