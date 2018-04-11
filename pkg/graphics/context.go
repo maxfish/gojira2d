@@ -27,9 +27,6 @@ type Context struct {
 func (c *Context) Clear() {
 	gl.ClearColor(c.clearColor.R(), c.clearColor.G(), c.clearColor.B(), c.clearColor.A())
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	// Do we need to do this every Clear?
-	// gl.Enable(gl.BLEND)
-	// gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 }
 
 // SetClearColor changes OpenGL background clear color
