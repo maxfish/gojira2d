@@ -15,10 +15,6 @@ type Text struct {
 	fontProps FontProps
 	text      string
 	font      *Font
-
-	// cached quad positions
-	charVertices []float32
-	charUVCoords []float32
 }
 
 const charVertices = 12
@@ -94,6 +90,8 @@ func charQuads(txt string, font *Font) ([]float32, []float32) {
 	return vertices, uvCoords
 }
 
+var textShaderProgram *graphics.ShaderProgram
+
 // NewText creates a Primitive2D with character quads for given string
 func (f *Font) NewText(
 	txt string,
@@ -101,19 +99,21 @@ func (f *Font) NewText(
 	size mgl32.Vec2,
 	fp FontProps,
 ) *Text {
+	if textShaderProgram == nil {
+		textShaderProgram = graphics.NewShaderProgram(
+			graphics.VertexShaderPrimitive2D, "", fragmentDistanceFieldFont,
+		)
+	}
 
 	text := &Text{}
-	text.charVertices, text.charUVCoords = charQuads(txt, f)
-
-	shaderProgram := graphics.NewShaderProgram(
-		graphics.VertexShaderPrimitive2D, "", fragmentDistanceFieldFont,
-	)
+	charVertices, charUVCoords := charQuads(txt, f)
 
 	// TODO: this should be done in draw/drawInBatch?
 	//shaderProgram.SetUniformV4fv("textColor", &fp.Color)
 	//shaderProgram.SetUniformV2f("widthEdge", fp.StrokeWidth, fp.StrokeEdge)
 
-	text.drawable = graphics.NewTriangles(text.charVertices, text.charUVCoords, f.tx, position, size, shaderProgram)
+	text.drawable = graphics.NewTriangles(
+		charVertices, charUVCoords, f.tx, position, size, textShaderProgram)
 	text.position = position
 	text.fontProps = fp
 	text.size = size
@@ -125,9 +125,9 @@ func (f *Font) NewText(
 
 // SetText changes the rendered string
 func (t *Text) SetText(txt string) {
-	t.charVertices, t.charUVCoords = charQuads(txt, t.font)
-	t.drawable.SetVertices(t.charVertices)
-	t.drawable.SetUVCoords(t.charUVCoords)
+	charVertices, charUVCoords := charQuads(txt, t.font)
+	t.drawable.SetVertices(charVertices)
+	t.drawable.SetUVCoords(charUVCoords)
 }
 
 // EnqueueForDrawing see Drawable.EnqueueForDrawing

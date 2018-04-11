@@ -103,7 +103,7 @@ func (p *Primitive2D) Draw(context *Context) {
 }
 
 // Texture and shaders are already bound when this is called
-func (p *Primitive2D) drawInBatch(context *Context) {
+func (p *Primitive2D) DrawInBatch(context *Context) {
 	p.SetUniforms()
 	gl.BindVertexArray(p.vaoId)
 	gl.DrawArrays(p.arrayMode, 0, p.arraySize)

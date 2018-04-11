@@ -29,5 +29,5 @@ func (p *Primitive) Shader() *ShaderProgram {
 func (p *Primitive) Draw(context *Context) {
 }
 
-func (p *Primitive) drawInBatch(context *Context) {
+func (p *Primitive) DrawInBatch(context *Context) {
 }
