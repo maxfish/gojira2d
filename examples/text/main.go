@@ -5,6 +5,7 @@ import (
 	a "gojira2d/pkg/app"
 	"gojira2d/pkg/graphics"
 	"gojira2d/pkg/ui"
+	"math/rand"
 	"time"
 
 	"github.com/go-gl/mathgl/mgl32"
@@ -36,11 +37,13 @@ func main() {
 		} else {
 			f = font2
 		}
+		fp := ui.FontPropSmall
+		fp.Color = graphics.Color{rand.Float32(), rand.Float32(), rand.Float32(), 1}
 		tc[i] = f.NewText(
 			"The quick brown fox jumps over the lazy dog",
 			mgl32.Vec3{-400, -300 + vo, 0},
 			mgl32.Vec2{j * 8, j * 8},
-			ui.FontPropSmall,
+			fp,
 		)
 		vo += j * 6
 	}

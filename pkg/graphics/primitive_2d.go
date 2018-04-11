@@ -89,7 +89,7 @@ func (p *Primitive2D) SetAnchorToCenter() {
 }
 
 func (p *Primitive2D) EnqueueForDrawing(context *Context) {
-	context.enqueueForDrawing(p)
+	context.EnqueueForDrawing(p)
 }
 
 func (p *Primitive2D) Draw(context *Context) {

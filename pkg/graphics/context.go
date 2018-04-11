@@ -37,7 +37,8 @@ func (c *Context) SetClearColor(color Color) {
 	c.clearColor = color
 }
 
-func (c *Context) enqueueForDrawing(drawable Drawable) {
+// EnqueueForDrawing adds a drawable to drawing list
+func (c *Context) EnqueueForDrawing(drawable Drawable) {
 	if c.primitivesToDraw == nil {
 		c.primitivesToDraw = make(map[uint32][]Drawable)
 	}
