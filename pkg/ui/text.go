@@ -95,8 +95,9 @@ func (t *Text) makeNewQuads() ([]float32, []float32) {
 var textShaderProgram *graphics.ShaderProgram
 
 // NewText creates a Primitive2D with character quads for given string
-func (f *Font) NewText(
+func NewText(
 	txt string,
+	font *Font,
 	position mgl32.Vec3,
 	size mgl32.Vec2,
 	color graphics.Color,
@@ -113,12 +114,13 @@ func (f *Font) NewText(
 	t.position = position
 	t.color = color
 	t.size = size
-	t.font = f
+	t.text = txt
+	t.font = font
 	t.paddings = paddings
 
 	charVertices, charUVCoords := t.makeNewQuads()
 	t.drawable = graphics.NewTriangles(
-		charVertices, charUVCoords, f.tx, position, size, textShaderProgram)
+		charVertices, charUVCoords, font.tx, position, size, textShaderProgram)
 
 	return t
 }

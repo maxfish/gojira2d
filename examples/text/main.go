@@ -17,11 +17,13 @@ func main() {
 	defer a.TerminateApp()
 
 	font := ui.NewFontFromFiles(
+		"mono",
 		"examples/assets/fonts/roboto-mono-regular.fnt",
 		"examples/assets/fonts/roboto-mono-regular.png",
 	)
 
 	font2 := ui.NewFontFromFiles(
+		"regular",
 		"examples/assets/fonts/roboto-regular.fnt",
 		"examples/assets/fonts/roboto-regular.png",
 	)
@@ -43,8 +45,9 @@ func main() {
 			rand.Float32(),
 			0.6 + 0.4*rand.Float32(),
 		}
-		tc[i] = f.NewText(
+		tc[i] = ui.NewText(
 			"The quick brown fox jumps over the lazy dog",
+			f,
 			mgl32.Vec3{-400, -300 + vo, 0},
 			mgl32.Vec2{j * 8, j * 8},
 			color,
