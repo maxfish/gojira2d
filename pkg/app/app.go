@@ -1,12 +1,17 @@
 package app
 
 import (
-	"log"
-	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/go-gl/gl/v4.1-core/gl"
-	"runtime"
+	"fmt"
+	"gojira2d/pkg/graphics"
 	g "gojira2d/pkg/graphics"
+	"gojira2d/pkg/ui"
 	"gojira2d/pkg/utils"
+	"log"
+	"runtime"
+
+	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/go-gl/mathgl/mgl32"
 )
 
 const (
@@ -15,18 +20,32 @@ const (
 )
 
 type App struct {
-	Window  *glfw.Window
-	Context *g.Context
-	FpsCounter *utils.FPSCounter
+	Window         *glfw.Window
+	Context        *g.Context
+	FpsCounter     *utils.FPSCounter
+	FpsCounterText *ui.Text
 }
 
-func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) (*App) {
+func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) *App {
 	runtime.LockOSThread()
 	app := &App{}
 	app.Window = initWindow(windowWidth, windowHeight, windowTitle)
 	app.Context = &g.Context{}
 	app.Context.SetOrtho2DProjection(windowWidth, windowHeight, 1, windowCentered)
 	app.FpsCounter = &utils.FPSCounter{}
+
+	font := ui.NewFontFromFiles(
+		"mono",
+		"examples/assets/fonts/roboto-mono-regular.fnt",
+		"examples/assets/fonts/roboto-mono-regular.png",
+	)
+	app.FpsCounterText = ui.NewText(
+		"0",
+		font,
+		mgl32.Vec3{float32(windowWidth/2 - 30), -float32(windowHeight/2 - 5), -0.1},
+		mgl32.Vec2{25, 25},
+		graphics.Color{1, 0, 0, 1},
+	)
 	return app
 }
 
@@ -81,6 +100,8 @@ func (a *App) MainLoop(
 
 		a.Context.Clear()
 		render()
+		a.FpsCounterText.SetText(fmt.Sprintf("%v", a.FpsCounter.FPS()))
+		a.Context.EnqueueForDrawing(a.FpsCounterText)
 		a.Context.RenderDrawableList()
 		a.Context.EraseDrawableList()
 
