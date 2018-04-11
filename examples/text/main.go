@@ -48,6 +48,7 @@ func main() {
 			mgl32.Vec3{-400, -300 + vo, 0},
 			mgl32.Vec2{j * 8, j * 8},
 			color,
+			mgl32.Vec4{0, 0, 0, -.17},
 		)
 		vo += j * 6
 	}
