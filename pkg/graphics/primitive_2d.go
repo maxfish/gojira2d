@@ -152,28 +152,8 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) *Primitive2D {
 	q.arraySize = 4
 
 	// Build the VAO
-	gl.GenVertexArrays(1, &q.vaoId)
-	gl.BindVertexArray(q.vaoId)
-
-	// Vertices
-	var vbo uint32
-	gl.GenBuffers(1, &vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	vertices := []float32{0, 0, 0, 1, 1, 1, 1, 0}
-	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*FLOAT32_SIZE, gl.Ptr(vertices), gl.STATIC_DRAW)
-	gl.EnableVertexAttribArray(0)
-	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
-
-	// Texture coordinates
-	var vboUV uint32
-	gl.GenBuffers(1, &vboUV)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vboUV)
-	uvCoordinates := []float32{0, 0, 0, 1, 1, 1, 1, 0}
-	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoordinates)*FLOAT32_SIZE, gl.Ptr(uvCoordinates), gl.STATIC_DRAW)
-	gl.EnableVertexAttribArray(1)
-	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
-
-	gl.BindVertexArray(0)
+	q.SetVertices([]float32{0, 0, 0, 1, 1, 1, 1, 0})
+	q.SetUVCoords([]float32{0, 0, 0, 1, 1, 1, 1, 0})
 	return q
 }
 
@@ -200,19 +180,8 @@ func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments
 	} else {
 		q.arrayMode = gl.LINE_STRIP
 	}
-	q.arraySize = int32(len(vertices) / 2)
 
-	// Build the VAO
-	gl.GenVertexArrays(1, &q.vaoId)
-	gl.BindVertexArray(q.vaoId)
-	var vbo uint32
-	gl.GenBuffers(1, &vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*FLOAT32_SIZE, gl.Ptr(vertices), gl.STATIC_DRAW)
-	gl.EnableVertexAttribArray(0)
-	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
-
-	gl.BindVertexArray(0)
+	q.SetVertices(vertices)
 	return q
 }
 
@@ -264,42 +233,41 @@ func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool)
 
 	primitive.arrayMode = gl.LINE_STRIP
 	primitive.arraySize = int32(len(vertices) / 2)
-
-	// Build the VAO
-	var vbo uint32
-	gl.GenVertexArrays(1, &primitive.vaoId)
-	gl.BindVertexArray(primitive.vaoId)
-	gl.GenBuffers(1, &vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*FLOAT32_SIZE, gl.Ptr(vertices), gl.STATIC_DRAW)
-	gl.EnableVertexAttribArray(0)
-	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
-
-	gl.BindVertexArray(0)
+	primitive.SetVertices(vertices)
 	return primitive
 }
 
 // SetVertices uploads new set of vertices into opengl buffer
 func (p *Primitive2D) SetVertices(vertices []float32) {
+	if p.vaoId == 0 {
+		gl.GenVertexArrays(1, &p.vaoId)
+	}
+	gl.BindVertexArray(p.vaoId)
 	if p.vboVertices == 0 {
 		gl.GenBuffers(1, &p.vboVertices)
 	}
 	gl.BindBuffer(gl.ARRAY_BUFFER, p.vboVertices)
-	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*4, gl.Ptr(vertices), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*FLOAT32_SIZE, gl.Ptr(vertices), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(0)
 	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 	p.arraySize = int32(len(vertices) / 2)
+	gl.BindVertexArray(0)
 }
 
 // SetUVCoords uploads new UV coordinates
 func (p *Primitive2D) SetUVCoords(uvCoords []float32) {
+	if p.vaoId == 0 {
+		gl.GenVertexArrays(1, &p.vaoId)
+	}
+	gl.BindVertexArray(p.vaoId)
 	if p.vboUVCoords == 0 {
 		gl.GenBuffers(1, &p.vboUVCoords)
 	}
 	gl.BindBuffer(gl.ARRAY_BUFFER, p.vboUVCoords)
-	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoords)*4, gl.Ptr(uvCoords), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoords)*FLOAT32_SIZE, gl.Ptr(uvCoords), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(1)
 	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
+	gl.BindVertexArray(0)
 }
 
 const (
