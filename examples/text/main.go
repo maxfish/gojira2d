@@ -37,8 +37,7 @@ func main() {
 		} else {
 			f = font2
 		}
-		fp := ui.FontPropSmall
-		fp.Color = graphics.Color{
+		color := graphics.Color{
 			rand.Float32(),
 			rand.Float32(),
 			rand.Float32(),
@@ -48,7 +47,7 @@ func main() {
 			"The quick brown fox jumps over the lazy dog",
 			mgl32.Vec3{-400, -300 + vo, 0},
 			mgl32.Vec2{j * 8, j * 8},
-			fp,
+			color,
 		)
 		vo += j * 6
 	}

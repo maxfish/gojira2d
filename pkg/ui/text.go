@@ -10,12 +10,12 @@ import (
 
 // Text is a UI element that just renders a string
 type Text struct {
-	drawable  *graphics.Primitive2D
-	position  mgl32.Vec3
-	size      mgl32.Vec2
-	fontProps FontProps
-	text      string
-	font      *Font
+	drawable *graphics.Primitive2D
+	position mgl32.Vec3
+	size     mgl32.Vec2
+	color    graphics.Color
+	text     string
+	font     *Font
 }
 
 const charVertices = 12
@@ -98,7 +98,7 @@ func (f *Font) NewText(
 	txt string,
 	position mgl32.Vec3,
 	size mgl32.Vec2,
-	fp FontProps,
+	color graphics.Color,
 ) *Text {
 	if textShaderProgram == nil {
 		textShaderProgram = graphics.NewShaderProgram(
@@ -112,7 +112,7 @@ func (f *Font) NewText(
 	text.drawable = graphics.NewTriangles(
 		charVertices, charUVCoords, f.tx, position, size, textShaderProgram)
 	text.position = position
-	text.fontProps = fp
+	text.color = color
 	text.size = size
 	text.text = txt
 	text.font = f
@@ -120,11 +120,16 @@ func (f *Font) NewText(
 	return text
 }
 
-// SetText changes the rendered string
+// SetText changes the rendered string and uploads new vertices/coordinates
 func (t *Text) SetText(txt string) {
 	charVertices, charUVCoords := charQuads(txt, t.font)
 	t.drawable.SetVertices(charVertices)
 	t.drawable.SetUVCoords(charUVCoords)
+}
+
+// SetColor ...
+func (t *Text) SetColor(color graphics.Color) {
+	t.color = color
 }
 
 // EnqueueForDrawing see Drawable.EnqueueForDrawing
@@ -135,11 +140,7 @@ func (t *Text) EnqueueForDrawing(context *graphics.Context) {
 // SetUniforms uploads relevant uniforms
 func (t *Text) SetUniforms() {
 	shaderProgram := t.Shader()
-	shaderProgram.SetUniform("textColor", &t.fontProps.Color)
-	shaderProgram.SetUniform(
-		"widthEdge",
-		&mgl32.Vec2{t.fontProps.StrokeWidth, t.fontProps.StrokeEdge},
-	)
+	shaderProgram.SetUniform("textColor", &t.color)
 }
 
 // Drawable implementation
@@ -179,11 +180,11 @@ var (
 
         uniform sampler2D tex;
         uniform vec4 textColor;
-        uniform vec2 widthEdge;
 
         void main() {
-          float distance = 1.0 - texture(tex, uv_out).a;
-          float alpha = 1.0 - smoothstep(widthEdge.x, widthEdge.x+widthEdge.y, distance);
+          float dist = texture(tex, uv_out).a;
+          float width = fwidth(dist);
+					float alpha = smoothstep(0.5-width, 0.5+width, dist);
           color = vec4(vec3(textColor),alpha*textColor.a);
         }
         ` + "\x00"
