@@ -79,10 +79,9 @@ func (a *App) MainLoop(
 		a.FpsCounter.Update(deltaTime, 1)
 		oldTime = newTime
 
-		a.Context.Clear()
+		a.Context.BeginRendering()
 		render()
-		a.Context.RenderDrawableList()
-		a.Context.EraseDrawableList()
+		a.Context.EndRendering()
 
 		glfw.PollEvents()
 		a.Window.SwapBuffers()

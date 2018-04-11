@@ -5,6 +5,10 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
+const (
+	maxPostProcessingSteps = 16
+)
+
 type Drawable interface {
 	Texture() (*Texture)
 	Shader() (*ShaderProgram)
@@ -19,6 +23,31 @@ type Context struct {
 	currentShaderProgram *ShaderProgram
 	clearColor           Color
 	primitivesToDraw     map[uint32][]Drawable
+	postProcessingSteps  []*PostProcessingStep
+}
+
+func (c *Context) BeginRendering() {
+	if c.postProcessingSteps != nil && len(c.postProcessingSteps) > 0 {
+		c.postProcessingSteps[0].frameBuffer.Bind()
+	}
+	c.Clear()
+}
+
+func (c *Context) EndRendering() {
+	c.renderDrawableList()
+	c.eraseDrawableList()
+
+	if c.postProcessingSteps != nil && len(c.postProcessingSteps) > 0 {
+		if len(c.postProcessingSteps) > 1 {
+			for i := 1; i < len(c.postProcessingSteps); i++ {
+				c.postProcessingSteps[i].frameBuffer.Bind()
+				c.postProcessingSteps[i-1].quad.Draw(c)
+			}
+
+			c.postProcessingSteps[len(c.postProcessingSteps)-1].frameBuffer.Unbind()
+			c.postProcessingSteps[len(c.postProcessingSteps)-1].quad.Draw(c)
+		}
+	}
 }
 
 func (c *Context) Clear() {
@@ -46,7 +75,7 @@ func (c *Context) enqueueForDrawing(drawable Drawable) {
 	c.primitivesToDraw[textureId] = append(c.primitivesToDraw[textureId], drawable)
 }
 
-func (c *Context) RenderDrawableList() {
+func (c *Context) renderDrawableList() {
 	for _, v := range c.primitivesToDraw {
 		for _, drawable := range v {
 			c.BindTexture(drawable.Texture())
@@ -59,7 +88,7 @@ func (c *Context) RenderDrawableList() {
 	}
 }
 
-func (c *Context) EraseDrawableList() {
+func (c *Context) eraseDrawableList() {
 	c.primitivesToDraw = make(map[uint32][]Drawable)
 }
 
@@ -97,4 +126,11 @@ func (c *Context) SetOrtho2DProjection(windowWidth int, windowHeight int, screen
 		bottom = 0
 	}
 	c.projectionMatrix = mgl32.Ortho(left, right, top, bottom, 1, -1)
+}
+
+func (c *Context) AddPostProcessingStep(step *PostProcessingStep) {
+	if c.postProcessingSteps == nil {
+		c.postProcessingSteps = make([]*PostProcessingStep, maxPostProcessingSteps)
+	}
+	c.postProcessingSteps = append(c.postProcessingSteps, step)
 }

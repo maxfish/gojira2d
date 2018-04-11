@@ -4,6 +4,9 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"log"
 	"strings"
+
+	"io/ioutil"
+
 	"github.com/go-gl/mathgl/mgl32"
 )
 
@@ -20,7 +23,7 @@ type ShaderProgram struct {
 	uniforms map[string]int32
 }
 
-func NewDefaultShaderProgram() (*ShaderProgram) {
+func NewDefaultShaderProgram() *ShaderProgram {
 	s := ShaderProgram{}
 	s.id = gl.CreateProgram()
 
@@ -31,7 +34,40 @@ func NewDefaultShaderProgram() (*ShaderProgram) {
 	return &s
 }
 
-func NewShaderProgram(vertSource string, geomSource string, fragSource string) (*ShaderProgram) {
+func NewShaderProgramFromFiles(vertFile string, geomFile string, fragFile string) *ShaderProgram {
+	var vertSource, geomSource, fragSource string
+
+	if vertFile != "" {
+		bytes, err := ioutil.ReadFile(vertFile)
+		vertSource = string(bytes)
+		if err != nil {
+			log.Fatalln(err)
+			return nil
+		}
+	}
+
+	if geomFile != "" {
+		bytes, err := ioutil.ReadFile(vertFile)
+		geomSource = string(bytes)
+		if err != nil {
+			log.Fatalln(err)
+			return nil
+		}
+	}
+
+	if vertFile != "" {
+		bytes, err := ioutil.ReadFile(vertFile)
+		vertSource = string(bytes)
+		if err != nil {
+			log.Fatalln(err)
+			return nil
+		}
+	}
+
+	return NewShaderProgram(string(vertSource), string(geomSource), string(fragSource))
+}
+
+func NewShaderProgram(vertSource string, geomSource string, fragSource string) *ShaderProgram {
 	s := ShaderProgram{}
 	s.id = gl.CreateProgram()
 

@@ -66,7 +66,7 @@ func NewTextureFromImage(imageData image.Image) *Texture {
 	return texture
 }
 
-func NewEmptyTexture(width int, height int) (*Texture, error) {
+func NewEmptyTexture(width int, height int) (*Texture) {
 	bounds := image.Rectangle{
 		Min: image.Point{X: 0, Y: 0},
 		Max: image.Point{X: width, Y: height},
@@ -89,7 +89,7 @@ func NewEmptyTexture(width int, height int) (*Texture, error) {
 		0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(imageData.Pix),
 	)
 
-	return texture, nil
+	return texture
 }
 
 func (t *Texture) Id() (uint32) {
