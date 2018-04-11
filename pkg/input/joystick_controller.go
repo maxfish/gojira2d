@@ -7,32 +7,50 @@ import (
 type JoystickController struct {
 	GameController
 	connected       bool
-	deviceIndex     glfw.Joystick
+	joystick        glfw.Joystick
 	name            string
+	numButtons      int
+	numAxes         int
 	axes            []float32
-	rawButtons      []byte
 	buttonsPressed  []bool
 	buttonsReleased []bool
 	buttonsDown     []bool
 }
 
-func (c *JoystickController) Open(deviceIndex int) (bool) {
+func (c *JoystickController) Open(deviceIndex int) bool {
+	if c.connected {
+		if glfw.Joystick(deviceIndex) == c.joystick {
+			// Device already connected
+			return true
+		} else {
+			// We are opening another device
+			c.Close()
+		}
+	}
+
 	if !glfw.JoystickPresent(glfw.Joystick(deviceIndex)) {
 		c.Close()
 		return false
 	}
 
 	c.connected = true
-	c.deviceIndex = glfw.Joystick(deviceIndex)
-	c.name = glfw.GetJoystickName(c.deviceIndex)
-	c.Update()
+	c.joystick = glfw.Joystick(deviceIndex)
+	c.name = glfw.GetJoystickName(c.joystick)
+
+	// Get the num of buttons and axes
+	c.numButtons = len(glfw.GetJoystickButtons(c.joystick))
+	c.numAxes = len(glfw.GetJoystickAxes(c.joystick))
+	// Build the slices
+	c.buttonsDown = make([]bool, c.numButtons)
+	c.buttonsPressed = make([]bool, c.numButtons)
+	c.buttonsReleased = make([]bool, c.numButtons)
 
 	return true
 }
 
 func (c *JoystickController) Close() {
 	c.connected = false
-	c.deviceIndex = -1
+	c.joystick = -1
 	c.name = ""
 	c.buttonsDown = nil
 	c.buttonsPressed = nil
@@ -45,72 +63,55 @@ func (c *JoystickController) Update() {
 	}
 
 	// Buttons
-	c.rawButtons = glfw.GetJoystickButtons(c.deviceIndex)
-	if c.buttonsDown == nil {
-		// builds the slices
-		c.buttonsDown = make([]bool, len(c.rawButtons))
-		c.buttonsPressed = make([]bool, len(c.rawButtons))
-		c.buttonsReleased = make([]bool, len(c.rawButtons))
-	}
-
-	for i := 0; i < len(c.rawButtons); i++ {
-		isDown := c.rawButtons[i] > 0
-		c.buttonsPressed[i] = false
-		c.buttonsReleased[i] = false
-		if isDown {
-			if !c.buttonsDown[i] {
-				c.buttonsPressed[i] = true
-			}
-		} else {
-			if c.buttonsDown[i] {
-				c.buttonsReleased[i] = true
-			}
-		}
+	for i, button := range glfw.GetJoystickButtons(c.joystick) {
+		isDown := button > 0
+		c.buttonsPressed[i] = isDown && !c.buttonsDown[i]
+		c.buttonsReleased[i] = !isDown && c.buttonsDown[i]
 		c.buttonsDown[i] = isDown
 	}
 
 	// Axes
-	c.axes = glfw.GetJoystickAxes(c.deviceIndex)
+	c.axes = glfw.GetJoystickAxes(c.joystick)
 }
 
-func (c *JoystickController) GetAxisValue(axisIndex int) (float32) {
-	return c.axes[axisIndex]
+func (c *JoystickController) GetAxisValue(axis ControllerAxis) float32 {
+	return c.axes[axis]
 }
 
-func (c *JoystickController) GetAxisDigital(axisIndex int) (float32) {
+func (c *JoystickController) GetAxisDigital(axis ControllerAxis) float32 {
 	// TODO: Define dead zone...
 	return 0
 }
 
-func (c *JoystickController) Connected() (bool) {
+func (c *JoystickController) Connected() bool {
 	return c.connected
 }
 
-func (c *JoystickController) NumButtons() (int) {
-	return len(c.rawButtons)
+func (c *JoystickController) NumButtons() int {
+	return c.numButtons
 }
 
-func (c *JoystickController) NumAxis() (int) {
-	return len(c.axes)
+func (c *JoystickController) NumAxis() int {
+	return c.numAxes
 }
 
-func (c *JoystickController) ButtonPressed(buttonId int) (bool) {
+func (c *JoystickController) ButtonPressed(button ControllerButton) bool {
 	if !c.connected {
 		return false
 	}
-	return c.buttonsPressed[buttonId]
+	return c.buttonsPressed[button]
 }
 
-func (c *JoystickController) ButtonReleased(buttonId int) (bool) {
+func (c *JoystickController) ButtonReleased(button ControllerButton) bool {
 	if !c.connected {
 		return false
 	}
-	return c.buttonsReleased[buttonId]
+	return c.buttonsReleased[button]
 }
 
-func (c *JoystickController) ButtonDown(buttonId int) (bool) {
+func (c *JoystickController) ButtonDown(button ControllerButton) bool {
 	if !c.connected {
 		return false
 	}
-	return c.buttonsDown[buttonId]
+	return c.buttonsDown[button]
 }

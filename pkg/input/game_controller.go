@@ -1,15 +1,18 @@
 package input
 
+type ControllerAxis int
+type ControllerButton int
+
 type GameController interface {
-	Connected() (bool)
-	Open(deviceIndex int) (bool)
+	Connected() bool
+	Open(deviceIndex int) bool
 	Close()
 	Update()
-	NumButtons() (int)
-	NumAxis() (int)
-	ButtonPressed(buttonId int) (bool)
-	ButtonReleased(buttonId int) (bool)
-	ButtonDown(buttonId int) (bool)
-	GetAxisValue(axisIndex int) (float32)
-	GetAxisDigital(axisIndex int) (float32)
+	NumButtons() int
+	NumAxis() int
+	ButtonPressed(button ControllerButton) bool
+	ButtonReleased(button ControllerButton) bool
+	ButtonDown(button ControllerButton) bool
+	GetAxisValue(axis ControllerAxis) float32
+	GetAxisDigital(axis ControllerAxis) float32
 }

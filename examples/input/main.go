@@ -13,9 +13,8 @@ func main() {
 	joy.Open(0)
 
 	app.MainLoop(func(speed float64) {
-		// NOP
-	}, func() {
 		joy.Update()
+	}, func() {
 		// TODO: print some text with info on the joystick's status
 	})
 }
