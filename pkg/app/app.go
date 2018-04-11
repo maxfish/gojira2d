@@ -1,12 +1,13 @@
 package app
 
 import (
-	"log"
-	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/go-gl/gl/v4.1-core/gl"
-	"runtime"
 	g "gojira2d/pkg/graphics"
 	"gojira2d/pkg/utils"
+	"log"
+	"runtime"
+
+	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
 const (
@@ -15,12 +16,12 @@ const (
 )
 
 type App struct {
-	Window  *glfw.Window
-	Context *g.Context
+	Window     *glfw.Window
+	Context    *g.Context
 	FpsCounter *utils.FPSCounter
 }
 
-func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) (*App) {
+func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) *App {
 	runtime.LockOSThread()
 	app := &App{}
 	app.Window = initWindow(windowWidth, windowHeight, windowTitle)
@@ -56,7 +57,9 @@ func initWindow(width, height int, title string) *glfw.Window {
 		panic(err)
 	}
 	gl.Enable(gl.DEPTH_TEST)
-	gl.DepthFunc(gl.LESS)
+	gl.DepthMask(true)
+	gl.DepthFunc(gl.LEQUAL)
+	gl.DepthRange(0.0, 1.0)
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.ClearColor(0, 0, 0, 1.0)
