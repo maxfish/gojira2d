@@ -184,7 +184,7 @@ var (
         void main() {
           float distance = 1.0 - texture(tex, uv_out).a;
           float alpha = 1.0 - smoothstep(widthEdge.x, widthEdge.x+widthEdge.y, distance);
-          color = vec4(vec3(textColor),alpha);
+          color = vec4(vec3(textColor),alpha*textColor.a);
         }
         ` + "\x00"
 )
