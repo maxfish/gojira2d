@@ -16,6 +16,7 @@ type Text struct {
 	color    graphics.Color
 	text     string
 	font     *Font
+	paddings mgl32.Vec4
 }
 
 const charVertices = 12
@@ -32,9 +33,9 @@ func charQuad(offsetX, offsetY, width, height float32) []float32 {
 	return q[:]
 }
 
-func charQuads(txt string, font *Font) ([]float32, []float32) {
+func (t *Text) makeNewQuads() ([]float32, []float32) {
 	var (
-		vnum     = len(txt) * charVertices
+		vnum     = len(t.text) * charVertices
 		idx      = 0
 		cursorX  float32
 		cursorY  float32
@@ -44,14 +45,14 @@ func charQuads(txt string, font *Font) ([]float32, []float32) {
 	vertices := make([]float32, vnum)
 	uvCoords := make([]float32, vnum)
 
-	for _, char := range txt {
+	for _, char := range t.text {
 		if char == 0x0a {
 			cursorX = 0
-			cursorY++
+			cursorY += 1 + t.paddings[1]
 			lastChar = 0
 			continue
 		}
-		bmc, ok := font.bm.Characters[char]
+		bmc, ok := t.font.bm.Characters[char]
 		if !ok {
 			log.Printf(
 				"ERR: char %v (%v) not found in font map",
@@ -68,8 +69,8 @@ func charQuads(txt string, font *Font) ([]float32, []float32) {
 		copy(
 			vertices[idx:],
 			charQuad(
-				cursorX+bmc.f32offsetX+kerning,
-				cursorY+bmc.f32offsetY,
+				cursorX+bmc.f32offsetX+kerning+t.paddings[2],
+				cursorY+bmc.f32offsetY+t.paddings[0],
 				bmc.f32lineWidth,
 				bmc.f32lineHeight,
 			),
@@ -84,7 +85,7 @@ func charQuads(txt string, font *Font) ([]float32, []float32) {
 			),
 		)
 		idx += charVertices
-		cursorX += bmc.f32advanceX
+		cursorX += bmc.f32advanceX + t.paddings[3]
 		lastChar = char
 	}
 
@@ -100,6 +101,7 @@ func NewText(
 	position mgl32.Vec3,
 	size mgl32.Vec2,
 	color graphics.Color,
+	paddings mgl32.Vec4,
 ) *Text {
 	if textShaderProgram == nil {
 		textShaderProgram = graphics.NewShaderProgram(
@@ -107,30 +109,48 @@ func NewText(
 		)
 	}
 
-	text := &Text{}
-	charVertices, charUVCoords := charQuads(txt, font)
+	t := &Text{}
+	t.text = txt
+	t.position = position
+	t.color = color
+	t.size = size
+	t.text = txt
+	t.font = font
+	t.paddings = paddings
 
-	text.drawable = graphics.NewTriangles(
+	charVertices, charUVCoords := t.makeNewQuads()
+	t.drawable = graphics.NewTriangles(
 		charVertices, charUVCoords, font.tx, position, size, textShaderProgram)
-	text.position = position
-	text.color = color
-	text.size = size
-	text.text = txt
-	text.font = font
 
-	return text
+	return t
+}
+
+func (t *Text) uploadNewQuads() {
+	charVertices, charUVCoords := t.makeNewQuads()
+	t.drawable.SetVertices(charVertices)
+	t.drawable.SetUVCoords(charUVCoords)
 }
 
 // SetText changes the rendered string and uploads new vertices/coordinates
 func (t *Text) SetText(txt string) {
-	charVertices, charUVCoords := charQuads(txt, t.font)
-	t.drawable.SetVertices(charVertices)
-	t.drawable.SetUVCoords(charUVCoords)
+	t.text = txt
+	t.uploadNewQuads()
 }
 
 // SetColor ...
 func (t *Text) SetColor(color graphics.Color) {
 	t.color = color
+}
+
+// SetPaddings sets paddings, regenerates and uploads new vertices and coords.
+//
+// Paddings are relative to line height and are 1 by default. Negative values
+// are allowed.
+//
+// Padding order: top, bottom, left, right
+func (t *Text) SetPaddings(paddings mgl32.Vec4) {
+	t.paddings = paddings
+	t.uploadNewQuads()
 }
 
 // EnqueueForDrawing see Drawable.EnqueueForDrawing

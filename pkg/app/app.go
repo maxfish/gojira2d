@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
+
 	"github.com/go-gl/mathgl/mgl32"
 )
 
@@ -45,6 +46,7 @@ func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle
 		mgl32.Vec3{float32(windowWidth/2 - 30), -float32(windowHeight/2 - 5), -0.1},
 		mgl32.Vec2{25, 25},
 		graphics.Color{1, 0, 0, 1},
+		mgl32.Vec4{0, 0, 0, -.17},
 	)
 	return app
 }
@@ -75,7 +77,9 @@ func initWindow(width, height int, title string) *glfw.Window {
 		panic(err)
 	}
 	gl.Enable(gl.DEPTH_TEST)
-	gl.DepthFunc(gl.LESS)
+	gl.DepthMask(true)
+	gl.DepthFunc(gl.LEQUAL)
+	gl.DepthRange(0.0, 1.0)
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.ClearColor(0, 0, 0, 1.0)
