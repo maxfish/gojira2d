@@ -4,17 +4,18 @@ import (
 	"gojira2d/pkg/graphics"
 	"log"
 
+	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
 )
 
 // Text is a UI element that just renders a string
 type Text struct {
-	drawable  *graphics.Primitive2D
-	position  mgl32.Vec3
-	size      mgl32.Vec2
-	fontProps FontProps
-	text      string
-	font      *Font
+	drawable *graphics.Primitive2D
+	position mgl32.Vec3
+	size     mgl32.Vec2
+	color    graphics.Color
+	text     string
+	font     *Font
 }
 
 const charVertices = 12
@@ -97,7 +98,7 @@ func (f *Font) NewText(
 	txt string,
 	position mgl32.Vec3,
 	size mgl32.Vec2,
-	fp FontProps,
+	color graphics.Color,
 ) *Text {
 	if textShaderProgram == nil {
 		textShaderProgram = graphics.NewShaderProgram(
@@ -108,14 +109,10 @@ func (f *Font) NewText(
 	text := &Text{}
 	charVertices, charUVCoords := charQuads(txt, f)
 
-	// TODO: this should be done in draw/drawInBatch?
-	//shaderProgram.SetUniformV4fv("textColor", &fp.Color)
-	//shaderProgram.SetUniformV2f("widthEdge", fp.StrokeWidth, fp.StrokeEdge)
-
 	text.drawable = graphics.NewTriangles(
 		charVertices, charUVCoords, f.tx, position, size, textShaderProgram)
 	text.position = position
-	text.fontProps = fp
+	text.color = color
 	text.size = size
 	text.text = txt
 	text.font = f
@@ -123,17 +120,56 @@ func (f *Font) NewText(
 	return text
 }
 
-// SetText changes the rendered string
+// SetText changes the rendered string and uploads new vertices/coordinates
 func (t *Text) SetText(txt string) {
 	charVertices, charUVCoords := charQuads(txt, t.font)
 	t.drawable.SetVertices(charVertices)
 	t.drawable.SetUVCoords(charUVCoords)
 }
 
-// EnqueueForDrawing see Drawable.EnqueueForDrawing
-func (t *Text) EnqueueForDrawing(ctx *graphics.Context) {
-	t.drawable.EnqueueForDrawing(ctx)
+// SetColor ...
+func (t *Text) SetColor(color graphics.Color) {
+	t.color = color
 }
+
+// EnqueueForDrawing see Drawable.EnqueueForDrawing
+func (t *Text) EnqueueForDrawing(context *graphics.Context) {
+	context.EnqueueForDrawing(t)
+}
+
+// SetUniforms uploads relevant uniforms
+func (t *Text) SetUniforms() {
+	shaderProgram := t.Shader()
+	shaderProgram.SetUniform("textColor", &t.color)
+}
+
+// Drawable implementation
+
+// Texture returns drawable texture
+func (t *Text) Texture() *graphics.Texture {
+	return t.drawable.Texture()
+}
+
+// Shader returns shader program
+func (t *Text) Shader() *graphics.ShaderProgram {
+	return t.drawable.Shader()
+}
+
+// Draw runs all the necessary routines to make drawable appear on screen
+func (t *Text) Draw(context *graphics.Context) {
+	shaderProgram := t.Shader()
+	gl.UseProgram(shaderProgram.Id())
+	t.SetUniforms()
+	t.drawable.Draw(context)
+}
+
+// DrawInBatch is like Draw() but without setting up texture and shader
+func (t *Text) DrawInBatch(context *graphics.Context) {
+	t.SetUniforms()
+	t.drawable.DrawInBatch(context)
+}
+
+// Drawable end
 
 var (
 	fragmentDistanceFieldFont = `
@@ -143,14 +179,13 @@ var (
         out vec4 color;
 
         uniform sampler2D tex;
-		uniform vec4 textColor;
-		uniform vec2 widthEdge;
+        uniform vec4 textColor;
 
-        void main() { 
-			float distance = 1.0 - texture(tex, uv_out).a;
-			vec2 widthEdge = vec2(0.5,0.1);
-			float alpha = 1.0 - smoothstep(widthEdge.x, widthEdge.x+widthEdge.y, distance);
-            color = vec4(0,0,0,alpha);
+        void main() {
+          float dist = texture(tex, uv_out).a;
+          float width = fwidth(dist);
+					float alpha = smoothstep(0.5-width, 0.5+width, dist);
+          color = vec4(vec3(textColor),alpha*textColor.a);
         }
         ` + "\x00"
 )

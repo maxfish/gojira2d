@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+// BmChar holds information about a single character, see
+// http://www.angelcode.com/products/bmfont/doc/file_format.html
 type BmChar struct {
 	id             int32
 	letter         string
@@ -40,6 +42,8 @@ type BmChar struct {
 	f32kernings   map[int32]float32
 }
 
+// BmFont holds all information about the font, see
+// http://www.angelcode.com/products/bmfont/doc/file_format.html
 type BmFont struct {
 	pageFiles      map[int]string
 	charactersList []*BmChar
@@ -72,6 +76,7 @@ type BmFont struct {
 	f32scaleH    float32
 }
 
+// NewBmFontFromFile parse the font data out of a file
 func NewBmFontFromFile(fileName string) *BmFont {
 	f := &BmFont{}
 
@@ -190,16 +195,16 @@ func (f *BmFont) parseKerningSection(keyValues map[string]string) {
 	char.f32kernings[int32(second)] = float32(amount) * f.f32scaleLine
 }
 
-var BmSectionRex = regexp.MustCompile("^(\\w+) ")
-var BmKeyValueRex = regexp.MustCompile("(\\w+)=\"?([\\w\\s ,._\\-]*)\"?( |$|\")")
+var bmSectionRex = regexp.MustCompile("^(\\w+) ")
+var bmKeyValueRex = regexp.MustCompile("(\\w+)=\"?([\\w\\s ,._\\-]*)\"?( |$|\")")
 
 func (f *BmFont) tokenizeLine(line string) (string, map[string]string) {
-	sectionMatches := BmSectionRex.FindStringSubmatch(line)
+	sectionMatches := bmSectionRex.FindStringSubmatch(line)
 	if sectionMatches == nil {
 		return "", nil
 	}
 	sectionName := sectionMatches[1]
-	data := BmKeyValueRex.FindAllStringSubmatch(line, -1)
+	data := bmKeyValueRex.FindAllStringSubmatch(line, -1)
 
 	keyValues := make(map[string]string)
 	for _, kv := range data {
