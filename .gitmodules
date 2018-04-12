@@ -1,3 +1,0 @@
-[submodule "pkg/physics/box2d"]
-	path = pkg/physics/box2d
-	url = https://github.com/ByteArena/box2d.git
