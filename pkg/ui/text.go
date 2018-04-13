@@ -133,8 +133,10 @@ func (t *Text) uploadNewQuads() {
 
 // SetText changes the rendered string and uploads new vertices/coordinates
 func (t *Text) SetText(txt string) {
-	t.text = txt
-	t.uploadNewQuads()
+	if t.text != txt {
+		t.text = txt
+		t.uploadNewQuads()
+	}
 }
 
 // SetColor ...
