@@ -1,6 +1,5 @@
 package input
 
-type ControllerAxis int
 type ControllerButton int
 
 const (
@@ -19,8 +18,12 @@ const (
 	BUTTON_DIR_PAD_DOWN
 	BUTTON_DIR_PAD_LEFT
 	BUTTON_DIR_PAD_RIGHT
+)
 
-	AXIS_LEFT_X ControllerAxis = iota + 100
+type ControllerAxis int
+
+const (
+	AXIS_LEFT_X ControllerAxis = iota
 	AXIS_LEFT_Y
 	AXIS_RIGHT_X
 	AXIS_RIGHT_Y
