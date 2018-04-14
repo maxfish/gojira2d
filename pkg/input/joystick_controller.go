@@ -1,6 +1,10 @@
 package input
 
 import (
+	"fmt"
+
+	"regexp"
+
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
@@ -15,6 +19,7 @@ type JoystickController struct {
 	buttonsPressed  []bool
 	buttonsReleased []bool
 	buttonsDown     []bool
+	mapping         *GameControllerMapping
 }
 
 func (c *JoystickController) Open(deviceIndex int) bool {
@@ -44,6 +49,8 @@ func (c *JoystickController) Open(deviceIndex int) bool {
 	c.buttonsDown = make([]bool, c.numButtons)
 	c.buttonsPressed = make([]bool, c.numButtons)
 	c.buttonsReleased = make([]bool, c.numButtons)
+
+	c.findMapping()
 
 	return true
 }
@@ -75,7 +82,8 @@ func (c *JoystickController) Update() {
 }
 
 func (c *JoystickController) AxisValue(axis ControllerAxis) float32 {
-	return c.axes[axis]
+	axisIndex := c.axisFromMapping(axis)
+	return c.axes[axisIndex]
 }
 
 func (c *JoystickController) AxisDigitalValue(axis ControllerAxis) int {
@@ -99,19 +107,59 @@ func (c *JoystickController) ButtonPressed(button ControllerButton) bool {
 	if !c.connected {
 		return false
 	}
-	return c.buttonsPressed[button]
+	buttonIndex := c.buttonFromMapping(button)
+	return c.buttonsPressed[buttonIndex]
 }
 
 func (c *JoystickController) ButtonReleased(button ControllerButton) bool {
 	if !c.connected {
 		return false
 	}
-	return c.buttonsReleased[button]
+	buttonIndex := c.buttonFromMapping(button)
+	return c.buttonsReleased[buttonIndex]
 }
 
 func (c *JoystickController) ButtonDown(button ControllerButton) bool {
 	if !c.connected {
 		return false
 	}
-	return c.buttonsDown[button]
+	buttonIndex := c.buttonFromMapping(button)
+	if buttonIndex >= c.numButtons {
+		return false
+	}
+	return c.buttonsDown[buttonIndex]
+}
+
+func (c *JoystickController) Description() string {
+	return fmt.Sprintf("joystick:'%s' buttons:%d axes:%d", c.name, c.numButtons, c.numAxes)
+}
+
+func (c *JoystickController) SetMapping(mapping *GameControllerMapping) {
+	c.mapping = mapping
+}
+
+func (c *JoystickController) findMapping() {
+	for _, mapping := range GameControllerMappings {
+		r, _ := regexp.Compile(mapping.nameRegEx)
+		if r.MatchString(c.name) == true && len(mapping.buttons) == c.numButtons && len(mapping.axes) == c.numAxes {
+			c.SetMapping(mapping)
+			return
+		}
+	}
+	//	Couldn't find a mapping, pick the XBox 360 one
+	c.SetMapping(&MappingXBox360)
+}
+
+func (c *JoystickController) buttonFromMapping(index ControllerButton) int {
+	if int(index) >= c.numButtons {
+		return 0
+	}
+	return c.mapping.buttons[int(index)]
+}
+
+func (c *JoystickController) axisFromMapping(index ControllerAxis) int {
+	if int(index) >= c.numAxes {
+		return 0
+	}
+	return c.mapping.axes[int(index)]
 }

@@ -43,4 +43,6 @@ type GameController interface {
 	ButtonDown(button ControllerButton) bool
 	AxisValue(axis ControllerAxis) float32
 	AxisDigitalValue(axis ControllerAxis) int
+	SetMapping(mapping *GameControllerMapping)
+	Description() string
 }
