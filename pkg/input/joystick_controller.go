@@ -82,6 +82,9 @@ func (c *JoystickController) Update() {
 }
 
 func (c *JoystickController) AxisValue(axis ControllerAxis) float32 {
+	if int(axis) >= c.numAxes {
+		return 0
+	}
 	axisIndex := c.axisFromMapping(axis)
 	return c.axes[axisIndex]
 }
