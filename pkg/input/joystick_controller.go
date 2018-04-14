@@ -78,7 +78,7 @@ func (c *JoystickController) AxisValue(axis ControllerAxis) float32 {
 	return c.axes[axis]
 }
 
-func (c *JoystickController) AxisDigitalValue(axis ControllerAxis) float32 {
+func (c *JoystickController) AxisDigitalValue(axis ControllerAxis) int {
 	// TODO: Define dead zone...
 	return 0
 }

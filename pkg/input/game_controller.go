@@ -39,5 +39,5 @@ type GameController interface {
 	ButtonReleased(button ControllerButton) bool
 	ButtonDown(button ControllerButton) bool
 	AxisValue(axis ControllerAxis) float32
-	AxisDigitalValue(axis ControllerAxis) float32
+	AxisDigitalValue(axis ControllerAxis) int
 }
