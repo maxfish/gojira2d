@@ -2,12 +2,12 @@ package graphics
 
 import (
 	"github.com/go-gl/gl/v4.1-core/gl"
-	"os"
 	"image"
 	"image/draw"
-	"log"
 	_ "image/jpeg"
 	_ "image/png"
+	"log"
+	"os"
 )
 
 type Texture struct {
@@ -92,6 +92,6 @@ func NewEmptyTexture(width int, height int) (*Texture, error) {
 	return texture, nil
 }
 
-func (t *Texture) Id() (uint32) {
+func (t *Texture) Id() uint32 {
 	return t.id
 }

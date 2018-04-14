@@ -2,9 +2,9 @@ package graphics
 
 import (
 	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/go-gl/mathgl/mgl32"
 	"log"
 	"strings"
-	"github.com/go-gl/mathgl/mgl32"
 )
 
 type ShaderType uint32
@@ -20,7 +20,7 @@ type ShaderProgram struct {
 	uniforms map[string]int32
 }
 
-func NewDefaultShaderProgram() (*ShaderProgram) {
+func NewDefaultShaderProgram() *ShaderProgram {
 	s := ShaderProgram{}
 	s.id = gl.CreateProgram()
 
@@ -31,7 +31,7 @@ func NewDefaultShaderProgram() (*ShaderProgram) {
 	return &s
 }
 
-func NewShaderProgram(vertSource string, geomSource string, fragSource string) (*ShaderProgram) {
+func NewShaderProgram(vertSource string, geomSource string, fragSource string) *ShaderProgram {
 	s := ShaderProgram{}
 	s.id = gl.CreateProgram()
 

@@ -1,10 +1,11 @@
 package main
 
 import (
-	g "gojira2d/pkg/graphics"
-	"github.com/go-gl/mathgl/mgl32"
 	a "gojira2d/pkg/app"
+	g "gojira2d/pkg/graphics"
 	"math"
+
+	"github.com/go-gl/mathgl/mgl32"
 )
 
 func main() {
@@ -22,10 +23,10 @@ func main() {
 
 	for _, p := range primitives {
 		p.SetAnchorToCenter()
-		p.SetColor(g.Color{1,1,1,1})
+		p.SetColor(g.Color{1, 1, 1, 1})
 	}
 
-	primitives[3].SetColor(g.Color{1,0,0,1})
+	primitives[3].SetColor(g.Color{1, 0, 0, 1})
 
 	var animationAngle float32 = 0
 

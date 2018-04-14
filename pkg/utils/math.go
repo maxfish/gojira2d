@@ -5,7 +5,7 @@ import (
 	"math"
 )
 
-func CircleToPolygon(center mgl32.Vec2, radius float32, numSegments int, startAngle float32) ([]mgl32.Vec2) {
+func CircleToPolygon(center mgl32.Vec2, radius float32, numSegments int, startAngle float32) []mgl32.Vec2 {
 	point := mgl32.Rotate2D(startAngle).Mul2x1(mgl32.Vec2{radius, 0})
 	vertices := make([]mgl32.Vec2, 0, numSegments*2)
 	rotation := mgl32.Rotate2D((math.Pi * 2.0) / float32(numSegments))
@@ -19,7 +19,7 @@ func CircleToPolygon(center mgl32.Vec2, radius float32, numSegments int, startAn
 	return vertices
 }
 
-func GetBoundingBox(points []mgl32.Vec2) (mgl32.Vec2, mgl32.Vec2){
+func GetBoundingBox(points []mgl32.Vec2) (mgl32.Vec2, mgl32.Vec2) {
 	var minX, minY, maxX, maxY float32
 	minX = math.MaxFloat32
 	minY = math.MaxFloat32
