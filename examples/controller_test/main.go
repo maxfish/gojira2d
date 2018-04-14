@@ -12,10 +12,21 @@ func main() {
 	app := a.InitApp(640, 480, false, "Controller Test")
 	defer a.TerminateApp()
 
-	joy := &input.JoystickController{}
-	joy.Open(0)
-	println(joy.Description())
+	var joy input.GameController
 
+	// Tries connecting a joystick...
+	joy = &input.JoystickController{}
+	ok := joy.Open(0)
+	if ok {
+		println(joy.Description())
+	} else {
+		// falls back to the keyboard
+		keyboard := &input.KeyboardController{}
+		keyboard.SetWindow(app.Window)
+		keyboard.Open(-1)
+		println(keyboard.Description())
+		joy = keyboard
+	}
 	parts := make([]joystickPart, 0, 32)
 
 	// 2 x Sticks
