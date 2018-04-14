@@ -19,19 +19,7 @@ type Context struct {
 	viewMatrix           mgl32.Mat4
 	currentTexture       *Texture
 	currentShaderProgram *ShaderProgram
-	clearColor           Color
 	primitivesToDraw     map[uint32][]Drawable
-}
-
-// Clear clears the screen using Context.clearColor
-func (c *Context) Clear() {
-	gl.ClearColor(c.clearColor.R(), c.clearColor.G(), c.clearColor.B(), c.clearColor.A())
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-}
-
-// SetClearColor changes OpenGL background clear color
-func (c *Context) SetClearColor(color Color) {
-	c.clearColor = color
 }
 
 // EnqueueForDrawing adds a drawable to drawing list

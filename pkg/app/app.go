@@ -23,8 +23,11 @@ const (
 type App struct {
 	Window         *glfw.Window
 	Context        *g.Context
+	UIContext      *g.Context
 	FpsCounter     *utils.FPSCounter
 	FpsCounterText *ui.Text
+
+	clearColor g.Color
 }
 
 func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) *App {
@@ -33,6 +36,8 @@ func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle
 	app.Window = initWindow(windowWidth, windowHeight, windowTitle)
 	app.Context = &g.Context{}
 	app.Context.SetOrtho2DProjection(windowWidth, windowHeight, 1, windowCentered)
+	app.UIContext = &g.Context{}
+	app.UIContext.SetOrtho2DProjection(windowWidth, windowHeight, 1, false)
 	app.FpsCounter = &utils.FPSCounter{}
 
 	font := ui.NewFontFromFiles(
@@ -43,7 +48,7 @@ func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle
 	app.FpsCounterText = ui.NewText(
 		"0",
 		font,
-		mgl32.Vec3{float32(windowWidth/2 - 30), -float32(windowHeight/2 - 5), -0.1},
+		mgl32.Vec3{10, 10, -1},
 		mgl32.Vec2{25, 25},
 		graphics.Color{1, 0, 0, 1},
 		mgl32.Vec4{0, 0, 0, -.17},
@@ -82,12 +87,23 @@ func initWindow(width, height int, title string) *glfw.Window {
 	gl.DepthRange(0.0, 1.0)
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-	gl.ClearColor(0, 0, 0, 1.0)
 
 	version := gl.GoStr(gl.GetString(gl.VERSION))
 	log.Println("OpenGL version", version)
 
 	return window
+}
+
+// Clear clears the screen using App.clearColor
+func (a *App) Clear() {
+	gl.ClearColor(
+		a.clearColor[0], a.clearColor[1], a.clearColor[2], a.clearColor[3])
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+}
+
+// SetClearColor changes OpenGL background clear color
+func (a *App) SetClearColor(color g.Color) {
+	a.clearColor = color
 }
 
 func (a *App) MainLoop(
@@ -102,10 +118,14 @@ func (a *App) MainLoop(
 		a.FpsCounter.Update(deltaTime, 1)
 		oldTime = newTime
 
-		a.Context.Clear()
+		a.Clear()
 		render()
+
 		a.FpsCounterText.SetText(fmt.Sprintf("%v", a.FpsCounter.FPS()))
-		a.Context.EnqueueForDrawing(a.FpsCounterText)
+		a.UIContext.EnqueueForDrawing(a.FpsCounterText)
+		a.UIContext.RenderDrawableList()
+		a.UIContext.EraseDrawableList()
+
 		a.Context.RenderDrawableList()
 		a.Context.EraseDrawableList()
 
