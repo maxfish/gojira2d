@@ -1,5 +1,7 @@
 package input
 
+import "github.com/go-gl/glfw/v3.2/glfw"
+
 var (
 	GameControllerMappings []*GameControllerMapping
 
@@ -21,6 +23,17 @@ func (g *GameControllerMapping) set(nameRegEx string, buttons []int, axes []int)
 }
 
 func init() {
+	// Keyboard as controller. This mapping is not supposed to be used by a JoystickController
+	MappingKeyboard.set("<None>",
+		[]int{
+			int(glfw.KeyA), int(glfw.KeyS), int(glfw.KeyD), int(glfw.KeyF),
+			int(glfw.Key1), int(glfw.Key2), int(glfw.Key3),
+			int(glfw.KeyQ), int(glfw.KeyR), int(glfw.KeyW), int(glfw.KeyE),
+			int(glfw.KeyUp), int(glfw.KeyDown), int(glfw.KeyLeft), int(glfw.KeyRight),
+		},
+		[]int{})
+
+	// List of the all the mappings but the keyboard ones
 	GameControllerMappings = make([]*GameControllerMapping, 0, 10)
 
 	// PS4 controller with USB cable (MacOS)
