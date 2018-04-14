@@ -74,11 +74,11 @@ func (c *JoystickController) Update() {
 	c.axes = glfw.GetJoystickAxes(c.joystick)
 }
 
-func (c *JoystickController) GetAxisValue(axis ControllerAxis) float32 {
+func (c *JoystickController) AxisValue(axis ControllerAxis) float32 {
 	return c.axes[axis]
 }
 
-func (c *JoystickController) GetAxisDigital(axis ControllerAxis) float32 {
+func (c *JoystickController) AxisDigitalValue(axis ControllerAxis) float32 {
 	// TODO: Define dead zone...
 	return 0
 }
