@@ -1,7 +1,7 @@
 package graphics
 
 import (
-	"github.com/maxfish/pkg/utils"
+	"github.com/maxfish/gojira2d/utils"
 
 	"log"
 

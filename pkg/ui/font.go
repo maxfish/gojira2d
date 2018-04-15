@@ -1,7 +1,7 @@
 package ui
 
 import (
-	g "github.com/maxfish/pkg/graphics"
+	g "github.com/maxfish/gojira2d/graphics"
 )
 
 // Font structure contains BmFont metadata and the texture

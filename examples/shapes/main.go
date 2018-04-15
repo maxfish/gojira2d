@@ -3,8 +3,8 @@ package main
 import (
 	"math"
 
-	a "github.com/maxfish/pkg/app"
-	g "github.com/maxfish/pkg/graphics"
+	a "github.com/maxfish/gojira2d/app"
+	g "github.com/maxfish/gojira2d/graphics"
 
 	"github.com/go-gl/mathgl/mgl32"
 )

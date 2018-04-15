@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/maxfish/pkg/graphics"
-	g "github.com/maxfish/pkg/graphics"
-	"github.com/maxfish/pkg/ui"
-	"github.com/maxfish/pkg/utils"
+	"github.com/maxfish/gojira2d/graphics"
+	g "github.com/maxfish/gojira2d/graphics"
+	"github.com/maxfish/gojira2d/ui"
+	"github.com/maxfish/gojira2d/utils"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"

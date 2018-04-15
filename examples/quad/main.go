@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
-	a "github.com/maxfish/pkg/app"
-	g "github.com/maxfish/pkg/graphics"
+	a "github.com/maxfish/gojira2d/app"
+	g "github.com/maxfish/gojira2d/graphics"
 )
 
 func main() {
