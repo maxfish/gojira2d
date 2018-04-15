@@ -48,7 +48,7 @@ func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle
 	app.FpsCounterText = ui.NewText(
 		"0",
 		font,
-		mgl32.Vec3{10, 10, -1},
+		mgl32.Vec3{float32(windowWidth - 30), 10, -1},
 		mgl32.Vec2{25, 25},
 		graphics.Color{1, 0, 0, 1},
 		mgl32.Vec4{0, 0, 0, -.17},
@@ -110,24 +110,25 @@ func (a *App) MainLoop(
 	update func(float64),
 	render func(),
 ) {
-	var newTime, oldTime float64
+	var newTime, oldTime, deltaTime float64
 	for !a.Window.ShouldClose() {
 		newTime = glfw.GetTime()
-		deltaTime := newTime - oldTime
+		deltaTime = newTime - oldTime
+		oldTime = newTime
+
 		update(deltaTime)
 		a.FpsCounter.Update(deltaTime, 1)
-		oldTime = newTime
+		a.FpsCounterText.SetText(fmt.Sprintf("%v", a.FpsCounter.FPS()))
 
 		a.Clear()
 		render()
 
-		a.FpsCounterText.SetText(fmt.Sprintf("%v", a.FpsCounter.FPS()))
+		a.Context.RenderDrawableList()
+		a.Context.EraseDrawableList()
+
 		a.UIContext.EnqueueForDrawing(a.FpsCounterText)
 		a.UIContext.RenderDrawableList()
 		a.UIContext.EraseDrawableList()
-
-		a.Context.RenderDrawableList()
-		a.Context.EraseDrawableList()
 
 		glfw.PollEvents()
 		a.Window.SwapBuffers()

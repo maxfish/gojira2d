@@ -39,6 +39,14 @@ func (c *Context) EnqueueForDrawing(drawable Drawable) {
 
 // RenderDrawableList binds shader and texture for each primitive and calls DrawInBatch
 func (c *Context) RenderDrawableList() {
+	// Re-bind last texture and shader in case another context had overridden them
+	if c.currentTexture != nil {
+		gl.BindTexture(gl.TEXTURE_2D, c.currentTexture.id)
+	}
+	if c.currentShaderProgram != nil {
+		gl.UseProgram(c.currentShaderProgram.id)
+	}
+
 	for _, v := range c.primitivesToDraw {
 		for _, drawable := range v {
 			c.BindTexture(drawable.Texture())
