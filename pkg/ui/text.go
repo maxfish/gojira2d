@@ -1,8 +1,9 @@
 package ui
 
 import (
-	"gojira2d/pkg/graphics"
 	"log"
+
+	"github.com/maxfish/gojira2d/pkg/graphics"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"

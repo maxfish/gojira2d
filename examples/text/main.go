@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	a "gojira2d/pkg/app"
-	"gojira2d/pkg/graphics"
-	"gojira2d/pkg/ui"
 	"math/rand"
 	"time"
+
+	a "github.com/maxfish/gojira2d/pkg/app"
+	"github.com/maxfish/gojira2d/pkg/graphics"
+	"github.com/maxfish/gojira2d/pkg/ui"
 
 	"github.com/go-gl/mathgl/mgl32"
 )
