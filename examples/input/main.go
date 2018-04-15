@@ -1,8 +1,8 @@
 package main
 
 import (
-	a "gojira2d/pkg/app"
-	"gojira2d/pkg/input"
+	a "github.com/maxfish/gojira2d/pkg/app"
+	"github.com/maxfish/gojira2d/pkg/input"
 )
 
 func main() {
