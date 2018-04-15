@@ -19,19 +19,7 @@ type Context struct {
 	viewMatrix           mgl32.Mat4
 	currentTexture       *Texture
 	currentShaderProgram *ShaderProgram
-	clearColor           Color
 	primitivesToDraw     map[uint32][]Drawable
-}
-
-// Clear clears the screen using Context.clearColor
-func (c *Context) Clear() {
-	gl.ClearColor(c.clearColor.R(), c.clearColor.G(), c.clearColor.B(), c.clearColor.A())
-	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-}
-
-// SetClearColor changes OpenGL background clear color
-func (c *Context) SetClearColor(color Color) {
-	c.clearColor = color
 }
 
 // EnqueueForDrawing adds a drawable to drawing list
@@ -51,6 +39,14 @@ func (c *Context) EnqueueForDrawing(drawable Drawable) {
 
 // RenderDrawableList binds shader and texture for each primitive and calls DrawInBatch
 func (c *Context) RenderDrawableList() {
+	// Re-bind last texture and shader in case another context had overridden them
+	if c.currentTexture != nil {
+		gl.BindTexture(gl.TEXTURE_2D, c.currentTexture.id)
+	}
+	if c.currentShaderProgram != nil {
+		gl.UseProgram(c.currentShaderProgram.id)
+	}
+
 	for _, v := range c.primitivesToDraw {
 		for _, drawable := range v {
 			c.BindTexture(drawable.Texture())

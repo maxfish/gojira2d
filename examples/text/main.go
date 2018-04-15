@@ -13,7 +13,7 @@ import (
 
 func main() {
 	app := a.InitApp(800, 600, true, "Text")
-	app.Context.SetClearColor(graphics.Color{0.3, 0.3, 0.3, 1})
+	app.SetClearColor(graphics.Color{0.3, 0.3, 0.3, 1})
 	defer a.TerminateApp()
 
 	font := ui.NewFontFromFiles(
