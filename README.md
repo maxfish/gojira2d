@@ -12,7 +12,7 @@ Install Golang and GLFW:
 
     $ brew install go glfw
 
-Setup your (`$GOPATH`)[https://golang.org/doc/code.html#GOPATH] and clone the
+Setup your [`$GOPATH`](https://golang.org/doc/code.html#GOPATH) and clone the
 repository into `$GOPATH/src` folder:
 
     $ go get -u maxfish/gojira2d
