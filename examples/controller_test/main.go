@@ -16,7 +16,8 @@ func main() {
 
 	// Tries getting a joystick...
 	joy = &input.JoystickController{}
-	if !joy.Open(0) {
+	if !joy.Connected() {
+		joy.Close()
 		// falls back to the keyboard
 		keyboard := &input.KeyboardController{}
 		keyboard.SetWindow(app.Window)
