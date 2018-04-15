@@ -2,7 +2,5 @@ language: go
 go:
  - "1.10"
 
-go_import_path: github.com/maxfish/gojira2d
-
 script:
  - go test -v ./...
