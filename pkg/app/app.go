@@ -7,10 +7,11 @@ import (
 	"gojira2d/pkg/ui"
 	"gojira2d/pkg/utils"
 	"log"
-	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
+
+	"runtime"
 
 	"github.com/go-gl/mathgl/mgl32"
 )
@@ -27,8 +28,14 @@ type App struct {
 	FpsCounterText *ui.Text
 }
 
-func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) *App {
+func init() {
 	runtime.LockOSThread()
+	if err := glfw.Init(); err != nil {
+		panic(err)
+	}
+}
+
+func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) *App {
 	app := &App{}
 	app.Window = initWindow(windowWidth, windowHeight, windowTitle)
 	app.Context = &g.Context{}
@@ -56,10 +63,6 @@ func TerminateApp() {
 }
 
 func initWindow(width, height int, title string) *glfw.Window {
-	if err := glfw.Init(); err != nil {
-		panic(err)
-	}
-
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, OpenGLMajorVersion)
 	glfw.WindowHint(glfw.ContextVersionMinor, OpenGLMinorVersion)

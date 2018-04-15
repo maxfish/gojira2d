@@ -14,17 +14,13 @@ func main() {
 
 	var joy input.GameController
 
-	// Tries connecting a joystick...
+	// Tries getting a joystick...
 	joy = &input.JoystickController{}
-	ok := joy.Open(0)
-	if ok {
-		println(joy.Description())
-	} else {
+	if !joy.Open(0) {
 		// falls back to the keyboard
 		keyboard := &input.KeyboardController{}
 		keyboard.SetWindow(app.Window)
 		keyboard.Open(-1)
-		println(keyboard.Description())
 		joy = keyboard
 	}
 	parts := make([]joystickPart, 0, 32)
