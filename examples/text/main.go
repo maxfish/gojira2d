@@ -5,9 +5,9 @@ import (
 	"math/rand"
 	"time"
 
-	a "github.com/maxfish/gojira2d/app"
-	"github.com/maxfish/gojira2d/graphics"
-	"github.com/maxfish/gojira2d/ui"
+	a "github.com/maxfish/gojira2d/pkg/app"
+	"github.com/maxfish/gojira2d/pkg/graphics"
+	"github.com/maxfish/gojira2d/pkg/ui"
 
 	"github.com/go-gl/mathgl/mgl32"
 )
