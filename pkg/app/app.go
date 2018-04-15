@@ -2,11 +2,12 @@ package app
 
 import (
 	"fmt"
-	"gojira2d/pkg/graphics"
-	g "gojira2d/pkg/graphics"
-	"gojira2d/pkg/ui"
-	"gojira2d/pkg/utils"
 	"log"
+
+	"github.com/maxfish/pkg/graphics"
+	g "github.com/maxfish/pkg/graphics"
+	"github.com/maxfish/pkg/ui"
+	"github.com/maxfish/pkg/utils"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"

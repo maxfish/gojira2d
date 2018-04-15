@@ -1,9 +1,10 @@
 package main
 
 import (
-	a "gojira2d/pkg/app"
-	g "gojira2d/pkg/graphics"
 	"math"
+
+	a "github.com/maxfish/pkg/app"
+	g "github.com/maxfish/pkg/graphics"
 
 	"github.com/go-gl/mathgl/mgl32"
 )
