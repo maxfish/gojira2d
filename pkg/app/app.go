@@ -22,15 +22,15 @@ const (
 	OpenGLMinorVersion = 1
 )
 
-type App struct {
-	Window         *glfw.Window
+var (
+	window         *glfw.Window
 	Context        *g.Context
 	UIContext      *g.Context
 	FpsCounter     *utils.FPSCounter
 	FpsCounterText *ui.Text
 
 	clearColor g.Color
-}
+)
 
 func init() {
 	runtime.LockOSThread()
@@ -39,21 +39,20 @@ func init() {
 	}
 }
 
-func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) *App {
-	app := &App{}
-	app.Window = initWindow(windowWidth, windowHeight, windowTitle)
-	app.Context = &g.Context{}
-	app.Context.SetOrtho2DProjection(windowWidth, windowHeight, 1, windowCentered)
-	app.UIContext = &g.Context{}
-	app.UIContext.SetOrtho2DProjection(windowWidth, windowHeight, 1, false)
-	app.FpsCounter = &utils.FPSCounter{}
+func Init(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) {
+	window = initWindow(windowWidth, windowHeight, windowTitle)
+	Context = &g.Context{}
+	Context.SetOrtho2DProjection(windowWidth, windowHeight, 1, windowCentered)
+	UIContext = &g.Context{}
+	UIContext.SetOrtho2DProjection(windowWidth, windowHeight, 1, false)
+	FpsCounter = &utils.FPSCounter{}
 
 	font := ui.NewFontFromFiles(
 		"mono",
 		"examples/assets/fonts/roboto-mono-regular.fnt",
 		"examples/assets/fonts/roboto-mono-regular.png",
 	)
-	app.FpsCounterText = ui.NewText(
+	FpsCounterText = ui.NewText(
 		"0",
 		font,
 		mgl32.Vec3{float32(windowWidth - 30), 10, -1},
@@ -61,10 +60,9 @@ func InitApp(windowWidth int, windowHeight int, windowCentered bool, windowTitle
 		graphics.Color{1, 0, 0, 1},
 		mgl32.Vec4{0, 0, 0, -.17},
 	)
-	return app
 }
 
-func TerminateApp() {
+func Terminate() {
 	glfw.Terminate()
 }
 
@@ -98,43 +96,47 @@ func initWindow(width, height int, title string) *glfw.Window {
 	return window
 }
 
+func GetWindow() *glfw.Window {
+	return window
+}
+
 // Clear clears the screen using App.clearColor
-func (a *App) Clear() {
+func Clear() {
 	gl.ClearColor(
-		a.clearColor[0], a.clearColor[1], a.clearColor[2], a.clearColor[3])
+		clearColor[0], clearColor[1], clearColor[2], clearColor[3])
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 }
 
 // SetClearColor changes OpenGL background clear color
-func (a *App) SetClearColor(color g.Color) {
-	a.clearColor = color
+func SetClearColor(color g.Color) {
+	clearColor = color
 }
 
-func (a *App) MainLoop(
+func MainLoop(
 	update func(float64),
 	render func(),
 ) {
 	var newTime, oldTime, deltaTime float64
-	for !a.Window.ShouldClose() {
+	for !window.ShouldClose() {
 		newTime = glfw.GetTime()
 		deltaTime = newTime - oldTime
 		oldTime = newTime
 
 		update(deltaTime)
-		a.FpsCounter.Update(deltaTime, 1)
-		a.FpsCounterText.SetText(fmt.Sprintf("%v", a.FpsCounter.FPS()))
+		FpsCounter.Update(deltaTime, 1)
+		FpsCounterText.SetText(fmt.Sprintf("%v", FpsCounter.FPS()))
 
-		a.Clear()
+		Clear()
 		render()
 
-		a.Context.RenderDrawableList()
-		a.Context.EraseDrawableList()
+		Context.RenderDrawableList()
+		Context.EraseDrawableList()
 
-		a.UIContext.EnqueueForDrawing(a.FpsCounterText)
-		a.UIContext.RenderDrawableList()
-		a.UIContext.EraseDrawableList()
+		UIContext.EnqueueForDrawing(FpsCounterText)
+		UIContext.RenderDrawableList()
+		UIContext.EraseDrawableList()
 
 		glfw.PollEvents()
-		a.Window.SwapBuffers()
+		window.SwapBuffers()
 	}
 }
