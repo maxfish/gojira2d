@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
-	a "github.com/maxfish/gojira2d/pkg/app"
 	g "github.com/maxfish/gojira2d/pkg/graphics"
+	"github.com/maxfish/gojira2d/pkg/app"
 )
 
 func main() {
-	app := a.InitApp(640, 480, true, "Quad")
-	defer a.TerminateApp()
+	app.Init(640, 480, true, "Quad")
+	defer app.Terminate()
 
 	Quad := g.NewQuadPrimitive(mgl32.Vec3{0, 0, 0}, mgl32.Vec2{200, 200})
 	Quad.SetAnchorToCenter()

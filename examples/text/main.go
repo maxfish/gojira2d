@@ -5,17 +5,17 @@ import (
 	"math/rand"
 	"time"
 
-	a "github.com/maxfish/gojira2d/pkg/app"
 	"github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/ui"
 
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/maxfish/gojira2d/pkg/app"
 )
 
 func main() {
-	app := a.InitApp(800, 600, true, "Text")
-	app.SetClearColor(graphics.Color{0.3, 0.3, 0.3, 1})
-	defer a.TerminateApp()
+	app.Init(800, 600, true, "Text")
+	app.SetClearColor(graphics.Color{0, 0, 0, 1})
+	defer app.Terminate()
 
 	font := ui.NewFontFromFiles(
 		"mono",

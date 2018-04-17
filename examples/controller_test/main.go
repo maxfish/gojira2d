@@ -1,16 +1,16 @@
 package main
 
 import (
-	a "github.com/maxfish/gojira2d/pkg/app"
 	"github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/input"
 
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/maxfish/gojira2d/pkg/app"
 )
 
 func main() {
-	app := a.InitApp(640, 480, false, "Controller Test")
-	defer a.TerminateApp()
+	app.Init(640, 480, false, "Controller Test")
+	defer app.Terminate()
 
 	var joy input.GameController
 
@@ -21,7 +21,6 @@ func main() {
 		joy.Close()
 		// falls back to the keyboard
 		keyboard := &input.KeyboardController{}
-		keyboard.SetWindow(app.Window)
 		keyboard.Open(-1)
 		joy = keyboard
 	}

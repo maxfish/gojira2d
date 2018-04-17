@@ -1,17 +1,15 @@
 package main
 
 import (
-	"math"
-
-	a "github.com/maxfish/gojira2d/pkg/app"
-	g "github.com/maxfish/gojira2d/pkg/graphics"
-
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/maxfish/gojira2d/pkg/app"
+	g "github.com/maxfish/gojira2d/pkg/graphics"
+	"math"
 )
 
 func main() {
-	app := a.InitApp(800, 600, false, "Quads")
-	defer a.TerminateApp()
+	app.Init(800, 600, false, "Quads")
+	defer app.Terminate()
 
 	quads := make([]*g.Primitive2D, 0, 12)
 	texture := g.NewTextureFromFile("examples/assets/texture.png")

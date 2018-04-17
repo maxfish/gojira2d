@@ -3,15 +3,15 @@ package main
 import (
 	"math"
 
-	a "github.com/maxfish/gojira2d/pkg/app"
+	"github.com/maxfish/gojira2d/pkg/app"
 	g "github.com/maxfish/gojira2d/pkg/graphics"
 
 	"github.com/go-gl/mathgl/mgl32"
 )
 
 func main() {
-	app := a.InitApp(640, 480, false, "Shapes")
-	defer a.TerminateApp()
+	app.Init(640, 480, false, "Shapes")
+	defer app.Terminate()
 
 	primitives := []*g.Primitive2D{
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{100, 100, 0}, 50, 5, false),

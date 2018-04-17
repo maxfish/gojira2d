@@ -3,14 +3,12 @@ package input
 import (
 	"fmt"
 
-	"log"
-
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/maxfish/gojira2d/pkg/app"
 )
 
 type KeyboardController struct {
 	GameController
-	window          *glfw.Window
 	connected       bool
 	numButtons      int
 	numAxes         int
@@ -23,14 +21,7 @@ type KeyboardController struct {
 	keyMapping      map[glfw.Key]int
 }
 
-func (c *KeyboardController) SetWindow(window *glfw.Window) {
-	c.window = window
-}
-
 func (c *KeyboardController) Open(_ int) bool {
-	if c.window == nil {
-		log.Panic("Please set the Window before calling Open()")
-	}
 	c.connected = true
 	c.numButtons = 15 // Xbox360
 	c.numAxes = 2     // Only the left stick
@@ -43,7 +34,7 @@ func (c *KeyboardController) Open(_ int) bool {
 	c.buttonsRaw = make([]bool, c.numButtons)
 	c.axes = make([]float32, c.numAxes)
 
-	c.window.SetKeyCallback(func(w *glfw.Window, key glfw.Key, scanCode int, action glfw.Action, mods glfw.ModifierKey) {
+	app.GetWindow().SetKeyCallback(func(w *glfw.Window, key glfw.Key, scanCode int, action glfw.Action, mods glfw.ModifierKey) {
 		if index, ok := c.keyMapping[key]; ok {
 			if action == glfw.Press {
 				c.buttonsRaw[index] = true
@@ -57,7 +48,7 @@ func (c *KeyboardController) Open(_ int) bool {
 }
 
 func (c *KeyboardController) Close() {
-	c.window.SetKeyCallback(nil)
+	app.GetWindow().SetKeyCallback(nil)
 	c.connected = false
 }
 
