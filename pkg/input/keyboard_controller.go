@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/maxfish/gojira2d/pkg/app"
 )
 
+// A GameController that used the keyboard to simulate a joystick
 type KeyboardController struct {
 	GameController
 	connected       bool
@@ -34,7 +34,7 @@ func (c *KeyboardController) Open(_ int) bool {
 	c.buttonsRaw = make([]bool, c.numButtons)
 	c.axes = make([]float32, c.numAxes)
 
-	app.GetWindow().SetKeyCallback(func(w *glfw.Window, key glfw.Key, scanCode int, action glfw.Action, mods glfw.ModifierKey) {
+	RegisterKeyCallback(func(w *glfw.Window, key glfw.Key, scanCode int, action glfw.Action, mods glfw.ModifierKey) {
 		if index, ok := c.keyMapping[key]; ok {
 			if action == glfw.Press {
 				c.buttonsRaw[index] = true
@@ -48,8 +48,13 @@ func (c *KeyboardController) Open(_ int) bool {
 }
 
 func (c *KeyboardController) Close() {
-	app.GetWindow().SetKeyCallback(nil)
+	UnregisterKeyCallback()
 	c.connected = false
+	c.buttonsDown = nil
+	c.buttonsPressed = nil
+	c.buttonsReleased = nil
+	c.buttonsRaw = nil
+	c.axes = nil
 }
 
 func (c *KeyboardController) Update() {
