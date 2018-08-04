@@ -127,9 +127,9 @@ func (b *Button) Update(controller input.GameController) {
 
 func (b *Button) Draw(ctx *graphics.Context) {
 	if b.pressed {
-		b.shapePressed.EnqueueForDrawing(ctx)
+		b.shapePressed.Draw(ctx)
 	} else {
-		b.shape.EnqueueForDrawing(ctx)
+		b.shape.Draw(ctx)
 	}
 }
 
@@ -165,8 +165,8 @@ func (s *Stick) Update(controller input.GameController) {
 }
 
 func (s *Stick) Draw(ctx *graphics.Context) {
-	s.shape.EnqueueForDrawing(ctx)
-	s.knob.EnqueueForDrawing(ctx)
+	s.shape.Draw(ctx)
+	s.knob.Draw(ctx)
 }
 
 type Trigger struct {
@@ -197,6 +197,6 @@ func (t *Trigger) Update(controller input.GameController) {
 }
 
 func (t *Trigger) Draw(ctx *graphics.Context) {
-	t.shape.EnqueueForDrawing(ctx)
-	t.knob.EnqueueForDrawing(ctx)
+	t.shape.Draw(ctx)
+	t.knob.Draw(ctx)
 }

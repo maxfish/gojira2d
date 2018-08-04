@@ -156,11 +156,6 @@ func (t *Text) SetPaddings(paddings mgl32.Vec4) {
 	t.uploadNewQuads()
 }
 
-// EnqueueForDrawing see Drawable.EnqueueForDrawing
-func (t *Text) EnqueueForDrawing(context *graphics.Context) {
-	context.EnqueueForDrawing(t)
-}
-
 // SetUniforms uploads relevant uniforms
 func (t *Text) SetUniforms() {
 	shaderProgram := t.Shader()

@@ -90,13 +90,13 @@ func (p *Primitive2D) SetAnchorToCenter() {
 	p.SetAnchor(mgl32.Vec2{p.size[0] / 2.0, p.size[1] / 2.0})
 }
 
-func (p *Primitive2D) EnqueueForDrawing(context *Context) {
-	context.EnqueueForDrawing(p)
-}
-
 func (p *Primitive2D) Draw(context *Context) {
 	shaderId := p.shaderProgram.Id()
-	gl.BindTexture(gl.TEXTURE_2D, p.texture.Id())
+	if p.texture != nil {
+		gl.BindTexture(gl.TEXTURE_2D, p.texture.Id())
+	} else {
+		gl.BindTexture(gl.TEXTURE_2D, 0)
+	}
 	gl.UseProgram(shaderId)
 	p.shaderProgram.SetUniform("mProjection", &context.projectionMatrix)
 	p.SetUniforms()
@@ -104,7 +104,7 @@ func (p *Primitive2D) Draw(context *Context) {
 	gl.DrawArrays(p.arrayMode, 0, p.arraySize)
 }
 
-// Texture and shaders are already bound when this is called
+// Texture and shaders should be already bound before calling this
 func (p *Primitive2D) DrawInBatch(context *Context) {
 	p.SetUniforms()
 	gl.BindVertexArray(p.vaoId)

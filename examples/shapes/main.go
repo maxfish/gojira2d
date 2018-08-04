@@ -40,7 +40,7 @@ func main() {
 		primitives[3].SetScale(mgl32.Vec2{animationScale, animationScale})
 	}, func() {
 		for _, p := range primitives {
-			p.EnqueueForDrawing(app.Context)
+			p.Draw(app.Context)
 		}
 	})
 }

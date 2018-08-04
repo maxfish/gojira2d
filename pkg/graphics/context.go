@@ -19,49 +19,6 @@ type Context struct {
 	viewMatrix           mgl32.Mat4
 	currentTexture       *Texture
 	currentShaderProgram *ShaderProgram
-	primitivesToDraw     map[uint32][]Drawable
-}
-
-// EnqueueForDrawing adds a drawable to drawing list
-func (c *Context) EnqueueForDrawing(drawable Drawable) {
-	if c.primitivesToDraw == nil {
-		c.primitivesToDraw = make(map[uint32][]Drawable)
-	}
-
-	texture := drawable.Texture()
-	var textureID uint32
-	if texture != nil {
-		textureID = texture.id
-	}
-	// Groups the primitives by their texture's id
-	c.primitivesToDraw[textureID] = append(c.primitivesToDraw[textureID], drawable)
-}
-
-// RenderDrawableList binds shader and texture for each primitive and calls DrawInBatch
-func (c *Context) RenderDrawableList() {
-	// Re-bind last texture and shader in case another context had overridden them
-	if c.currentTexture != nil {
-		gl.BindTexture(gl.TEXTURE_2D, c.currentTexture.id)
-	}
-	if c.currentShaderProgram != nil {
-		gl.UseProgram(c.currentShaderProgram.id)
-	}
-
-	for _, v := range c.primitivesToDraw {
-		for _, drawable := range v {
-			c.BindTexture(drawable.Texture())
-			shader := drawable.Shader()
-			c.BindShader(shader)
-			// TODO this should be done only once per frame via uniform buffers
-			shader.SetUniform("mProjection", &c.projectionMatrix)
-			drawable.DrawInBatch(c)
-		}
-	}
-}
-
-// EraseDrawableList resets primitivesToDraw to empty list
-func (c *Context) EraseDrawableList() {
-	c.primitivesToDraw = make(map[uint32][]Drawable)
 }
 
 // BindTexture sets texture to be current texture if it isn't already

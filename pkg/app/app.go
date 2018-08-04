@@ -129,12 +129,7 @@ func MainLoop(
 		Clear()
 		render()
 
-		Context.RenderDrawableList()
-		Context.EraseDrawableList()
-
-		UIContext.EnqueueForDrawing(FpsCounterText)
-		UIContext.RenderDrawableList()
-		UIContext.EraseDrawableList()
+		FpsCounterText.Draw(UIContext)
 
 		glfw.PollEvents()
 		window.SwapBuffers()

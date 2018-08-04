@@ -54,7 +54,7 @@ func main() {
 		quads[11].SetAngle(animationAngle)
 	}, func() {
 		for _, q := range quads {
-			q.EnqueueForDrawing(app.Context)
+			q.Draw(app.Context)
 		}
 	})
 }

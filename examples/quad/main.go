@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
-	g "github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/app"
+	g "github.com/maxfish/gojira2d/pkg/graphics"
 )
 
 func main() {
@@ -17,6 +17,6 @@ func main() {
 	app.MainLoop(func(speed float64) {
 		// NOP
 	}, func() {
-		Quad.EnqueueForDrawing(app.Context)
+		Quad.Draw(app.Context)
 	})
 }

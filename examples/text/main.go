@@ -63,7 +63,7 @@ func main() {
 		},
 		func() {
 			for _, t := range tc {
-				t.EnqueueForDrawing(app.Context)
+				t.Draw(app.Context)
 			}
 		})
 }
