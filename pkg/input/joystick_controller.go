@@ -2,10 +2,8 @@ package input
 
 import (
 	"fmt"
-
-	"regexp"
-
 	"log"
+	"regexp"
 
 	"github.com/go-gl/glfw/v3.2/glfw"
 )

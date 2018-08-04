@@ -1,10 +1,11 @@
 package main
 
 import (
+	"math"
+
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/maxfish/gojira2d/pkg/app"
 	g "github.com/maxfish/gojira2d/pkg/graphics"
-	"math"
 )
 
 func main() {

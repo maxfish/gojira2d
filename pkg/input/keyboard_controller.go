@@ -2,9 +2,9 @@ package input
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"log"
 )
 
 // A GameController that used the keyboard to simulate a joystick

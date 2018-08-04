@@ -1,12 +1,11 @@
 package graphics
 
 import (
-	"github.com/maxfish/gojira2d/pkg/utils"
-
 	"log"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/maxfish/gojira2d/pkg/utils"
 )
 
 const FLOAT32_SIZE = 4

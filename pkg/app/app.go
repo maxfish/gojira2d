@@ -3,18 +3,15 @@ package app
 import (
 	"fmt"
 	"log"
+	"runtime"
 
+	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/go-gl/mathgl/mgl32"
 	"github.com/maxfish/gojira2d/pkg/graphics"
 	g "github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/ui"
 	"github.com/maxfish/gojira2d/pkg/utils"
-
-	"github.com/go-gl/gl/v4.1-core/gl"
-	"github.com/go-gl/glfw/v3.2/glfw"
-
-	"runtime"
-
-	"github.com/go-gl/mathgl/mgl32"
 )
 
 const (

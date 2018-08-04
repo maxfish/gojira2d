@@ -1,9 +1,8 @@
 package utils
 
 import (
-	"math"
-
 	"errors"
+	"math"
 
 	"github.com/go-gl/mathgl/mgl32"
 )

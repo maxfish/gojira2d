@@ -3,10 +3,9 @@ package ui
 import (
 	"log"
 
-	"github.com/maxfish/gojira2d/pkg/graphics"
-
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/maxfish/gojira2d/pkg/graphics"
 )
 
 // Text is a UI element that just renders a string

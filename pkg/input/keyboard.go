@@ -1,9 +1,10 @@
 package input
 
 import (
+	"log"
+
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/maxfish/gojira2d/pkg/app"
-	"log"
 )
 
 var (

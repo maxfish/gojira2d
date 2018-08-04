@@ -1,13 +1,14 @@
 package graphics
 
 import (
-	"github.com/go-gl/gl/v4.1-core/gl"
 	"image"
 	"image/draw"
 	_ "image/jpeg"
 	_ "image/png"
 	"log"
 	"os"
+
+	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
 type Texture struct {
