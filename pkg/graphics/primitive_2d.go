@@ -92,11 +92,7 @@ func (p *Primitive2D) SetAnchorToCenter() {
 
 func (p *Primitive2D) Draw(context *Context) {
 	shaderId := p.shaderProgram.Id()
-	if p.texture != nil {
-		gl.BindTexture(gl.TEXTURE_2D, p.texture.Id())
-	} else {
-		gl.BindTexture(gl.TEXTURE_2D, 0)
-	}
+	context.BindTexture(p.texture)
 	gl.UseProgram(shaderId)
 	p.shaderProgram.SetUniform("mProjection", &context.projectionMatrix)
 	p.SetUniforms()

@@ -24,15 +24,16 @@ type Context struct {
 // BindTexture sets texture to be current texture if it isn't already
 func (c *Context) BindTexture(texture *Texture) {
 	if texture == nil {
+		gl.BindTexture(gl.TEXTURE_2D, 0)
+		c.currentTexture = nil
 		return
 	}
-	if c.currentTexture == nil || texture.id != c.currentTexture.id {
-		gl.BindTexture(gl.TEXTURE_2D, texture.id)
-		c.currentTexture = texture
-	}
+
+	gl.BindTexture(gl.TEXTURE_2D, texture.id)
+	c.currentTexture = texture
 }
 
-// BindShader sets shader to be current chader if it isn't already
+// BindShader sets shader to be current shader if it isn't already
 func (c *Context) BindShader(shader *ShaderProgram) {
 	if c.currentShaderProgram == nil || shader.id != c.currentShaderProgram.id {
 		gl.UseProgram(shader.id)

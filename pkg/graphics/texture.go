@@ -62,6 +62,7 @@ func NewTextureFromImage(imageData image.Image) *Texture {
 		gl.TEXTURE_2D, 0, gl.RGBA, texture.width, texture.height,
 		0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(pixelData),
 	)
+	gl.BindTexture(gl.TEXTURE_2D, 0)
 
 	return texture
 }
@@ -88,6 +89,7 @@ func NewEmptyTexture(width int, height int) (*Texture, error) {
 		gl.TEXTURE_2D, 0, gl.RGBA, texture.width, texture.height,
 		0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(imageData.Pix),
 	)
+	gl.BindTexture(gl.TEXTURE_2D, 0)
 
 	return texture, nil
 }
