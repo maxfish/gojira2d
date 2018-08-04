@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"log"
 )
 
 // A GameController that used the keyboard to simulate a joystick
@@ -22,6 +23,11 @@ type KeyboardController struct {
 }
 
 func (c *KeyboardController) Open(_ int) bool {
+	if !IsKeyboardFree() {
+		log.Print("The keyboard is already in use")
+		return false
+	}
+
 	c.connected = true
 	c.numButtons = 15 // Xbox360
 	c.numAxes = 2     // Only the left stick

@@ -22,3 +22,7 @@ func UnregisterKeyCallback() {
 	keyCallbackFunc = nil
 	app.GetWindow().SetKeyCallback(nil)
 }
+
+func IsKeyboardFree() bool {
+	return keyCallbackFunc == nil
+}
