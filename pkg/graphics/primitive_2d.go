@@ -8,7 +8,19 @@ import (
 	"github.com/maxfish/gojira2d/pkg/utils"
 )
 
-const FLOAT32_SIZE = 4
+type AnchorHorizontal int
+type AnchorVertical int
+
+const (
+	Float32Size = 4
+
+	AnchorLeft AnchorHorizontal = iota
+	AnchorCenter
+	AnchorRight
+	AnchorTop AnchorVertical = iota
+	AnchorMiddle
+	AnchorBottom
+)
 
 type ModelMatrix struct {
 	mgl32.Mat4
@@ -45,16 +57,53 @@ func (p *Primitive2D) SetAnchor(anchor mgl32.Vec2) {
 	p.modelMatrix.dirty = true
 }
 
+func (p *Primitive2D) SetAnchorToCenter() {
+	p.SetAnchor(mgl32.Vec2{p.size[0] / 2.0, p.size[1] / 2.0})
+}
+
+// SetRelativeAnchor set the anchor based on horizontal and vertical alignment
+func (p *Primitive2D) SetRelativeAnchor(horizontal AnchorHorizontal, vertical AnchorVertical) {
+	var h float32 = 0
+	var v float32 = 0
+	switch horizontal {
+	case AnchorCenter:
+		h = p.size[0] / 2.0
+	case AnchorRight:
+		h = p.size[0] - 1
+	}
+	switch vertical {
+	case AnchorMiddle:
+		v = p.size[1] / 2.0
+	case AnchorBottom:
+		v = p.size[1] - 1
+	}
+	p.SetAnchor(mgl32.Vec2{h, v})
+}
+
+// Angle in radians
+func (p *Primitive2D) Angle() float32 {
+	return p.angle
+}
+
 func (p *Primitive2D) SetAngle(radians float32) {
 	p.angle = radians
 	p.modelMatrix.rotation = mgl32.HomogRotate3DZ(p.angle)
 	p.modelMatrix.dirty = true
 }
 
+// Size in pixels
+func (p *Primitive2D) Size() mgl32.Vec2 {
+	return mgl32.Vec2{p.size.X(), p.size.Y()}
+}
+
 func (p *Primitive2D) SetSize(size mgl32.Vec2) {
 	p.size = size
 	p.modelMatrix.size = mgl32.Scale3D(p.size.X(), p.size.Y(), 1)
 	p.modelMatrix.dirty = true
+}
+
+func (p *Primitive2D) SetSizeFromTexture() {
+	p.SetSize(mgl32.Vec2{float32(p.texture.width), float32(p.texture.height)})
 }
 
 func (p *Primitive2D) SetScale(scale mgl32.Vec2) {
@@ -79,14 +128,6 @@ func (p *Primitive2D) SetColor(color Color) {
 func (p *Primitive2D) SetUniforms() {
 	p.shaderProgram.SetUniform("color", &p.color)
 	p.shaderProgram.SetUniform("mModel", p.ModelMatrix())
-}
-
-func (p *Primitive2D) SetSizeFromTexture() {
-	p.SetSize(mgl32.Vec2{float32(p.texture.width), float32(p.texture.height)})
-}
-
-func (p *Primitive2D) SetAnchorToCenter() {
-	p.SetAnchor(mgl32.Vec2{p.size[0] / 2.0, p.size[1] / 2.0})
 }
 
 func (p *Primitive2D) Draw(context *Context) {
@@ -248,7 +289,7 @@ func (p *Primitive2D) SetVertices(vertices []float32) {
 		gl.GenBuffers(1, &p.vboVertices)
 	}
 	gl.BindBuffer(gl.ARRAY_BUFFER, p.vboVertices)
-	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*FLOAT32_SIZE, gl.Ptr(vertices), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*Float32Size, gl.Ptr(vertices), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(0)
 	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 	p.arraySize = int32(len(vertices) / 2)
@@ -265,7 +306,7 @@ func (p *Primitive2D) SetUVCoords(uvCoords []float32) {
 		gl.GenBuffers(1, &p.vboUVCoords)
 	}
 	gl.BindBuffer(gl.ARRAY_BUFFER, p.vboUVCoords)
-	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoords)*FLOAT32_SIZE, gl.Ptr(uvCoords), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, len(uvCoords)*Float32Size, gl.Ptr(uvCoords), gl.STATIC_DRAW)
 	gl.EnableVertexAttribArray(1)
 	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 	gl.BindVertexArray(0)
