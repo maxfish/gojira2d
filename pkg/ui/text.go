@@ -105,7 +105,7 @@ func NewText(
 ) *Text {
 	if textShaderProgram == nil {
 		textShaderProgram = graphics.NewShaderProgram(
-			graphics.VertexShaderPrimitive2D, "", fragmentDistanceFieldFont,
+			graphics.VertexShaderBase, "", fragmentDistanceFieldFont,
 		)
 	}
 

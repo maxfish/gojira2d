@@ -153,7 +153,7 @@ func (p *Primitive2D) SetColor(color Color) {
 // SetUniforms sets the shader's uniform variables
 func (p *Primitive2D) SetUniforms() {
 	p.shaderProgram.SetUniform("color", &p.color)
-	p.shaderProgram.SetUniform("mModel", p.ModelMatrix())
+	p.shaderProgram.SetUniform("model", p.ModelMatrix())
 }
 
 // Draw draws the primitive
@@ -161,7 +161,7 @@ func (p *Primitive2D) Draw(context *Context) {
 	shaderID := p.shaderProgram.Id()
 	context.BindTexture(p.texture)
 	gl.UseProgram(shaderID)
-	p.shaderProgram.SetUniform("mProjection", &context.projectionMatrix)
+	p.shaderProgram.SetUniform("projection", &context.projectionMatrix)
 	p.SetUniforms()
 	gl.BindVertexArray(p.vaoId)
 	gl.DrawArrays(p.arrayMode, 0, p.arraySize)
