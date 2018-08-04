@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	app.Init(800, 600, true, "Text")
+	app.Init(800, 600, false, "Text")
 	app.SetClearColor(graphics.Color{0, 0, 0, 1})
 	defer app.Terminate()
 
@@ -49,7 +49,7 @@ func main() {
 		tc[i] = ui.NewText(
 			"The quick brown fox jumps over the lazy dog",
 			f,
-			mgl32.Vec3{-400, -300 + vo, 0},
+			mgl32.Vec3{0, 0 + vo, 0},
 			mgl32.Vec2{j * 8, j * 8},
 			color,
 			mgl32.Vec4{0, 0, 0, -.17},
