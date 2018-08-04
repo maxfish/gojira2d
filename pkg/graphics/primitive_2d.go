@@ -8,20 +8,31 @@ import (
 	"github.com/maxfish/gojira2d/pkg/utils"
 )
 
+// AnchorHorizontal anchoring constants for X
 type AnchorHorizontal int
+
+// AnchorVertical anchoring constants for Y
 type AnchorVertical int
 
 const (
+	// Float32Size is the size (in bytes) of a float32
 	Float32Size = 4
 
+	// AnchorLeft refers to the left side of the primitive
 	AnchorLeft AnchorHorizontal = iota
+	// AnchorCenter refers to the center (on the X axis) of the primitive
 	AnchorCenter
+	// AnchorRight refers to the right side of the primitive
 	AnchorRight
+	// AnchorTop refers to the top of the primitive
 	AnchorTop AnchorVertical = iota
+	// AnchorMiddle refers to the center (on the Y axis) of the primitive
 	AnchorMiddle
+	// AnchorBottom refers to the bottom of the primitive
 	AnchorBottom
 )
 
+// ModelMatrix matrix representing the primitive transformation
 type ModelMatrix struct {
 	mgl32.Mat4
 	size        mgl32.Mat4
@@ -32,6 +43,7 @@ type ModelMatrix struct {
 	dirty       bool
 }
 
+// Primitive2D a drawing primitive on the XY plane
 type Primitive2D struct {
 	Primitive
 	position    mgl32.Vec3
@@ -45,26 +57,29 @@ type Primitive2D struct {
 	modelMatrix ModelMatrix
 }
 
+// SetPosition sets the X,Y,Z position of the primitive. Z is used for the drawing order
 func (p *Primitive2D) SetPosition(position mgl32.Vec3) {
 	p.position = position
 	p.modelMatrix.translation = mgl32.Translate3D(p.position.X(), p.position.Y(), p.position.Z())
 	p.modelMatrix.dirty = true
 }
 
+// SetAnchor sets the anchor point of the primitive, this will be the point placed at Position
 func (p *Primitive2D) SetAnchor(anchor mgl32.Vec2) {
 	p.anchor = anchor
 	p.modelMatrix.anchor = mgl32.Translate3D(-p.anchor.X(), -p.anchor.Y(), 0)
 	p.modelMatrix.dirty = true
 }
 
+// SetAnchorToCenter sets the anchor at the center of the primitive
 func (p *Primitive2D) SetAnchorToCenter() {
 	p.SetAnchor(mgl32.Vec2{p.size[0] / 2.0, p.size[1] / 2.0})
 }
 
 // SetRelativeAnchor set the anchor based on horizontal and vertical alignment
 func (p *Primitive2D) SetRelativeAnchor(horizontal AnchorHorizontal, vertical AnchorVertical) {
-	var h float32 = 0
-	var v float32 = 0
+	var h float32
+	var v float32
 	switch horizontal {
 	case AnchorCenter:
 		h = p.size[0] / 2.0
@@ -85,6 +100,7 @@ func (p *Primitive2D) Angle() float32 {
 	return p.angle
 }
 
+// SetAngle sets the rotation angle around the Z axis
 func (p *Primitive2D) SetAngle(radians float32) {
 	p.angle = radians
 	p.modelMatrix.rotation = mgl32.HomogRotate3DZ(p.angle)
@@ -96,51 +112,62 @@ func (p *Primitive2D) Size() mgl32.Vec2 {
 	return mgl32.Vec2{p.size.X(), p.size.Y()}
 }
 
+// SetSize sets the size (in pixels) of the current primitive
 func (p *Primitive2D) SetSize(size mgl32.Vec2) {
 	p.size = size
 	p.modelMatrix.size = mgl32.Scale3D(p.size.X(), p.size.Y(), 1)
 	p.modelMatrix.dirty = true
 }
 
+// SetSizeFromTexture sets the size of the current primitive to the pixel size of the texture
 func (p *Primitive2D) SetSizeFromTexture() {
+	if p.texture == nil {
+		return
+	}
 	p.SetSize(mgl32.Vec2{float32(p.texture.width), float32(p.texture.height)})
 }
 
+// SetScale sets the scaling factor on X and Y for the primitive. The scaling respects the anchor and the rotation
 func (p *Primitive2D) SetScale(scale mgl32.Vec2) {
 	p.scale = scale
 	p.rebuildScaleMatrix()
 }
 
+// SetFlipX flips the primitive around the Y axis
 func (p *Primitive2D) SetFlipX(flipX bool) {
 	p.flipX = flipX
 	p.rebuildScaleMatrix()
 }
 
+// SetFlipY flips the primitive around the X axis
 func (p *Primitive2D) SetFlipY(flipY bool) {
 	p.flipY = flipY
 	p.rebuildScaleMatrix()
 }
 
+// SetColor sets the color passed to the shader
 func (p *Primitive2D) SetColor(color Color) {
 	p.color = color
 }
 
+// SetUniforms sets the shader's uniform variables
 func (p *Primitive2D) SetUniforms() {
 	p.shaderProgram.SetUniform("color", &p.color)
 	p.shaderProgram.SetUniform("mModel", p.ModelMatrix())
 }
 
+// Draw draws the primitive
 func (p *Primitive2D) Draw(context *Context) {
-	shaderId := p.shaderProgram.Id()
+	shaderID := p.shaderProgram.Id()
 	context.BindTexture(p.texture)
-	gl.UseProgram(shaderId)
+	gl.UseProgram(shaderID)
 	p.shaderProgram.SetUniform("mProjection", &context.projectionMatrix)
 	p.SetUniforms()
 	gl.BindVertexArray(p.vaoId)
 	gl.DrawArrays(p.arrayMode, 0, p.arraySize)
 }
 
-// Texture and shaders should be already bound before calling this
+// DrawInBatch draws the primitive assuming that the correct texture and shader are already bound
 func (p *Primitive2D) DrawInBatch(context *Context) {
 	p.SetUniforms()
 	gl.BindVertexArray(p.vaoId)
@@ -170,6 +197,7 @@ func (p *Primitive2D) rebuildScaleMatrix() {
 	p.modelMatrix.dirty = true
 }
 
+// ModelMatrix returns the current model matrix
 func (p *Primitive2D) ModelMatrix() *mgl32.Mat4 {
 	if p.modelMatrix.dirty {
 		p.modelMatrix.Mat4 = p.modelMatrix.translation.Mul4(p.modelMatrix.rotation).Mul4(p.modelMatrix.scale).Mul4(p.modelMatrix.anchor).Mul4(p.modelMatrix.size)
@@ -178,12 +206,13 @@ func (p *Primitive2D) ModelMatrix() *mgl32.Mat4 {
 	return &p.modelMatrix.Mat4
 }
 
+// NewQuadPrimitive creates a rectangular primitive
 func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) *Primitive2D {
 	q := &Primitive2D{}
 	q.position = position
 	q.size = size
 	q.scale = mgl32.Vec2{1, 1}
-	q.shaderProgram = NewShaderProgram(VertexShaderPrimitive2D, "", FragmentShaderTexture)
+	q.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderTexture)
 	q.rebuildMatrices()
 
 	q.arrayMode = gl.TRIANGLE_FAN
@@ -195,6 +224,7 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) *Primitive2D {
 	return q
 }
 
+// NewRegularPolygonPrimitive creates a primitive from a regular polygon
 func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments int, filled bool) *Primitive2D {
 	circlePoints, err := utils.CircleToPolygon(mgl32.Vec2{0.5, 0.5}, 0.5, numSegments, 0)
 	if err != nil {
@@ -206,7 +236,7 @@ func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments
 	q.position = position
 	q.size = mgl32.Vec2{radius * 2, radius * 2}
 	q.scale = mgl32.Vec2{1, 1}
-	q.shaderProgram = NewShaderProgram(VertexShaderPrimitive2D, "", FragmentShaderSolidColor)
+	q.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderSolidColor)
 	q.rebuildMatrices()
 
 	// Vertices
@@ -227,6 +257,7 @@ func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments
 	return q
 }
 
+// NewTriangles creates a primitive as a collection of triangles
 func NewTriangles(
 	vertices []float32,
 	uvCoords []float32,
@@ -252,6 +283,7 @@ func NewTriangles(
 	return p
 }
 
+// NewPolylinePrimitive creates a primitive from a sequence of points
 func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool) *Primitive2D {
 	topLeft, bottomRight := utils.GetBoundingBox(points)
 
@@ -259,7 +291,7 @@ func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool)
 	primitive.position = position
 	primitive.size = bottomRight.Sub(topLeft)
 	primitive.scale = mgl32.Vec2{1, 1}
-	primitive.shaderProgram = NewShaderProgram(VertexShaderPrimitive2D, "", FragmentShaderSolidColor)
+	primitive.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderSolidColor)
 	primitive.rebuildMatrices()
 
 	// Vertices
@@ -311,23 +343,3 @@ func (p *Primitive2D) SetUVCoords(uvCoords []float32) {
 	gl.VertexAttribPointer(1, 2, gl.FLOAT, false, 0, gl.PtrOffset(0))
 	gl.BindVertexArray(0)
 }
-
-const (
-	VertexShaderPrimitive2D = `
-        #version 410 core
-
-        uniform mat4 mModel;
-        uniform mat4 mProjection;
-
-        layout(location=0) in vec2 vertex;
-        layout(location=1) in vec2 uv;
-
-        out vec2 uv_out;
-
-        void main() {
-            vec4 vertex_world = mModel * vec4(vertex, 0, 1);
-            gl_Position = mProjection * vertex_world;
-            uv_out = uv;
-        }
-        ` + "\x00"
-)
