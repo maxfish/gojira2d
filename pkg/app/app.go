@@ -39,9 +39,9 @@ func init() {
 func Init(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) {
 	window = initWindow(windowWidth, windowHeight, windowTitle)
 	Context = &g.Context{}
-	Context.SetOrtho2DProjection(windowWidth, windowHeight, 1, windowCentered)
+	Context.Camera2D = g.NewCamera2D(windowWidth, windowHeight, 1, windowCentered)
 	UIContext = &g.Context{}
-	UIContext.SetOrtho2DProjection(windowWidth, windowHeight, 1, false)
+	UIContext.Camera2D = g.NewCamera2D(windowWidth, windowHeight, 1, false)
 	FpsCounter = &utils.FPSCounter{}
 
 	font := ui.NewFontFromFiles(

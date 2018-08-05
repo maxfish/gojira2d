@@ -15,7 +15,7 @@ type Drawable interface {
 
 // Context ...
 type Context struct {
-	projectionMatrix     mgl32.Mat4
+	Camera2D             *Camera2D
 	viewMatrix           mgl32.Mat4
 	currentTexture       *Texture
 	currentShaderProgram *ShaderProgram
@@ -39,24 +39,4 @@ func (c *Context) BindShader(shader *ShaderProgram) {
 		gl.UseProgram(shader.id)
 		c.currentShaderProgram = shader
 	}
-}
-
-// SetOrtho2DProjection sets up orthogonal projection matrix
-func (c *Context) SetOrtho2DProjection(windowWidth int, windowHeight int, screenScale float32, centered bool) {
-	var left, right, top, bottom float32
-	if centered {
-		// 0,0 is placed at the center of the window
-		halfWidth := float32(windowWidth) / 2 / screenScale
-		halfHeight := float32(windowHeight) / 2 / screenScale
-		left = -halfWidth
-		right = halfWidth
-		top = halfHeight
-		bottom = -halfHeight
-	} else {
-		left = 0
-		right = float32(windowWidth)
-		top = float32(windowHeight)
-		bottom = 0
-	}
-	c.projectionMatrix = mgl32.Ortho(left, right, top, bottom, 1, -1)
 }
