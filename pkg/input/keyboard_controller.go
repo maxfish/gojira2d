@@ -119,8 +119,8 @@ func (c *KeyboardController) NumButtons() int {
 	return c.numButtons
 }
 
-// NumAxis number of the axes this controller is simulating
-func (c *KeyboardController) NumAxis() int {
+// NumAxes number of the axes this controller is simulating
+func (c *KeyboardController) NumAxes() int {
 	return c.numAxes
 }
 

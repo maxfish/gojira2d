@@ -137,7 +137,7 @@ func (c *JoystickController) NumButtons() int {
 	return c.numButtons
 }
 
-func (c *JoystickController) NumAxis() int {
+func (c *JoystickController) NumAxes() int {
 	return c.numAxes
 }
 
