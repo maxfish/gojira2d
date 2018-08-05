@@ -86,35 +86,35 @@ func posForButton(buttonIndex int) mgl32.Vec3 {
 	var y float32 = 320
 	var yCenter float32 = 240
 	switch input.ControllerButton(buttonIndex) {
-	case input.BUTTON_A:
+	case input.ButtonA:
 		return mgl32.Vec3{xRight, y + 60, 0}
-	case input.BUTTON_B:
+	case input.ButtonB:
 		return mgl32.Vec3{xRight + 30, y + 30, 0}
-	case input.BUTTON_X:
+	case input.ButtonX:
 		return mgl32.Vec3{xRight - 30, y + 30, 0}
-	case input.BUTTON_Y:
+	case input.ButtonY:
 		return mgl32.Vec3{xRight, y, 0}
-	case input.BUTTON_DIR_PAD_DOWN:
+	case input.ButtonDirPadDown:
 		return mgl32.Vec3{xLeft, y + 60, 0}
-	case input.BUTTON_DIR_PAD_RIGHT:
+	case input.ButtonDirPadRight:
 		return mgl32.Vec3{xLeft + 30, y + 30, 0}
-	case input.BUTTON_DIR_PAD_LEFT:
+	case input.ButtonDirPadLeft:
 		return mgl32.Vec3{xLeft - 30, y + 30, 0}
-	case input.BUTTON_DIR_PAD_UP:
+	case input.ButtonDirPadUp:
 		return mgl32.Vec3{xLeft, y, 0}
-	case input.BUTTON_BACK:
+	case input.ButtonBack:
 		return mgl32.Vec3{xCenter - 30, y - 20, 0}
-	case input.BUTTON_GUIDE:
+	case input.ButtonGuide:
 		return mgl32.Vec3{xCenter, y - 20, 0}
-	case input.BUTTON_START:
+	case input.ButtonStart:
 		return mgl32.Vec3{xCenter + 30, y - 20, 0}
-	case input.BUTTON_LEFT_SHOULDER:
+	case input.ButtonLeftShoulder:
 		return mgl32.Vec3{xLeft, yCenter - 90, 0}
-	case input.BUTTON_RIGHT_SHOULDER:
+	case input.ButtonRightShoulder:
 		return mgl32.Vec3{xRight, yCenter - 90, 0}
-	case input.BUTTON_LEFT_STICK:
+	case input.ButtonLeftStick:
 		return mgl32.Vec3{xLeft, yCenter, 0}
-	case input.BUTTON_RIGHT_STICK:
+	case input.ButtonRightStick:
 		return mgl32.Vec3{xRight, yCenter, 0}
 	}
 

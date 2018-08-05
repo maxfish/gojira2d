@@ -28,7 +28,7 @@ var (
 
 func init() {
 	// Map keeping track of the connected joysticks
-	JoystickControllers = make(map[int]*JoystickController, MAX_NUM_JOYSTICKS)
+	JoystickControllers = make(map[int]*JoystickController, MaxNumJoysticks)
 
 	// Attach the status change callback
 	glfw.SetJoystickCallback(func(joy, event int) {

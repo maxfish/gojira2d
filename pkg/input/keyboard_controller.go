@@ -80,16 +80,16 @@ func (c *KeyboardController) Update() {
 	}
 
 	// Axes
-	if c.buttonsDown[BUTTON_DIR_PAD_LEFT] {
+	if c.buttonsDown[ButtonDirPadLeft] {
 		c.axes[0] = -1
-	} else if c.buttonsDown[BUTTON_DIR_PAD_RIGHT] {
+	} else if c.buttonsDown[ButtonDirPadRight] {
 		c.axes[0] = 1
 	} else {
 		c.axes[0] = 0
 	}
-	if c.buttonsDown[BUTTON_DIR_PAD_UP] {
+	if c.buttonsDown[ButtonDirPadUp] {
 		c.axes[1] = -1
-	} else if c.buttonsDown[BUTTON_DIR_PAD_DOWN] {
+	} else if c.buttonsDown[ButtonDirPadDown] {
 		c.axes[1] = 1
 	} else {
 		c.axes[1] = 0

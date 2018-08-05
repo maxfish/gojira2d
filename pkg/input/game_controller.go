@@ -4,35 +4,41 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
+// ControllerButton type representing a button of the input device
 type ControllerButton int
+
+// ControllerAxis type representing an axis of the input device
 type ControllerAxis int
 
+// Constants for all the buttons and axes
 const (
-	BUTTON_A ControllerButton = iota
-	BUTTON_B
-	BUTTON_X
-	BUTTON_Y
-	BUTTON_BACK
-	BUTTON_GUIDE
-	BUTTON_START
-	BUTTON_LEFT_STICK
-	BUTTON_RIGHT_STICK
-	BUTTON_LEFT_SHOULDER
-	BUTTON_RIGHT_SHOULDER
-	BUTTON_DIR_PAD_UP
-	BUTTON_DIR_PAD_DOWN
-	BUTTON_DIR_PAD_LEFT
-	BUTTON_DIR_PAD_RIGHT
-	AXIS_LEFT_X ControllerAxis = iota
-	AXIS_LEFT_Y
-	AXIS_RIGHT_X
-	AXIS_RIGHT_Y
-	AXIS_TRIGGER_LEFT
-	AXIS_TRIGGER_RIGHT
+	ButtonA ControllerButton = iota
+	ButtonB
+	ButtonX
+	ButtonY
+	ButtonBack
+	ButtonGuide
+	ButtonStart
+	ButtonLeftStick
+	ButtonRightStick
+	ButtonLeftShoulder
+	ButtonRightShoulder
+	ButtonDirPadUp
+	ButtonDirPadDown
+	ButtonDirPadLeft
+	ButtonDirPadRight
+	AxisLeftX ControllerAxis = iota
+	AxisLeftY
+	AxisRightX
+	AxisRightY
+	AxisTriggerLeft
+	AxisTriggerRight
 
-	MAX_NUM_JOYSTICKS = glfw.JoystickLast
+	// MaxNumJoysticks max num of joysticks allowed by glfw
+	MaxNumJoysticks = glfw.JoystickLast
 )
 
+// A set of basic mappings
 var (
 	GameControllerMappings []*GameControllerMapping
 	MappingXBox360         GameControllerMapping
@@ -40,6 +46,7 @@ var (
 	MappingKeyboard        GameControllerMapping
 )
 
+// GameController represents a physical input device
 type GameController interface {
 	Connected() bool
 	Open(deviceIndex int) bool
@@ -56,6 +63,7 @@ type GameController interface {
 	Description() string
 }
 
+// GameControllerMapping a axes/buttons mapping for a specific device
 type GameControllerMapping struct {
 	nameRegEx string
 	buttons   []int
