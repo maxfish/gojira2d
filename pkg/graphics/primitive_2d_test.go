@@ -31,6 +31,12 @@ func TestTransformations(t *testing.T) {
 		t.Errorf("SetSize failed\nexpected\n%s received\n%s", expected.String(), p.modelMatrix.String())
 	}
 
+	// Texture is not set, nothing should change
+	p.SetSizeFromTexture()
+	if !p.ModelMatrix().ApproxEqual(expected) {
+		t.Errorf("SetSizeFromTexture with no texture failed\nexpected\n%s received\n%s", expected.String(), p.modelMatrix.String())
+	}
+
 	p.texture = &Texture{0, 20, 20}
 	p.SetSizeFromTexture()
 	expected = mgl32.Mat4FromRows(mgl32.Vec4{40, 0, 0, 0}, mgl32.Vec4{0, 60, 0, 0}, mgl32.Vec4{0, 0, 1, 0}, mgl32.Vec4{0, 0, 0, 1})
