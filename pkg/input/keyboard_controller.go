@@ -7,7 +7,7 @@ import (
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
-// A GameController that used the keyboard to simulate a joystick
+// KeyboardController A GameController that uses the keyboard to simulate a joystick
 type KeyboardController struct {
 	GameController
 	connected       bool
@@ -22,6 +22,7 @@ type KeyboardController struct {
 	keyMapping      map[glfw.Key]int
 }
 
+// Open initializes the keyboard. The parameter is ignored
 func (c *KeyboardController) Open(_ int) bool {
 	if !IsKeyboardFree() {
 		log.Print("The keyboard is already in use")
@@ -53,6 +54,7 @@ func (c *KeyboardController) Open(_ int) bool {
 	return true
 }
 
+// Close disables the keyboard callback and resets all the data
 func (c *KeyboardController) Close() {
 	UnregisterKeyCallback()
 	c.connected = false
@@ -63,6 +65,7 @@ func (c *KeyboardController) Close() {
 	c.axes = nil
 }
 
+// Update gets the input from the keyboard and sets the game controller accordingly
 func (c *KeyboardController) Update() {
 	if !c.connected {
 		return
@@ -93,6 +96,7 @@ func (c *KeyboardController) Update() {
 	}
 }
 
+// AxisValue returns the current value, from -1 to 1, of the axis
 func (c *KeyboardController) AxisValue(axis ControllerAxis) float32 {
 	if int(axis) >= c.numAxes {
 		return 0
@@ -100,22 +104,27 @@ func (c *KeyboardController) AxisValue(axis ControllerAxis) float32 {
 	return c.axes[axis]
 }
 
+// AxisDigitalValue returns a digital value for the axis
 func (c *KeyboardController) AxisDigitalValue(axis ControllerAxis) int {
 	return 0
 }
 
+// Connected returns if this controller is connected and initialized
 func (c *KeyboardController) Connected() bool {
 	return c.connected
 }
 
+// NumButtons number of the buttons this controller is simulating
 func (c *KeyboardController) NumButtons() int {
 	return c.numButtons
 }
 
+// NumAxis number of the axes this controller is simulating
 func (c *KeyboardController) NumAxis() int {
 	return c.numAxes
 }
 
+// ButtonPressed checks if a button has been pressed since the last frame
 func (c *KeyboardController) ButtonPressed(button ControllerButton) bool {
 	if !c.connected {
 		return false
@@ -123,6 +132,7 @@ func (c *KeyboardController) ButtonPressed(button ControllerButton) bool {
 	return c.buttonsPressed[button]
 }
 
+// ButtonReleased checks if a button has been released since the last frame
 func (c *KeyboardController) ButtonReleased(button ControllerButton) bool {
 	if !c.connected {
 		return false
@@ -130,6 +140,7 @@ func (c *KeyboardController) ButtonReleased(button ControllerButton) bool {
 	return c.buttonsReleased[button]
 }
 
+// ButtonDown checks if a button is currently pressed
 func (c *KeyboardController) ButtonDown(button ControllerButton) bool {
 	if !c.connected {
 		return false
@@ -137,10 +148,12 @@ func (c *KeyboardController) ButtonDown(button ControllerButton) bool {
 	return c.buttonsDown[button]
 }
 
+// Description identification string of this controller
 func (c *KeyboardController) Description() string {
 	return fmt.Sprintf("joystick:'Keyboard' buttons:%d axes:0", c.numButtons)
 }
 
+// SetMapping maps the keys to the virtual controller inputs
 func (c *KeyboardController) SetMapping(mapping *GameControllerMapping) {
 	c.mapping = mapping
 	c.keyMapping = make(map[glfw.Key]int)
