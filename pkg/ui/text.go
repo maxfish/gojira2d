@@ -176,7 +176,7 @@ func (t *Text) Shader() *graphics.ShaderProgram {
 // Draw runs all the necessary routines to make drawable appear on screen
 func (t *Text) Draw(context *graphics.Context) {
 	shaderProgram := t.Shader()
-	gl.UseProgram(shaderProgram.Id())
+	gl.UseProgram(shaderProgram.ID())
 	t.SetUniforms()
 	t.drawable.Draw(context)
 }

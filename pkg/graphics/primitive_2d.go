@@ -158,7 +158,7 @@ func (p *Primitive2D) SetUniforms() {
 
 // Draw draws the primitive
 func (p *Primitive2D) Draw(context *Context) {
-	shaderID := p.shaderProgram.Id()
+	shaderID := p.shaderProgram.ID()
 	context.BindTexture(p.texture)
 	gl.UseProgram(shaderID)
 	p.shaderProgram.SetUniform("projection", &context.projectionMatrix)

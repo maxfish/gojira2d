@@ -7,7 +7,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-// Approximate a circle shape with a regular polygon
+// CircleToPolygon approximate a circle shape with a regular polygon
 func CircleToPolygon(center mgl32.Vec2, radius float32, numSegments int, startAngle float32) ([]mgl32.Vec2, error) {
 	if radius <= 0 {
 		return nil, errors.New("Radius cannot be <=0")
@@ -28,7 +28,7 @@ func CircleToPolygon(center mgl32.Vec2, radius float32, numSegments int, startAn
 	return vertices, nil
 }
 
-// Returns the top left and the bottom right points of the 2D box bounding all the points passed.
+// GetBoundingBox returns the top left and the bottom right points of the 2D box bounding all the points passed.
 func GetBoundingBox(points []mgl32.Vec2) (mgl32.Vec2, mgl32.Vec2) {
 	var minX, minY, maxX, maxY float32
 	minX = math.MaxFloat32
