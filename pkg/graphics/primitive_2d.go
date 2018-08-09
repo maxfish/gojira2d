@@ -8,28 +8,9 @@ import (
 	"github.com/maxfish/gojira2d/pkg/utils"
 )
 
-// AnchorHorizontal anchoring constants for X
-type AnchorHorizontal int
-
-// AnchorVertical anchoring constants for Y
-type AnchorVertical int
-
 const (
 	// Float32Size is the size (in bytes) of a float32
 	Float32Size = 4
-
-	// AnchorLeft refers to the left side of the primitive
-	AnchorLeft AnchorHorizontal = iota
-	// AnchorCenter refers to the center (on the X axis) of the primitive
-	AnchorCenter
-	// AnchorRight refers to the right side of the primitive
-	AnchorRight
-	// AnchorTop refers to the top of the primitive
-	AnchorTop AnchorVertical = iota
-	// AnchorMiddle refers to the center (on the Y axis) of the primitive
-	AnchorMiddle
-	// AnchorBottom refers to the bottom of the primitive
-	AnchorBottom
 )
 
 // ModelMatrix matrix representing the primitive transformation
@@ -74,25 +55,6 @@ func (p *Primitive2D) SetAnchor(anchor mgl32.Vec2) {
 // SetAnchorToCenter sets the anchor at the center of the primitive
 func (p *Primitive2D) SetAnchorToCenter() {
 	p.SetAnchor(mgl32.Vec2{p.size[0] / 2.0, p.size[1] / 2.0})
-}
-
-// SetRelativeAnchor set the anchor based on horizontal and vertical alignment
-func (p *Primitive2D) SetRelativeAnchor(horizontal AnchorHorizontal, vertical AnchorVertical) {
-	var h float32
-	var v float32
-	switch horizontal {
-	case AnchorCenter:
-		h = p.size[0] / 2.0
-	case AnchorRight:
-		h = p.size[0] - 1
-	}
-	switch vertical {
-	case AnchorMiddle:
-		v = p.size[1] / 2.0
-	case AnchorBottom:
-		v = p.size[1] - 1
-	}
-	p.SetAnchor(mgl32.Vec2{h, v})
 }
 
 // Angle in radians
