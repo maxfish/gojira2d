@@ -7,7 +7,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-func TestTransformations(t *testing.T) {
+func TestPrimitive2DTransformations(t *testing.T) {
 	p := &Primitive2D{}
 	p.position = mgl32.Vec3{0, 0, 0}
 	p.size = mgl32.Vec2{5, 5}
