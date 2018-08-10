@@ -1,14 +1,14 @@
 package graphics
 
 import (
+	"fmt"
 	"image"
 	"image/draw"
+	"os"
 	// Used only to initialize the JPEG subsystem
 	_ "image/jpeg"
 	// Used only to initialize the PNG subsystem
 	_ "image/png"
-	"log"
-	"os"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 )
@@ -24,14 +24,14 @@ type Texture struct {
 func NewTextureFromFile(filePath string) *Texture {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Panicf("Loading texture. %s", err)
+		fmt.Printf("Error loading texture. %s", err)
 		return nil
 	}
 	defer file.Close()
 
 	decodedImage, format, err := image.Decode(file)
 	if err != nil {
-		log.Panicf("cannot decode image <%s>: '%s'", format, filePath)
+		fmt.Printf("Error decoding <%s> image: '%s'", format, filePath)
 		return nil
 	}
 	return NewTextureFromImage(decodedImage)
@@ -44,7 +44,7 @@ func NewTextureFromImage(imageData image.Image) *Texture {
 	default:
 		rgba := image.NewRGBA(imageData.Bounds())
 		if rgba.Stride != rgba.Rect.Size().X*4 {
-			log.Panicf("unsupported stride")
+			fmt.Printf("Error creating texture: unsupported stride")
 			return nil
 		}
 		draw.Draw(rgba, rgba.Bounds(), imageData, image.Point{0, 0}, draw.Src)
