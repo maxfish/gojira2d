@@ -161,4 +161,5 @@ func (a *B2DVector2D) UnmarshalJSON(b []byte) (err error) {
 }
 
 type B2DCustomPropertyData struct {
+	// TODO Implement
 }
