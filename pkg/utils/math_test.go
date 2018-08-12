@@ -58,6 +58,7 @@ func TestGetBoundingBox(t *testing.T) {
 	}{
 		{[]mgl32.Vec2{{5, 5}, {-10, -10}, {20, 20}}, mgl32.Vec2{-10, -10}, mgl32.Vec2{20, 20}},
 		{[]mgl32.Vec2{{-100, -5}, {-80, 50}, {-4, 20}}, mgl32.Vec2{-100, -5}, mgl32.Vec2{-4, 50}},
+		{[]mgl32.Vec2{{3, 5}, {3, 6}, {2, 6}, {2, 5}}, mgl32.Vec2{2, 5}, mgl32.Vec2{3, 6}},
 	}
 
 	for _, test := range tests {
