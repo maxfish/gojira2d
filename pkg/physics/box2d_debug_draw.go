@@ -1,8 +1,8 @@
 package physics
 
 import (
-	"github.com/ByteArena/box2d"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/maxfish/box2d"
 	"github.com/maxfish/gojira2d/pkg/graphics"
 )
 
@@ -115,11 +115,6 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		c.SetAnchorToCenter()
 		c.SetColor(color)
 		body.SetUserData(c)
-	case box2d.B2Shape_Type.E_edge:
-		// 			b2EdgeShape* edge = (b2EdgeShape*)fixture.GetShape();
-		// 			b2Vec2 v1 = b2Mul(xf, edge.m_vertex1);
-		// 			b2Vec2 v2 = b2Mul(xf, edge.m_vertex2);
-		// 			g_debugDraw.DrawSegment(v1, v2, color);
 	case box2d.B2Shape_Type.E_chain:
 		b2Shape := fixture.GetShape().(*box2d.B2ChainShape)
 		numVertices := b2Shape.M_count
@@ -154,6 +149,8 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		// 				g_debugDraw.DrawSegment(v1, vn, ghostColor);
 		// 				g_debugDraw.DrawCircle(vn, 0.1f, ghostColor);
 		// 			}
+	default:
+		// There are no other shapes supported
 	}
 }
 
@@ -169,11 +166,6 @@ func (d *Box2DDebugDraw) updateShape(body *box2d.B2Body, fixture *box2d.B2Fixtur
 		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
 		c.SetAngle(float32(body.GetAngle()))
 		c.SetColor(color)
-	case box2d.B2Shape_Type.E_edge:
-		// 			b2EdgeShape* edge = (b2EdgeShape*)fixture.GetShape();
-		// 			b2Vec2 v1 = b2Mul(xf, edge.m_vertex1);
-		// 			b2Vec2 v2 = b2Mul(xf, edge.m_vertex2);
-		// 			g_debugDraw.DrawSegment(v1, v2, color);
 	case box2d.B2Shape_Type.E_chain:
 		c := body.GetUserData().(*graphics.Primitive2D)
 		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
@@ -201,6 +193,8 @@ func (d *Box2DDebugDraw) updateShape(body *box2d.B2Body, fixture *box2d.B2Fixtur
 		// 				g_debugDraw.DrawSegment(v1, vn, ghostColor);
 		// 				g_debugDraw.DrawCircle(vn, 0.1f, ghostColor);
 		// 			}
+	default:
+		// There are no other shapes supported
 	}
 }
 
