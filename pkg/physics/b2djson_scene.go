@@ -113,7 +113,7 @@ func (s *B2DJsonScene) buildBody(data *B2DBodyData) *box2d.B2Body {
 
 	for i := 0; i < len(data.Fixture); i++ {
 		_ = s.buildFixture(b2Body, &data.Fixture[i])
-		////readCustomPropertiesFromJson(fixture, fixtureValue);
+		// TODO: Read the custom properties
 	}
 
 	b2MassData := box2d.MakeMassData()
@@ -194,6 +194,7 @@ func (s *B2DJsonScene) buildFixture(b2Body *box2d.B2Body, data *B2DFixtureData) 
 		b2Fixture = b2Body.CreateFixtureFromDef(&b2FixtureDef)
 	}
 
+	// TODO: Read the custom properties
 	// NOTE: these shapes are not exported by R.U.B.E -> edge, loop
 
 	return b2Fixture
@@ -281,6 +282,8 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 
 		jointInterface = s.World.CreateJoint(&j)
 	}
+
+	// TODO: Missing joint types --> Rope, Motor, Weld, Friction
 
 	return jointInterface
 }
