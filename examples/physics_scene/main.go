@@ -13,6 +13,7 @@ func main() {
 
 	// Use a cartesian coordinates system
 	a.Context.Camera2D.SetFlipVertical(true)
+	a.Context.Camera2D.SetPosition(50, 0)
 
 	// Load the scene from a Rube file
 	scene := physics.NewB2DJsonSceneFromFile("examples/assets/test_scene.json")
