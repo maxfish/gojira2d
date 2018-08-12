@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/ByteArena/box2d"
+	"github.com/maxfish/box2d"
 )
 
 type B2DJsonScene struct {
@@ -15,6 +15,9 @@ type B2DJsonScene struct {
 	loadedData  B2DJsonWorld
 	indexToBody map[int]*box2d.B2Body
 	bodyToName  map[*box2d.B2Body]string
+	jointToName map[*box2d.B2Joint]string
+	bodies      []*box2d.B2Body
+	joints      []*box2d.B2Joint
 
 	// Engine parameters
 	PositionIterations int
@@ -26,6 +29,7 @@ func NewB2DJsonSceneFromFile(fileName string) *B2DJsonScene {
 	scene := &B2DJsonScene{}
 	scene.indexToBody = make(map[int]*box2d.B2Body)
 	scene.bodyToName = make(map[*box2d.B2Body]string)
+	scene.jointToName = make(map[*box2d.B2Joint]string)
 
 	// Open the json file
 	jsonFile, err := os.Open(fileName)
@@ -76,42 +80,17 @@ func (s *B2DJsonScene) loadWorld() {
 		bodyData := w.Body[i]
 		body := s.buildBody(&bodyData)
 		s.indexToBody[i] = body
+		s.bodies = append(s.bodies, body)
 	}
 
-	//	//need two passes for joints because gear joints reference other joints
-	//	i = 0;
-	//Json::Value jointValue = worldValue["joint"][i++];
-	//	while ( !jointValue.isNull() ) {
-	//		if ( jointValue["type"].asString() != "gear" ) {
-	//			b2Joint* joint = j2b2Joint(world, jointValue);
-	//			readCustomPropertiesFromJson(joint, jointValue);
-	//			m_joints.push_back(joint);
-	//		}
-	//		jointValue = worldValue["joint"][i++];
-	//	}
-	//	i = 0;
-	//	jointValue = worldValue["joint"][i++];
-	//	while ( !jointValue.isNull() ) {
-	//		if ( jointValue["type"].asString() == "gear" ) {
-	//			b2Joint* joint = j2b2Joint(world, jointValue);
-	//			readCustomPropertiesFromJson(joint, jointValue);
-	//			m_joints.push_back(joint);
-	//		}
-	//		jointValue = worldValue["joint"][i++];
-	//	}
-	//
-	//	i = 0;
-	//Json::Value imageValue = worldValue["image"][i++];
-	//	while ( !imageValue.isNull() ) {
-	//		b2dJsonImage* img = j2b2dJsonImage(imageValue);
-	//		readCustomPropertiesFromJson(img, imageValue);
-	//		m_images.push_back(img);
-	//		addImage(img);
-	//
-	//		imageValue = worldValue["image"][i++];
-	//	}
-	//
-	//	return world;
+	// NOTE: R.U.B.E doesn't support Gear joints. To support them in this loader
+	// two loops are needed. The first one should parse all the non-gear joints and the second
+	// only the gears. Gear joints reference other joins.
+	for i := 0; i < len(w.Joint); i++ {
+		jointData := w.Joint[i]
+		_ = s.buildJoint(&jointData)
+		//s.joints = append(s.joints, joint)
+	}
 }
 
 func (s *B2DJsonScene) buildBody(data *B2DBodyData) *box2d.B2Body {
@@ -126,9 +105,6 @@ func (s *B2DJsonScene) buildBody(data *B2DBodyData) *box2d.B2Body {
 	b2BodyDef.Awake = data.Awake
 	b2BodyDef.FixedRotation = data.FixedRotation
 	b2BodyDef.Bullet = data.Bullet
-	//b2BodyDef.GravityScale = 1 // Value not loaded from file
-	//b2BodyDef.AllowSleep = true // Value not loaded from file
-	//b2BodyDef.Active = true // Value not loaded from file
 
 	b2Body := s.World.CreateBody(&b2BodyDef)
 	if data.Name != "" {
@@ -156,6 +132,8 @@ func (s *B2DJsonScene) buildFixture(b2Body *box2d.B2Body, data *B2DFixtureData) 
 	b2FixtureDef.Friction = data.Friction
 	b2FixtureDef.Density = data.Density
 	b2FixtureDef.IsSensor = data.Sensor
+
+	// TODO: Read the name of the fixture and store it
 
 	filter := box2d.MakeB2Filter()
 	if data.FilterCategoryBits != nil {
@@ -216,42 +194,93 @@ func (s *B2DJsonScene) buildFixture(b2Body *box2d.B2Body, data *B2DFixtureData) 
 		b2Fixture = b2Body.CreateFixtureFromDef(&b2FixtureDef)
 	}
 
-	//else if ( !fixtureValue["edge"].isNull() ) {
-	//	b2EdgeShape edgeShape;
-	//	edgeShape.m_vertex1 = jsonToVec("vertex1", fixtureValue["edge"]);
-	//	edgeShape.m_vertex2 = jsonToVec("vertex2", fixtureValue["edge"]);
-	//	edgeShape.m_hasVertex0 = fixtureValue["edge"].get("hasVertex0",false).asBool();
-	//	edgeShape.m_hasVertex3 = fixtureValue["edge"].get("hasVertex3",false).asBool();
-	//	if ( edgeShape.m_hasVertex0 )
-	//	edgeShape.m_vertex0 = jsonToVec("vertex0", fixtureValue["edge"]);
-	//	if ( edgeShape.m_hasVertex3 )
-	//	edgeShape.m_vertex3 = jsonToVec("vertex3", fixtureValue["edge"]);
-	//	fixtureDef.shape = &edgeShape;
-	//	fixture = b2Body->CreateFixture(&fixtureDef);
-	//}
-	//else if ( !fixtureValue["loop"].isNull() ) { //support old format (r197)
-	//	b2ChainShape chainShape;
-	//	int numVertices = fixtureValue["loop"]["vertices"]["x"].size();
-	//	b2Vec2* vertices = new b2Vec2[numVertices];
-	//	for (int i = 0; i < numVertices; i++)
-	//	vertices[i] = jsonToVec("vertices", fixtureValue["loop"], i);
-	//	chainShape.CreateLoop(vertices, numVertices);
-	//	fixtureDef.shape = &chainShape;
-	//	fixture = b2Body->CreateFixture(&fixtureDef);
-	//	delete[] vertices;
-	//}
-	//
-	//string fixtureName = fixtureValue.get("name","").asString();
-	//if ( fixtureName != "" ) {
-	//	setFixtureName(fixture, fixtureName.c_str());
-	//}
-	//
-	//string fixturePath = fixtureValue.get("path","").asString();
-	//if ( fixturePath != "" ) {
-	//	setFixturePath(fixture, fixturePath.c_str());
-	//}
-	//
-	//return fixture;
+	// NOTE: these shapes are not exported by R.U.B.E -> edge, loop
 
 	return b2Fixture
+}
+
+func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
+	var jointInterface box2d.B2JointInterface
+	bodyIndexA := data.BodyA
+	bodyIndexB := data.BodyB
+
+	if bodyIndexA >= len(s.bodies) || bodyIndexB >= len(s.bodies) {
+		fmt.Println("Error: couldn't create the joint. Bodies indices wrong")
+		return nil
+	}
+
+	// TODO: Read the name of the joint and store it
+
+	if data.Type == "revolute" {
+		j := box2d.MakeB2RevoluteJointDef()
+		j.BodyA = s.bodies[bodyIndexA]
+		j.BodyB = s.bodies[bodyIndexB]
+		j.CollideConnected = data.CollideConnected
+
+		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
+		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
+		j.ReferenceAngle = data.RefAngle
+		j.EnableLimit = data.EnableLimit
+		j.LowerAngle = data.LowerLimit
+		j.UpperAngle = data.UpperLimit
+		j.EnableMotor = data.EnableMotor
+		j.MotorSpeed = data.MotorSpeed
+		j.MaxMotorTorque = data.MaxMotorTorque
+
+		jointInterface = s.World.CreateJoint(&j)
+	} else if data.Type == "prismatic" {
+		// TODO: This works only with fixed rotation set to true!
+		s.bodies[bodyIndexA].SetFixedRotation(true)
+
+		j := box2d.MakeB2PrismaticJointDef()
+
+		j.SetBodyA(s.bodies[bodyIndexA])
+		j.SetBodyB(s.bodies[bodyIndexB])
+		j.SetCollideConnected(data.CollideConnected)
+
+		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
+		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
+		j.LocalAxisA = box2d.B2Vec2{X: data.LocalAxisA.X, Y: data.LocalAxisA.Y}
+		j.ReferenceAngle = data.RefAngle
+		j.EnableLimit = data.EnableLimit
+		j.EnableMotor = data.EnableMotor
+		j.MotorSpeed = data.MotorSpeed
+		j.MaxMotorForce = data.MaxMotorForce
+		j.LowerTranslation = data.LowerLimit
+		j.UpperTranslation = data.UpperLimit
+
+		jointInterface = s.World.CreateJoint(&j)
+	} else if data.Type == "distance" {
+		j := box2d.MakeB2DistanceJointDef()
+
+		j.SetBodyA(s.bodies[bodyIndexA])
+		j.SetBodyB(s.bodies[bodyIndexB])
+		j.SetCollideConnected(data.CollideConnected)
+
+		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
+		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
+		j.Length = data.Length
+		j.FrequencyHz = data.Frequency
+		j.DampingRatio = data.DampingRatio
+
+		jointInterface = s.World.CreateJoint(&j)
+	} else if data.Type == "wheel" {
+		j := box2d.MakeB2WheelJointDef()
+		j.BodyA = s.bodies[bodyIndexA]
+		j.BodyB = s.bodies[bodyIndexB]
+		j.CollideConnected = data.CollideConnected
+
+		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
+		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
+		j.LocalAxisA = box2d.B2Vec2{X: data.LocalAxisA.X, Y: data.LocalAxisA.Y}
+		j.EnableMotor = data.EnableMotor
+		j.MotorSpeed = data.MotorSpeed
+		j.MaxMotorTorque = data.MaxMotorTorque
+		j.FrequencyHz = data.SpringFrequency
+		j.DampingRatio = data.SpringDampingRatio
+
+		jointInterface = s.World.CreateJoint(&j)
+	}
+
+	return jointInterface
 }
