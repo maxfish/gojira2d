@@ -12,6 +12,7 @@ type Camera2D struct {
 	height           float32
 	zoom             float32
 	centered         bool
+	flipVertical     bool
 	near             float32
 	far              float32
 	projectionMatrix mgl32.Mat4
@@ -54,6 +55,12 @@ func (c *Camera2D) SetZoom(zoom float32) {
 	c.matrixDirty = true
 }
 
+// SetFlipVertical sets the orientation of the vertical axis. Pass true to have a cartesian coordinate system
+func (c *Camera2D) SetFlipVertical(flip bool) {
+	c.flipVertical = flip
+	c.matrixDirty = true
+}
+
 func (c *Camera2D) rebuildMatrix() {
 	var left, right, top, bottom float32
 
@@ -73,6 +80,12 @@ func (c *Camera2D) rebuildMatrix() {
 	right += c.x
 	top += c.y
 	bottom += c.y
+
+	if c.flipVertical {
+		tmp := bottom
+		bottom = top
+		top = tmp
+	}
 
 	c.projectionMatrix = mgl32.Ortho(left, right, top, bottom, c.near, c.far)
 	c.matrixDirty = false
