@@ -12,6 +12,7 @@ type Box2DDebugDraw struct {
 	colorStatic    graphics.Color
 	colorKinematic graphics.Color
 	colorAsleep    graphics.Color
+	colorSensor    graphics.Color
 
 	b2World *box2d.B2World
 	PTM     float64
@@ -27,29 +28,17 @@ func NewBox2DDebugDraw(w *box2d.B2World, PTM float64) *Box2DDebugDraw {
 	d.colorStatic = graphics.Color{0.5, 0.9, 0.5, 1}
 	d.colorKinematic = graphics.Color{0.5, 0.5, 0.9, 1}
 	d.colorAsleep = graphics.Color{0.6, 0.6, 0.6, 1}
+	d.colorSensor = graphics.Color{0.6, 0.3, 0.6, 1}
 
 	// TODO: Debug flags??
 	drawShapes := true
 
 	if drawShapes {
-		color := graphics.Color{}
 		body := w.GetBodyList()
 		for body != nil {
-			if !body.IsActive() {
-				color = d.colorInactive
-			} else if body.GetType() == box2d.B2BodyType.B2_staticBody {
-				color = d.colorStatic
-			} else if body.GetType() == box2d.B2BodyType.B2_kinematicBody {
-				color = d.colorKinematic
-			} else if !body.IsAwake() {
-				color = d.colorAsleep
-			} else {
-				color = d.colorNormal
-			}
-			transform := body.GetTransform()
 			fixture := body.GetFixtureList()
 			for fixture != nil {
-				d.buildShape(body, fixture, transform, color)
+				d.buildShape(body, fixture)
 				fixture = fixture.GetNext()
 			}
 			body = body.GetNext()
@@ -65,20 +54,22 @@ func (d *Box2DDebugDraw) Update() {
 	color := graphics.Color{}
 	body := d.b2World.GetBodyList()
 	for body != nil {
-		if !body.IsActive() {
-			color = d.colorInactive
-		} else if body.GetType() == box2d.B2BodyType.B2_staticBody {
-			color = d.colorStatic
-		} else if body.GetType() == box2d.B2BodyType.B2_kinematicBody {
-			color = d.colorKinematic
-		} else if !body.IsAwake() {
-			color = d.colorAsleep
-		} else {
-			color = d.colorNormal
-		}
 		transform := body.GetTransform()
 		fixture := body.GetFixtureList()
 		for fixture != nil {
+			if fixture.IsSensor() {
+				color = d.colorSensor
+			} else if !body.IsActive() {
+				color = d.colorInactive
+			} else if body.GetType() == box2d.B2BodyType.B2_staticBody {
+				color = d.colorStatic
+			} else if body.GetType() == box2d.B2BodyType.B2_kinematicBody {
+				color = d.colorKinematic
+			} else if !body.IsAwake() {
+				color = d.colorAsleep
+			} else {
+				color = d.colorNormal
+			}
 			d.updateShape(body, fixture, transform, color)
 			fixture = fixture.GetNext()
 		}
@@ -99,13 +90,12 @@ func (d *Box2DDebugDraw) Draw(context *graphics.Context) {
 	}
 }
 
-func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture, transform box2d.B2Transform, color graphics.Color) {
+func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture) {
 	switch fixture.GetType() {
 	case box2d.B2Shape_Type.E_circle:
 		circle := fixture.GetShape().(*box2d.B2CircleShape)
 		c := graphics.NewRegularPolygonPrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, float32(circle.M_radius*d.PTM), 10, false)
 		c.SetAnchorToCenter()
-		c.SetColor(color)
 		fixture.SetUserData(c)
 	case box2d.B2Shape_Type.E_polygon:
 		b2Shape := fixture.GetShape().(*box2d.B2PolygonShape)
@@ -116,7 +106,6 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		}
 		c := graphics.NewPolylinePrimitiveRaw(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, true)
 		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
-		c.SetColor(color)
 		fixture.SetUserData(c)
 	case box2d.B2Shape_Type.E_chain:
 		b2Shape := fixture.GetShape().(*box2d.B2ChainShape)
@@ -127,7 +116,6 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		}
 		c := graphics.NewPolylinePrimitiveRaw(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, false)
 		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
-		c.SetColor(color)
 		fixture.SetUserData(c)
 
 		// 			if (chain.m_hasPrevVertex)
