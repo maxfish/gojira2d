@@ -283,18 +283,19 @@ func NewPolylinePrimitiveRaw(position mgl32.Vec3, points []mgl32.Vec2, closed bo
 	primitive.rebuildMatrices()
 
 	// Vertices
-	vertices := make([]float32, 0, len(points)*2)
+	var numVertices int32 = int32(len(points))
+	vertices := make([]float32, 0, numVertices*2)
 	for _, p := range points {
-		// The vertices coordinates are relative to the top left and are scaled by size
 		vertices = append(vertices, p[0], p[1])
 	}
 	if closed {
 		// Add the first point again to close the loop
 		vertices = append(vertices, vertices[0], vertices[1])
+		numVertices++
 	}
 
 	primitive.arrayMode = gl.LINE_STRIP
-	primitive.arraySize = int32(len(vertices) / 2)
+	primitive.arraySize = numVertices
 	primitive.SetVertices(vertices)
 	return primitive
 }
