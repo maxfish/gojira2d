@@ -36,4 +36,11 @@ func TestCamera2D(t *testing.T) {
 	if !c.ProjectionMatrix().ApproxEqual(expected) {
 		t.Errorf("SetZoom failed\nexpected\n%s received\n%s", expected.String(), c.projectionMatrix.String())
 	}
+
+	c.SetFlipVertical(true)
+	expected = mgl32.Mat4FromRows(mgl32.Vec4{0.1, 0, 0, -2}, mgl32.Vec4{0, 0.1, 0, -2}, mgl32.Vec4{0, 0, 0.5, 0}, mgl32.Vec4{0, 0, 0, 1})
+	if !c.ProjectionMatrix().ApproxEqual(expected) {
+		t.Errorf("SetFlipVertical failed\nexpected\n%s received\n%s", expected.String(), c.projectionMatrix.String())
+	}
+
 }
