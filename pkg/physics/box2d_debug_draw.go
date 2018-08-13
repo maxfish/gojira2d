@@ -32,23 +32,23 @@ func NewBox2DDebugDraw(w *box2d.B2World, PTM float64) *Box2DDebugDraw {
 	drawShapes := true
 
 	if drawShapes {
+		color := graphics.Color{}
 		body := w.GetBodyList()
 		for body != nil {
-			color := graphics.Color{}
+			if !body.IsActive() {
+				color = d.colorInactive
+			} else if body.GetType() == box2d.B2BodyType.B2_staticBody {
+				color = d.colorStatic
+			} else if body.GetType() == box2d.B2BodyType.B2_kinematicBody {
+				color = d.colorKinematic
+			} else if !body.IsAwake() {
+				color = d.colorAsleep
+			} else {
+				color = d.colorNormal
+			}
 			transform := body.GetTransform()
 			fixture := body.GetFixtureList()
 			for fixture != nil {
-				if !body.IsActive() {
-					color = d.colorInactive
-				} else if body.GetType() == box2d.B2BodyType.B2_staticBody {
-					color = d.colorStatic
-				} else if body.GetType() == box2d.B2BodyType.B2_kinematicBody {
-					color = d.colorKinematic
-				} else if !body.IsAwake() {
-					color = d.colorAsleep
-				} else {
-					color = d.colorNormal
-				}
 				d.buildShape(body, fixture, transform, color)
 				fixture = fixture.GetNext()
 			}
@@ -61,36 +61,38 @@ func NewBox2DDebugDraw(w *box2d.B2World, PTM float64) *Box2DDebugDraw {
 	return d
 }
 
-func (d *Box2DDebugDraw) Draw(context *graphics.Context) {
+func (d *Box2DDebugDraw) Update() {
+	color := graphics.Color{}
 	body := d.b2World.GetBodyList()
 	for body != nil {
-		if body.GetUserData() != nil {
-			primitive := body.GetUserData().(*graphics.Primitive2D)
-			primitive.Draw(context)
+		if !body.IsActive() {
+			color = d.colorInactive
+		} else if body.GetType() == box2d.B2BodyType.B2_staticBody {
+			color = d.colorStatic
+		} else if body.GetType() == box2d.B2BodyType.B2_kinematicBody {
+			color = d.colorKinematic
+		} else if !body.IsAwake() {
+			color = d.colorAsleep
+		} else {
+			color = d.colorNormal
+		}
+		transform := body.GetTransform()
+		fixture := body.GetFixtureList()
+		for fixture != nil {
+			d.updateShape(body, fixture, transform, color)
+			fixture = fixture.GetNext()
 		}
 		body = body.GetNext()
 	}
 }
 
-func (d *Box2DDebugDraw) Update() {
+func (d *Box2DDebugDraw) Draw(context *graphics.Context) {
 	body := d.b2World.GetBodyList()
 	for body != nil {
-		color := graphics.Color{}
-		transform := body.GetTransform()
 		fixture := body.GetFixtureList()
 		for fixture != nil {
-			if !body.IsActive() {
-				color = d.colorInactive
-			} else if body.GetType() == box2d.B2BodyType.B2_staticBody {
-				color = d.colorStatic
-			} else if body.GetType() == box2d.B2BodyType.B2_kinematicBody {
-				color = d.colorKinematic
-			} else if !body.IsAwake() {
-				color = d.colorAsleep
-			} else {
-				color = d.colorNormal
-			}
-			d.updateShape(body, fixture, transform, color)
+			primitive := fixture.GetUserData().(*graphics.Primitive2D)
+			primitive.Draw(context)
 			fixture = fixture.GetNext()
 		}
 		body = body.GetNext()
@@ -104,7 +106,7 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		c := graphics.NewRegularPolygonPrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, float32(circle.M_radius*d.PTM), 10, false)
 		c.SetAnchorToCenter()
 		c.SetColor(color)
-		body.SetUserData(c)
+		fixture.SetUserData(c)
 	case box2d.B2Shape_Type.E_polygon:
 		b2Shape := fixture.GetShape().(*box2d.B2PolygonShape)
 		numVertices := b2Shape.M_count
@@ -112,11 +114,11 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		for i := 0; i < numVertices; i++ {
 			vertices = append(vertices, mgl32.Vec2{float32(b2Shape.M_vertices[i].X), float32(b2Shape.M_vertices[i].Y)})
 		}
-		c := graphics.NewPolylinePrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, true)
+		c := graphics.NewPolylinePrimitiveRaw(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, true)
 		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
-		c.SetAnchorToCenter()
+		//c.SetAnchorToCenter()
 		c.SetColor(color)
-		body.SetUserData(c)
+		fixture.SetUserData(c)
 	case box2d.B2Shape_Type.E_chain:
 		b2Shape := fixture.GetShape().(*box2d.B2ChainShape)
 		numVertices := b2Shape.M_count
@@ -128,7 +130,7 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
 		c.SetAnchorToCenter()
 		c.SetColor(color)
-		body.SetUserData(c)
+		fixture.SetUserData(c)
 
 		// 			if (chain.m_hasPrevVertex)
 		// 			{
@@ -159,17 +161,17 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 func (d *Box2DDebugDraw) updateShape(body *box2d.B2Body, fixture *box2d.B2Fixture, transform box2d.B2Transform, color graphics.Color) {
 	switch fixture.GetType() {
 	case box2d.B2Shape_Type.E_circle:
-		c := body.GetUserData().(*graphics.Primitive2D)
+		c := fixture.GetUserData().(*graphics.Primitive2D)
 		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
 		c.SetAngle(float32(body.GetAngle()))
 		c.SetColor(color)
 	case box2d.B2Shape_Type.E_polygon:
-		c := body.GetUserData().(*graphics.Primitive2D)
+		c := fixture.GetUserData().(*graphics.Primitive2D)
 		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
 		c.SetAngle(float32(body.GetAngle()))
 		c.SetColor(color)
 	case box2d.B2Shape_Type.E_chain:
-		c := body.GetUserData().(*graphics.Primitive2D)
+		c := fixture.GetUserData().(*graphics.Primitive2D)
 		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
 		c.SetAngle(float32(body.GetAngle()))
 		c.SetColor(color)
