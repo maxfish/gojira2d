@@ -274,6 +274,32 @@ func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool)
 	return primitive
 }
 
+func NewPolylinePrimitiveRaw(position mgl32.Vec3, points []mgl32.Vec2, closed bool) *Primitive2D {
+	primitive := &Primitive2D{}
+	primitive.position = position
+	primitive.size = mgl32.Vec2{1, 1}
+	primitive.scale = mgl32.Vec2{1, 1}
+	primitive.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderSolidColor)
+	primitive.rebuildMatrices()
+
+	// Vertices
+	var numVertices int32 = int32(len(points))
+	vertices := make([]float32, 0, numVertices*2)
+	for _, p := range points {
+		vertices = append(vertices, p[0], p[1])
+	}
+	if closed {
+		// Add the first point again to close the loop
+		vertices = append(vertices, vertices[0], vertices[1])
+		numVertices++
+	}
+
+	primitive.arrayMode = gl.LINE_STRIP
+	primitive.arraySize = numVertices
+	primitive.SetVertices(vertices)
+	return primitive
+}
+
 // SetVertices uploads new set of vertices into opengl buffer
 func (p *Primitive2D) SetVertices(vertices []float32) {
 	if p.vaoId == 0 {

@@ -17,6 +17,7 @@ func main() {
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{250, 100, 0}, 50, 6, true),
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{400, 100, 0}, 50, 8, false),
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{550, 100, 0}, 50, 12, true),
+		g.NewPolylinePrimitive(mgl32.Vec3{250, 250, 0}, []mgl32.Vec2{{-40, -30}, {40, -30}, {40, 30}, {-40, 30}}, true),
 		g.NewPolylinePrimitive(mgl32.Vec3{50, 420, 0}, []mgl32.Vec2{{60, 20}, {20, 20}, {20, 70}, {60, 70}, {60, 45}, {40, 45}}, false),
 		g.NewPolylinePrimitive(mgl32.Vec3{110, 420, 0}, []mgl32.Vec2{{0, 0}, {0, 50}, {40, 50}}, false),
 	}
@@ -37,6 +38,7 @@ func main() {
 		primitives[2].SetAngle(animationAngle)
 		primitives[3].SetAngle(animationAngle)
 		primitives[3].SetScale(mgl32.Vec2{animationScale, animationScale})
+		primitives[4].SetAngle(animationAngle)
 	}, func() {
 		for _, p := range primitives {
 			p.Draw(app.Context)
