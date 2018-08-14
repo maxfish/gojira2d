@@ -7,8 +7,10 @@ import (
 )
 
 func main() {
-	app.Init(640, 480, true, "Quad")
+	app.Init(640, 480, "Quad")
 	defer app.Terminate()
+
+	app.Context.Camera2D.SetCentered(true)
 
 	Quad := g.NewQuadPrimitive(mgl32.Vec3{0, 0, 0}, mgl32.Vec2{200, 200})
 	Quad.SetAnchorToCenter()

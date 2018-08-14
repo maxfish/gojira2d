@@ -20,12 +20,11 @@ type Camera2D struct {
 }
 
 // NewCamera2D sets up an orthogonal projection camera
-func NewCamera2D(width int, height int, zoom float32, centered bool) *Camera2D {
+func NewCamera2D(width int, height int, zoom float32) *Camera2D {
 	c := &Camera2D{
-		width:    float32(width),
-		height:   float32(height),
-		zoom:     zoom,
-		centered: centered,
+		width:  float32(width),
+		height: float32(height),
+		zoom:   zoom,
 	}
 	c.far = -2
 	c.near = 2
@@ -52,6 +51,12 @@ func (c *Camera2D) SetPosition(x float32, y float32) {
 // SetZoom sets the zoom factor
 func (c *Camera2D) SetZoom(zoom float32) {
 	c.zoom = zoom
+	c.matrixDirty = true
+}
+
+// SetCentered sets the center of the camera to the center of the screen
+func (c *Camera2D) SetCentered(centered bool) {
+	c.centered = centered
 	c.matrixDirty = true
 }
 

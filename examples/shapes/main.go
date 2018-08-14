@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	app.Init(640, 480, false, "Shapes")
+	app.Init(640, 480, "Shapes")
 	defer app.Terminate()
 
 	primitives := []*g.Primitive2D{
