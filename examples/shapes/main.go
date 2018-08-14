@@ -17,8 +17,8 @@ func main() {
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{250, 100, 0}, 50, 6, true),
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{400, 100, 0}, 50, 8, false),
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{550, 100, 0}, 50, 12, true),
-		g.NewPolylinePrimitiveRaw(mgl32.Vec3{50, 420, 0}, []mgl32.Vec2{{20, -20}, {-20, -20}, {-20, 40}, {20, 40}, {20, 10}, {0, 10}}, false),
-		g.NewPolylinePrimitiveRaw(mgl32.Vec3{110, 420, 0}, []mgl32.Vec2{{-20, -20}, {-20, 40}, {20, 40}}, false),
+		g.NewPolylinePrimitive(mgl32.Vec3{50, 420, 0}, []mgl32.Vec2{{20, -20}, {-20, -20}, {-20, 40}, {20, 40}, {20, 10}, {0, 10}}, false),
+		g.NewPolylinePrimitive(mgl32.Vec3{110, 420, 0}, []mgl32.Vec2{{-20, -20}, {-20, 40}, {20, 40}}, false),
 	}
 
 	for _, p := range primitives {

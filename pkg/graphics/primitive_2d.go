@@ -246,8 +246,8 @@ func NewTriangles(
 	return p
 }
 
-// NewPolylinePrimitiveRaw creates a primitive from a sequence of points. The points coordinates are relative to the passed center
-func NewPolylinePrimitiveRaw(center mgl32.Vec3, points []mgl32.Vec2, closed bool) *Primitive2D {
+// NewPolylinePrimitive creates a primitive from a sequence of points. The points coordinates are relative to the passed center
+func NewPolylinePrimitive(center mgl32.Vec3, points []mgl32.Vec2, closed bool) *Primitive2D {
 	primitive := &Primitive2D{}
 	primitive.position = center
 	primitive.size = mgl32.Vec2{1, 1}

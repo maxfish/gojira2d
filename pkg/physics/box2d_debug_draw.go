@@ -104,7 +104,7 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		for i := 0; i < numVertices; i++ {
 			vertices = append(vertices, mgl32.Vec2{float32(b2Shape.M_vertices[i].X), float32(b2Shape.M_vertices[i].Y)})
 		}
-		c := graphics.NewPolylinePrimitiveRaw(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, true)
+		c := graphics.NewPolylinePrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, true)
 		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
 		fixture.SetUserData(c)
 	case box2d.B2Shape_Type.E_chain:
@@ -114,7 +114,7 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		for i := 0; i < numVertices; i++ {
 			vertices = append(vertices, mgl32.Vec2{float32(b2Shape.M_vertices[i].X), float32(b2Shape.M_vertices[i].Y)})
 		}
-		c := graphics.NewPolylinePrimitiveRaw(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, false)
+		c := graphics.NewPolylinePrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, false)
 		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
 		fixture.SetUserData(c)
 
