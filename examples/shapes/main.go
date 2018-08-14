@@ -22,7 +22,6 @@ func main() {
 	}
 
 	for _, p := range primitives {
-		p.SetAnchorToCenter()
 		p.SetColor(g.Color{1, 1, 1, 1})
 	}
 
