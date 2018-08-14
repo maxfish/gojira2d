@@ -39,7 +39,7 @@ func GetBoundingBox(points []mgl32.Vec2) (mgl32.Vec2, mgl32.Vec2) {
 		if p.X() < minX {
 			minX = p.X()
 		}
-		if p.Y() > maxX {
+		if p.X() > maxX {
 			maxX = p.X()
 		}
 		if p.Y() < minY {
