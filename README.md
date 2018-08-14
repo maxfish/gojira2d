@@ -19,12 +19,9 @@ repository into `$GOPATH/src` folder:
     $ cd $GOPATH/src/maxfish/gojira2d
     $ git remote set-url origin git@github.com:maxfish/gojira2d.git
 
-Install Golang dependencies:
+Install Golang [`dep tool`](https://github.com/golang/dep) and use it to fetch dependencies:
 
-    $ go get \
-        github.com/go-gl/mathgl/mgl32 \
-        github.com/go-gl/gl/v4.1-core/gl \
-        github.com/go-gl/glfw/v3.2/glfw
+    $ dep ensure
 
 Try running some examples:
 
