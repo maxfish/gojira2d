@@ -188,16 +188,16 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) *Primitive2D {
 }
 
 // NewRegularPolygonPrimitive creates a primitive from a regular polygon
-func NewRegularPolygonPrimitive(position mgl32.Vec3, radius float32, numSegments int, filled bool) *Primitive2D {
-	circlePoints, err := utils.CircleToPolygon(mgl32.Vec2{0.5, 0.5}, 0.5, numSegments, 0)
+func NewRegularPolygonPrimitive(center mgl32.Vec3, radius float32, numSegments int, filled bool) *Primitive2D {
+	circlePoints, err := utils.CircleToPolygon(mgl32.Vec2{0, 0}, radius, numSegments, 0)
 	if err != nil {
 		log.Panic(err)
 		return nil
 	}
 
 	q := &Primitive2D{}
-	q.position = position
-	q.size = mgl32.Vec2{radius * 2, radius * 2}
+	q.position = center
+	q.size = mgl32.Vec2{1, 1}
 	q.scale = mgl32.Vec2{1, 1}
 	q.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderSolidColor)
 	q.rebuildMatrices()
