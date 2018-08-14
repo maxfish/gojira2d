@@ -246,34 +246,6 @@ func NewTriangles(
 	return p
 }
 
-// NewPolylinePrimitive creates a primitive from a sequence of points
-func NewPolylinePrimitive(position mgl32.Vec3, points []mgl32.Vec2, closed bool) *Primitive2D {
-	topLeft, bottomRight := utils.GetBoundingBox(points)
-
-	primitive := &Primitive2D{}
-	primitive.position = position
-	primitive.size = bottomRight.Sub(topLeft)
-	primitive.scale = mgl32.Vec2{1, 1}
-	primitive.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderSolidColor)
-	primitive.rebuildMatrices()
-
-	// Vertices
-	vertices := make([]float32, 0, len(points)*2)
-	for _, p := range points {
-		// The vertices coordinates are relative to the top left and are scaled by size
-		vertices = append(vertices, (p[0]-topLeft[0])/primitive.size.X(), (p[1]-topLeft[1])/primitive.size.Y())
-	}
-	if closed {
-		// Add the first point again to close the loop
-		vertices = append(vertices, vertices[0], vertices[1])
-	}
-
-	primitive.arrayMode = gl.LINE_STRIP
-	primitive.arraySize = int32(len(vertices) / 2)
-	primitive.SetVertices(vertices)
-	return primitive
-}
-
 // NewPolylinePrimitiveRaw creates a primitive from a sequence of points. The points coordinates are relative to the passed center
 func NewPolylinePrimitiveRaw(center mgl32.Vec3, points []mgl32.Vec2, closed bool) *Primitive2D {
 	primitive := &Primitive2D{}
