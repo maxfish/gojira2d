@@ -4,6 +4,7 @@ import "encoding/json"
 
 // Description of a scene as produced by R.U.B.E editor (https://www.iforce2d.net/rube/json-structure)
 
+// B2DJsonWorld represent the whole Box2D world
 type B2DJsonWorld struct {
 	Gravity            B2DVector2D               `json:"gravity"`
 	AllowSleep         bool                      `json:"allowSleep"`
@@ -21,6 +22,7 @@ type B2DJsonWorld struct {
 	Joint []B2DJointData `json:"joint"`
 }
 
+// B2DBodyData a Box2D body
 type B2DBodyData struct {
 	Name            string      `json:"name"`
 	Type            uint8       `json:"type"`  // 0 = static, 1 = kinematic, 2 = dynamic
@@ -41,6 +43,7 @@ type B2DBodyData struct {
 	CustomProperties []B2DCustomPropertyData `json:"customProperties"`
 }
 
+// B2DFixtureData a Box2D fixture
 type B2DFixtureData struct {
 	Name               string  `json:"name"`
 	Density            float64 `json:"density"`
@@ -58,6 +61,7 @@ type B2DFixtureData struct {
 	CustomProperties []B2DCustomPropertyData `json:"customProperties"`
 }
 
+// B2DJointData a Box2D joint
 type B2DJointData struct {
 	Type             string      `json:"type"`
 	Name             string      `json:"name"`
@@ -90,6 +94,7 @@ type B2DJointData struct {
 	CustomProperties []B2DCustomPropertyData `json:"customProperties"`
 }
 
+// B2DImageData an image added to the bodies
 type B2DImageData struct {
 	Name        string          `json:"name"`
 	Opacity     float64         `json:"opacity"`
@@ -111,19 +116,23 @@ type B2DImageData struct {
 	CustomProperties  []B2DCustomPropertyData `json:"customProperties"`
 }
 
+// B2DVerticesData a list of 2D vertices
 type B2DVerticesData struct {
 	X []float64 `json:"x"`
 	Y []float64 `json:"y"`
 }
 
+// B2DCollisionBitplanesData a list of collision bitplanes names
 type B2DCollisionBitplanesData struct {
 	Names []string `json:"names"`
 }
 
+// B2DPolygonFixtureData data necessary to represent a polygon fixture
 type B2DPolygonFixtureData struct {
 	Vertices B2DVerticesData `json:"vertices"`
 }
 
+// B2DChainFixtureData data necessary to represent a chain fixture
 type B2DChainFixtureData struct {
 	Vertices B2DVerticesData `json:"vertices"`
 	//If the following properties are not present, the shape is an open-ended
@@ -134,11 +143,13 @@ type B2DChainFixtureData struct {
 	PrevVertex    B2DVector2D `json:"prevVertex"`
 }
 
+// B2DCircleFixtureData data necessary to represent a circle fixture
 type B2DCircleFixtureData struct {
 	Center B2DVector2D `json:"center"`
 	Radius float64     `json:"radius"`
 }
 
+// B2DVector2D a 2D vector
 type B2DVector2D struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`
@@ -147,6 +158,7 @@ type B2DVector2D struct {
 // Unmarshaler for the Vector2D type.
 type _vector2D B2DVector2D
 
+// UnmarshalJSON handle attributes that can have different value types
 func (a *B2DVector2D) UnmarshalJSON(b []byte) (err error) {
 	j, n := _vector2D{}, float64(0)
 	if err = json.Unmarshal(b, &j); err == nil {
@@ -160,6 +172,7 @@ func (a *B2DVector2D) UnmarshalJSON(b []byte) (err error) {
 	return
 }
 
+// B2DCustomPropertyData custom parameters specified within R.U.B.E
 type B2DCustomPropertyData struct {
 	// TODO Implement
 }

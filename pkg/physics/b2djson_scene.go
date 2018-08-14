@@ -10,6 +10,7 @@ import (
 	"github.com/maxfish/box2d"
 )
 
+// B2DJsonScene A scene produced by R.U.B.E
 type B2DJsonScene struct {
 	World       *box2d.B2World
 	loadedData  B2DJsonWorld
@@ -25,6 +26,7 @@ type B2DJsonScene struct {
 	StepsPerSecond     float64
 }
 
+// NewB2DJsonSceneFromFile Loads the scene from an exported JSON file
 func NewB2DJsonSceneFromFile(fileName string) *B2DJsonScene {
 	scene := &B2DJsonScene{}
 	scene.indexToBody = make(map[int]*box2d.B2Body)
