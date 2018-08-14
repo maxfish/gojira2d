@@ -10,7 +10,7 @@ Simple 2D game library based on modern OpenGL
 
 Install Golang and GLFW:
 
-    $ brew install go glfw
+    $ brew install go dep glfw
 
 Setup your [`$GOPATH`](https://golang.org/doc/code.html#GOPATH) and clone the
 repository into `$GOPATH/src` folder:
@@ -19,7 +19,7 @@ repository into `$GOPATH/src` folder:
     $ cd $GOPATH/src/maxfish/gojira2d
     $ git remote set-url origin git@github.com:maxfish/gojira2d.git
 
-Install Golang [`dep tool`](https://github.com/golang/dep) and use it to fetch dependencies:
+Use `dep` to fetch dependencies:
 
     $ dep ensure
 
