@@ -7,6 +7,22 @@
 
 Simple 2D game library written in Go and based on modern OpenGL.
 
+Gojira2D is licensed under the terms of the MIT License. See LICENSE for details of the usage license granted to you for this code.
+
+## HIGHLIGHTS
+
+* It uses [GLFW](https://github.com/go-gl/glfw) as window manager
+* Super easy setup: create a window and a game loop in less than 10 lines of code
+* Shader support: Vertex, Geometry, Fragment
+* Input handling:
+  * Basic support for keyboard and mouse
+  * Joystick support, including emulation via keyboard
+* Basic support for shapes: lines, polylines and [approximated] circles
+* Fonts support:
+  * Bitmap fonts in [BMFont format](http://www.angelcode.com/products/bmfont/doc/file_format.html)
+  * Distance field rendering of TTF fonts
+* Developed and tested on MacOS using OpenGL 4.1
+
 ## Installation
 
 Install Golang and GLFW:
