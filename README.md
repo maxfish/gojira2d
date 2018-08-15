@@ -21,6 +21,9 @@ Gojira2D is licensed under the terms of the MIT License. See LICENSE for details
 * Fonts support:
   * Bitmap fonts in [BMFont format](http://www.angelcode.com/products/bmfont/doc/file_format.html)
   * Distance field rendering of TTF fonts
+* Physics support:
+  * 2D rigid body physics via Box2D
+  * [R.U.B.E](https://www.iforce2d.net/rube/) ([JSON format](https://www.iforce2d.net/rube/json-structure)) scene loader
 * Developed and tested on MacOS using OpenGL 4.1
 
 ## Installation
