@@ -12,6 +12,7 @@ func main() {
 	app.Init(640, 480, "Shapes")
 	defer app.Terminate()
 
+	app.SetFPSCounterVisible(true)
 	primitives := []*g.Primitive2D{
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{100, 100, 0}, 50, 5, false),
 		g.NewRegularPolygonPrimitive(mgl32.Vec3{250, 100, 0}, 50, 6, true),

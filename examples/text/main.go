@@ -16,6 +16,8 @@ func main() {
 	app.SetClearColor(graphics.Color{0, 0, 0, 1})
 	defer app.Terminate()
 
+	app.SetFPSCounterVisible(true)
+
 	font := ui.NewFontFromFiles(
 		"mono",
 		"examples/assets/fonts/roboto-mono-regular.fnt",

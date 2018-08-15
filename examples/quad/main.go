@@ -10,6 +10,7 @@ func main() {
 	app.Init(640, 480, "Quad")
 	defer app.Terminate()
 
+	app.SetFPSCounterVisible(true)
 	app.Context.Camera2D.SetCentered(true)
 
 	Quad := g.NewQuadPrimitive(mgl32.Vec3{0, 0, 0}, mgl32.Vec2{200, 200})
