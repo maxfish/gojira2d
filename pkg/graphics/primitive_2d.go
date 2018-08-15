@@ -171,13 +171,13 @@ func (p *Primitive2D) ModelMatrix() *mgl32.Mat4 {
 
 // NewQuadPrimitive creates a rectangular primitive
 func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) *Primitive2D {
-	q := &Primitive2D{}
-	q.position = position
-	q.size = size
-	q.scale = mgl32.Vec2{1, 1}
+	q := &Primitive2D{
+		position: position,
+		size:     size,
+		scale:    mgl32.Vec2{1, 1},
+	}
 	q.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderTexture)
 	q.rebuildMatrices()
-
 	q.arrayMode = gl.TRIANGLE_FAN
 	q.arraySize = 4
 
@@ -195,10 +195,11 @@ func NewRegularPolygonPrimitive(center mgl32.Vec3, radius float32, numSegments i
 		return nil
 	}
 
-	q := &Primitive2D{}
-	q.position = center
-	q.size = mgl32.Vec2{1, 1}
-	q.scale = mgl32.Vec2{1, 1}
+	q := &Primitive2D{
+		position: center,
+		size:     mgl32.Vec2{1, 1},
+		scale:    mgl32.Vec2{1, 1},
+	}
 	q.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderSolidColor)
 	q.rebuildMatrices()
 
@@ -229,14 +230,15 @@ func NewTriangles(
 	size mgl32.Vec2,
 	shaderProgram *ShaderProgram,
 ) *Primitive2D {
-	p := &Primitive2D{}
+	p := &Primitive2D{
+		position: position,
+		size:     size,
+		scale:    mgl32.Vec2{1, 1},
+	}
 	p.arrayMode = gl.TRIANGLES
 	p.arraySize = int32(len(vertices) / 2)
 	p.texture = texture
 	p.shaderProgram = shaderProgram
-	p.position = position
-	p.scale = mgl32.Vec2{1, 1}
-	p.size = size
 	p.rebuildMatrices()
 	gl.GenVertexArrays(1, &p.vaoId)
 	gl.BindVertexArray(p.vaoId)
@@ -248,10 +250,11 @@ func NewTriangles(
 
 // NewPolylinePrimitive creates a primitive from a sequence of points. The points coordinates are relative to the passed center
 func NewPolylinePrimitive(center mgl32.Vec3, points []mgl32.Vec2, closed bool) *Primitive2D {
-	primitive := &Primitive2D{}
-	primitive.position = center
-	primitive.size = mgl32.Vec2{1, 1}
-	primitive.scale = mgl32.Vec2{1, 1}
+	primitive := &Primitive2D{
+		position: center,
+		size:     mgl32.Vec2{1, 1},
+		scale:    mgl32.Vec2{1, 1},
+	}
 	primitive.shaderProgram = NewShaderProgram(VertexShaderBase, "", FragmentShaderSolidColor)
 	primitive.rebuildMatrices()
 
