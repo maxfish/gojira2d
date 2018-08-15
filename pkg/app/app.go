@@ -8,7 +8,6 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/maxfish/gojira2d/pkg/graphics"
 	g "github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/ui"
 	"github.com/maxfish/gojira2d/pkg/utils"
@@ -21,6 +20,8 @@ const (
 
 var (
 	window         *glfw.Window
+	windowWidth    int
+	windowHeight   int
 	Context        *g.Context
 	UIContext      *g.Context
 	FpsCounter     *utils.FPSCounter
@@ -37,27 +38,14 @@ func init() {
 }
 
 // Init initializes the main window
-func Init(windowWidth int, windowHeight int, windowTitle string) {
+func Init(width int, height int, windowTitle string) {
+	windowWidth = width
+	windowHeight = height
 	window = initWindow(windowWidth, windowHeight, windowTitle)
 	Context = &g.Context{}
 	Context.Camera2D = g.NewCamera2D(windowWidth, windowHeight, 1)
 	UIContext = &g.Context{}
 	UIContext.Camera2D = g.NewCamera2D(windowWidth, windowHeight, 1)
-	FpsCounter = &utils.FPSCounter{}
-
-	font := ui.NewFontFromFiles(
-		"mono",
-		"examples/assets/fonts/roboto-mono-regular.fnt",
-		"examples/assets/fonts/roboto-mono-regular.png",
-	)
-	FpsCounterText = ui.NewText(
-		"0",
-		font,
-		mgl32.Vec3{float32(windowWidth - 30), 10, -1},
-		mgl32.Vec2{25, 25},
-		graphics.Color{1, 0, 0, 1},
-		mgl32.Vec4{0, 0, 0, -.17},
-	)
 }
 
 func Terminate() {
@@ -110,6 +98,29 @@ func SetClearColor(color g.Color) {
 	clearColor = color
 }
 
+func SetFPSCounterVisible(visible bool) {
+	if visible {
+		if FpsCounter == nil {
+			FpsCounter = &utils.FPSCounter{}
+			font := ui.NewFontFromFiles(
+				"mono",
+				"examples/assets/fonts/roboto-mono-regular.fnt",
+				"examples/assets/fonts/roboto-mono-regular.png",
+			)
+			FpsCounterText = ui.NewText(
+				"0",
+				font,
+				mgl32.Vec3{float32(windowWidth - 30), 10, -1},
+				mgl32.Vec2{25, 25},
+				g.Color{1, 0, 0, 1},
+				mgl32.Vec4{0, 0, 0, -.17},
+			)
+		}
+	} else {
+		FpsCounter = nil
+	}
+}
+
 func MainLoop(
 	update func(float64),
 	render func(),
@@ -121,13 +132,14 @@ func MainLoop(
 		oldTime = newTime
 
 		update(deltaTime)
-		FpsCounter.Update(deltaTime, 1)
-		FpsCounterText.SetText(fmt.Sprintf("%v", FpsCounter.FPS()))
-
 		Clear()
 		render()
 
-		FpsCounterText.Draw(UIContext)
+		if FpsCounter != nil {
+			FpsCounter.Update(deltaTime, 1)
+			FpsCounterText.SetText(fmt.Sprintf("%v", FpsCounter.FPS()))
+			FpsCounterText.Draw(UIContext)
+		}
 
 		glfw.PollEvents()
 		window.SwapBuffers()

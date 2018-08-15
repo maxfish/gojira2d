@@ -12,6 +12,7 @@ func main() {
 	app.Init(800, 600, "Quads")
 	defer app.Terminate()
 
+	app.SetFPSCounterVisible(true)
 	quads := make([]*g.Primitive2D, 0, 12)
 	texture := g.NewTextureFromFile("examples/assets/texture.png")
 
