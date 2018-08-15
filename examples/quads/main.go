@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	app.Init(800, 600, false, "Quads")
+	app.Init(800, 600, "Quads")
 	defer app.Terminate()
 
 	quads := make([]*g.Primitive2D, 0, 12)

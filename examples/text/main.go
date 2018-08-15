@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	app.Init(800, 600, false, "Text")
+	app.Init(800, 600, "Text")
 	app.SetClearColor(graphics.Color{0, 0, 0, 1})
 	defer app.Terminate()
 

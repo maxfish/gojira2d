@@ -36,12 +36,13 @@ func init() {
 	}
 }
 
-func Init(windowWidth int, windowHeight int, windowCentered bool, windowTitle string) {
+// Init initializes the main window
+func Init(windowWidth int, windowHeight int, windowTitle string) {
 	window = initWindow(windowWidth, windowHeight, windowTitle)
 	Context = &g.Context{}
-	Context.Camera2D = g.NewCamera2D(windowWidth, windowHeight, 1, windowCentered)
+	Context.Camera2D = g.NewCamera2D(windowWidth, windowHeight, 1)
 	UIContext = &g.Context{}
-	UIContext.Camera2D = g.NewCamera2D(windowWidth, windowHeight, 1, false)
+	UIContext.Camera2D = g.NewCamera2D(windowWidth, windowHeight, 1)
 	FpsCounter = &utils.FPSCounter{}
 
 	font := ui.NewFontFromFiles(

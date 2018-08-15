@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	app.Init(640, 480, false, "Controller Test")
+	app.Init(640, 480, "Controller Test")
 	defer app.Terminate()
 
 	var joy input.GameController
