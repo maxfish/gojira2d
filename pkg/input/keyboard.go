@@ -1,7 +1,7 @@
 package input
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/maxfish/gojira2d/pkg/app"
@@ -13,7 +13,7 @@ var (
 
 func RegisterKeyCallback(callback glfw.KeyCallback) {
 	if keyCallbackFunc != nil {
-		log.Panic("A keyboard key-callback is already registered!")
+		fmt.Println("Error: A keyboard key-callback is already registered!")
 	}
 	keyCallbackFunc = callback
 	app.GetWindow().SetKeyCallback(callback)

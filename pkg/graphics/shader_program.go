@@ -1,7 +1,7 @@
 package graphics
 
 import (
-	"log"
+	"fmt"
 	"strings"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
@@ -58,7 +58,7 @@ func NewShaderProgram(vertSource string, geomSource string, fragSource string) *
 // Release releases all the resources associated with this program
 func (s *ShaderProgram) Release() {
 	if s.id == 0 {
-		log.Panicf("Trying to release a non initialized shader program")
+		fmt.Printf("Error: Trying to release a non initialized shader program")
 	}
 	// TODO
 	//var shadersId [8]uint32
@@ -87,7 +87,7 @@ func (s *ShaderProgram) AttachShader(source string, shaderType ShaderType) {
 		logStr := strings.Repeat("\x00", int(logLength+1))
 		gl.GetShaderInfoLog(shaderID, logLength, nil, gl.Str(logStr))
 
-		log.Panicf("failed to compile %v: %v", source, logStr)
+		fmt.Printf("Error: failed to compile %v: %v", source, logStr)
 	}
 	gl.AttachShader(s.id, shaderID)
 }
@@ -104,7 +104,7 @@ func (s *ShaderProgram) Link() {
 		logStr := strings.Repeat("\x00", int(logLength+1))
 		gl.GetProgramInfoLog(s.id, logLength, nil, gl.Str(logStr))
 
-		log.Panicf("failed to link program: %v", logStr)
+		fmt.Printf("Error: failed to link program: %v", logStr)
 	}
 }
 
@@ -150,7 +150,7 @@ func (s *ShaderProgram) SetUniform(name string, val interface{}) {
 	case *Color:
 		gl.Uniform4fv(uniform, 1, &(*v)[0])
 	default:
-		log.Panicf("unknown value type: %T %+v", val, val)
+		fmt.Printf("Error: unknown value type: %T %+v", val, val)
 	}
 }
 

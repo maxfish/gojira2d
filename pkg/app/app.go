@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
@@ -89,7 +88,7 @@ func initWindow(width, height int, title string) *glfw.Window {
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
 	version := gl.GoStr(gl.GetString(gl.VERSION))
-	log.Println("OpenGL version", version)
+	fmt.Println("OpenGL version", version)
 
 	return window
 }
