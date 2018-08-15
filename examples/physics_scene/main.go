@@ -8,7 +8,7 @@ import (
 const pixelsPerMeter float64 = 50
 
 func main() {
-	a.Init(800, 600, false, "Physics")
+	a.Init(800, 600, "Physics")
 	defer a.Terminate()
 
 	// Use a cartesian coordinates system
