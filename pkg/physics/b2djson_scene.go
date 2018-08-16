@@ -225,7 +225,6 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.BodyA = s.bodies[bodyIndexA]
 		j.BodyB = s.bodies[bodyIndexB]
 		j.CollideConnected = data.CollideConnected
-
 		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
 		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
 		j.ReferenceAngle = data.RefAngle
@@ -235,18 +234,16 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.EnableMotor = data.EnableMotor
 		j.MotorSpeed = data.MotorSpeed
 		j.MaxMotorTorque = data.MaxMotorTorque
-
 		jointInterface = s.World.CreateJoint(&j)
 	} else if data.Type == "prismatic" {
 		// TODO: This works only with fixed rotation set to true!
 		s.bodies[bodyIndexA].SetFixedRotation(true)
+		s.bodies[bodyIndexB].SetFixedRotation(true)
 
 		j := box2d.MakeB2PrismaticJointDef()
-
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
 		j.SetCollideConnected(data.CollideConnected)
-
 		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
 		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
 		j.LocalAxisA = box2d.B2Vec2{X: data.LocalAxisA.X, Y: data.LocalAxisA.Y}
@@ -257,28 +254,23 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.MaxMotorForce = data.MaxMotorForce
 		j.LowerTranslation = data.LowerLimit
 		j.UpperTranslation = data.UpperLimit
-
 		jointInterface = s.World.CreateJoint(&j)
 	} else if data.Type == "distance" {
 		j := box2d.MakeB2DistanceJointDef()
-
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
 		j.SetCollideConnected(data.CollideConnected)
-
 		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
 		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
 		j.Length = data.Length
 		j.FrequencyHz = data.Frequency
 		j.DampingRatio = data.DampingRatio
-
 		jointInterface = s.World.CreateJoint(&j)
 	} else if data.Type == "wheel" {
 		j := box2d.MakeB2WheelJointDef()
 		j.BodyA = s.bodies[bodyIndexA]
 		j.BodyB = s.bodies[bodyIndexB]
 		j.CollideConnected = data.CollideConnected
-
 		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
 		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
 		j.LocalAxisA = box2d.B2Vec2{X: data.LocalAxisA.X, Y: data.LocalAxisA.Y}
@@ -287,11 +279,49 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.MaxMotorTorque = data.MaxMotorTorque
 		j.FrequencyHz = data.SpringFrequency
 		j.DampingRatio = data.SpringDampingRatio
-
+		jointInterface = s.World.CreateJoint(&j)
+	} else if data.Type == "weld" {
+		j := box2d.MakeB2WeldJointDef()
+		j.SetBodyA(s.bodies[bodyIndexA])
+		j.SetBodyB(s.bodies[bodyIndexB])
+		j.SetCollideConnected(data.CollideConnected)
+		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
+		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
+		j.ReferenceAngle = data.RefAngle
+		j.FrequencyHz = data.Frequency
+		j.DampingRatio = data.DampingRatio
+		jointInterface = s.World.CreateJoint(&j)
+	} else if data.Type == "rope" {
+		j := box2d.MakeB2RopeJointDef()
+		j.SetBodyA(s.bodies[bodyIndexA])
+		j.SetBodyB(s.bodies[bodyIndexB])
+		j.SetCollideConnected(data.CollideConnected)
+		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
+		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
+		j.MaxLength = data.MaxLength
+		jointInterface = s.World.CreateJoint(&j)
+	} else if data.Type == "motor" {
+		j := box2d.MakeB2MotorJointDef()
+		j.SetBodyA(s.bodies[bodyIndexA])
+		j.SetBodyB(s.bodies[bodyIndexB])
+		j.SetCollideConnected(data.CollideConnected)
+		j.LinearOffset = box2d.B2Vec2{X: data.LinearOffset.X, Y: data.LinearOffset.Y}
+		j.AngularOffset = data.RefAngle
+		j.MaxForce = data.MaxForce
+		j.MaxTorque = data.MaxTorque
+		j.CorrectionFactor = data.CorrectionFactor
+		jointInterface = s.World.CreateJoint(&j)
+	} else if data.Type == "friction" {
+		j := box2d.MakeB2FrictionJointDef()
+		j.SetBodyA(s.bodies[bodyIndexA])
+		j.SetBodyB(s.bodies[bodyIndexB])
+		j.SetCollideConnected(data.CollideConnected)
+		j.LocalAnchorA = box2d.B2Vec2{X: data.AnchorA.X, Y: data.AnchorA.Y}
+		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
+		j.MaxForce = data.MaxForce
+		j.MaxTorque = data.MaxTorque
 		jointInterface = s.World.CreateJoint(&j)
 	}
-
-	// TODO: Missing joint types --> Rope, Motor, Weld, Friction
 
 	return jointInterface
 }
