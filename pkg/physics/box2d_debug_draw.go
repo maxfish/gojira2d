@@ -4,6 +4,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/maxfish/box2d"
 	"github.com/maxfish/gojira2d/pkg/graphics"
+	"github.com/maxfish/gojira2d/pkg/utils"
 )
 
 type Box2DDebugDraw struct {
@@ -17,6 +18,8 @@ type Box2DDebugDraw struct {
 	b2World *box2d.B2World
 	PTM     float64
 }
+
+const numSegmentsPerCircle = 12
 
 func NewBox2DDebugDraw(w *box2d.B2World, PTM float64) *Box2DDebugDraw {
 	d := &Box2DDebugDraw{}
@@ -94,8 +97,13 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 	switch fixture.GetType() {
 	case box2d.B2Shape_Type.E_circle:
 		circle := fixture.GetShape().(*box2d.B2CircleShape)
-		c := graphics.NewRegularPolygonPrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, float32(circle.M_radius*d.PTM), 10, false)
-		c.SetAnchorToCenter()
+		circlePoints, _ := utils.CircleToPolygon(mgl32.Vec2{float32(circle.M_p.X), float32(circle.M_p.Y)}, float32(circle.M_radius), numSegmentsPerCircle, 0)
+		var vertices []mgl32.Vec2
+		for i := 0; i < len(circlePoints); i++ {
+			vertices = append(vertices, mgl32.Vec2{float32(circlePoints[i].X()), float32(circlePoints[i].Y())})
+		}
+		c := graphics.NewPolylinePrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, true)
+		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
 		fixture.SetUserData(c)
 	case box2d.B2Shape_Type.E_polygon:
 		b2Shape := fixture.GetShape().(*box2d.B2PolygonShape)
@@ -146,12 +154,7 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 
 func (d *Box2DDebugDraw) updateShape(body *box2d.B2Body, fixture *box2d.B2Fixture, transform box2d.B2Transform, color graphics.Color) {
 	switch fixture.GetType() {
-	case box2d.B2Shape_Type.E_circle:
-		c := fixture.GetUserData().(*graphics.Primitive2D)
-		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
-		c.SetAngle(float32(body.GetAngle()))
-		c.SetColor(color)
-	case box2d.B2Shape_Type.E_polygon:
+	case box2d.B2Shape_Type.E_circle, box2d.B2Shape_Type.E_polygon:
 		c := fixture.GetUserData().(*graphics.Primitive2D)
 		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
 		c.SetAngle(float32(body.GetAngle()))
