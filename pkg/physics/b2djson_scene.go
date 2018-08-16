@@ -15,6 +15,7 @@ type B2DJsonScene struct {
 	loadedData  B2DJsonWorld
 	indexToBody map[int]*box2d.B2Body
 	bodyToName  map[*box2d.B2Body]string
+	nameToBody  map[string]*box2d.B2Body
 	jointToName map[*box2d.B2Joint]string
 	bodies      []*box2d.B2Body
 	joints      []*box2d.B2Joint
@@ -30,6 +31,7 @@ func NewB2DJsonSceneFromFile(fileName string) *B2DJsonScene {
 	scene := &B2DJsonScene{}
 	scene.indexToBody = make(map[int]*box2d.B2Body)
 	scene.bodyToName = make(map[*box2d.B2Body]string)
+	scene.nameToBody = make(map[string]*box2d.B2Body)
 	scene.jointToName = make(map[*box2d.B2Joint]string)
 
 	// Open the json file
@@ -62,6 +64,10 @@ func NewB2DJsonSceneFromFile(fileName string) *B2DJsonScene {
 	return scene
 }
 
+func (s *B2DJsonScene) BodyForName(name string) *box2d.B2Body {
+	return s.nameToBody[name]
+}
+
 func (s *B2DJsonScene) buildWorld() *box2d.B2World {
 	w := s.loadedData
 	b2World := box2d.MakeB2World(box2d.MakeB2Vec2(w.Gravity.X, w.Gravity.Y))
@@ -81,6 +87,7 @@ func (s *B2DJsonScene) loadWorld() {
 		bodyData := w.Body[i]
 		body := s.buildBody(&bodyData)
 		s.indexToBody[i] = body
+		s.nameToBody[bodyData.Name] = body
 		s.bodies = append(s.bodies, body)
 	}
 
