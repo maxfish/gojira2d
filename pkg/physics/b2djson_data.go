@@ -90,6 +90,7 @@ type B2DJointData struct {
 	SpringDampingRatio float64     `json:"springDampingRatio"` // Wheel
 	SpringFrequency    float64     `json:"springFrequency"`    // Wheel
 	UpperLimit         float64     `json:"upperLimit"`         // Revolute, Prismatic
+	LinearOffset       B2DVector2D `json:"linearOffset"`       // Motor
 
 	CustomProperties []B2DCustomPropertyData `json:"customProperties"`
 }
