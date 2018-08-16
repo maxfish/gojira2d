@@ -2,7 +2,6 @@ package input
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 
 	"github.com/go-gl/glfw/v3.2/glfw"
@@ -34,13 +33,13 @@ func init() {
 	glfw.SetJoystickCallback(func(joy, event int) {
 		if glfw.MonitorEvent(event) == glfw.Connected {
 			// The joystick was connected
-			log.Printf("Joystick #%d: plugged in", joy)
+			fmt.Printf("Joystick #%d: plugged in", joy)
 			if JoystickControllers[joy] != nil {
 				JoystickControllers[joy].Open(joy)
 			}
 		} else if glfw.MonitorEvent(event) == glfw.Disconnected {
 			// The joystick was disconnected
-			log.Printf("Joystick #%d: plugged out", joy)
+			fmt.Printf("Joystick #%d: plugged out", joy)
 			if JoystickControllers[joy] != nil && JoystickControllers[joy].Connected() {
 				JoystickControllers[joy].pluggedOut()
 			}
@@ -50,12 +49,12 @@ func init() {
 
 func (c *JoystickController) Open(deviceIndex int) bool {
 	if c.connected {
-		log.Printf("Joystick already open on device #%d", c.joystick)
+		fmt.Printf("Joystick already open on device #%d", c.joystick)
 		return true
 	}
 
 	if JoystickControllers[deviceIndex] != nil && JoystickControllers[deviceIndex] != c {
-		log.Printf("Another joystick is associated to index #%d", deviceIndex)
+		fmt.Printf("Another joystick is associated to index #%d", deviceIndex)
 		return false
 	}
 
@@ -78,14 +77,14 @@ func (c *JoystickController) Open(deviceIndex int) bool {
 	c.buttonsPressed = make([]bool, c.numButtons)
 	c.buttonsReleased = make([]bool, c.numButtons)
 
-	log.Printf("Joystick #%d: opened. %s", c.joystick, c.Description())
+	fmt.Printf("Joystick #%d: opened. %s", c.joystick, c.Description())
 	c.findMapping()
 
 	return true
 }
 
 func (c *JoystickController) Close() {
-	log.Printf("Joystick #%d: closed", c.joystick)
+	fmt.Printf("Joystick #%d: closed", c.joystick)
 	JoystickControllers[int(c.joystick)] = nil
 	c.pluggedOut()
 }
@@ -181,7 +180,7 @@ func (c *JoystickController) findMapping() {
 		r, _ := regexp.Compile(mapping.nameRegEx)
 		if r.MatchString(c.name) == true && len(mapping.buttons) == c.numButtons && len(mapping.axes) == c.numAxes {
 			c.SetMapping(mapping)
-			log.Printf("Joystick #%d: mapping found", c.joystick)
+			fmt.Printf("Joystick #%d: mapping found", c.joystick)
 			return
 		}
 	}

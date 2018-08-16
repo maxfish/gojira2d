@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
@@ -54,7 +54,7 @@ func (t *Text) makeNewQuads() ([]float32, []float32) {
 		}
 		bmc, ok := t.font.bm.Characters[char]
 		if !ok {
-			log.Printf(
+			fmt.Printf(
 				"ERR: char %v (%v) not found in font map",
 				string(char), char,
 			)

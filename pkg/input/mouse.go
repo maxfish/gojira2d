@@ -1,7 +1,7 @@
 package input
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/maxfish/gojira2d/pkg/app"
@@ -19,7 +19,7 @@ var (
 
 func registerMouseCallbacks(pCallback glfw.CursorPosCallback, bCallback glfw.MouseButtonCallback) {
 	if positionCallback != nil {
-		log.Panic("Mouse callbacks have been already registered!")
+		fmt.Printf("Error: Mouse callbacks have been already registered!")
 	}
 	positionCallback = pCallback
 	buttonCallback = bCallback

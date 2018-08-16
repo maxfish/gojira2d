@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/maxfish/box2d"
@@ -46,9 +45,9 @@ func NewB2DJsonSceneFromFile(fileName string) *B2DJsonScene {
 	byteData, _ := ioutil.ReadAll(jsonFile)
 	err = json.Unmarshal(byteData, &scene.loadedData)
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 	} else {
-		log.Println("Data read successfully")
+		fmt.Println("Data read successfully")
 	}
 
 	// Engine parameters

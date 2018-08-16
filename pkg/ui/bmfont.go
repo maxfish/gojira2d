@@ -4,8 +4,8 @@ package ui
 // http://www.angelcode.com/products/bmfont/doc/file_format.html
 
 import (
+	"fmt"
 	"io/ioutil"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -85,7 +85,7 @@ func NewBmFontFromFile(fileName string) *BmFont {
 
 	fileContent, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
 	}
 	lines := strings.Split(string(fileContent), "\n")
 	for _, line := range lines {
@@ -183,13 +183,13 @@ func (f *BmFont) parseKerningSection(keyValues map[string]string) {
 	second, err := strconv.Atoi(keyValues["second"])
 	amount, err := strconv.Atoi(keyValues["amount"])
 	if err != nil {
-		log.Printf("Error parsing kerning: %v", err)
+		fmt.Printf("Error parsing kerning: %v", err)
 		return
 	}
 
 	char, ok := f.Characters[int32(first)]
 	if !ok {
-		log.Printf("Kerning parse error: char %v not found", first)
+		fmt.Printf("Kerning parse error: char %v not found", first)
 	}
 	char.kernings[int32(second)] = amount
 	char.f32kernings[int32(second)] = float32(amount) * f.f32scaleLine

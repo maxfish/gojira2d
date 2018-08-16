@@ -1,7 +1,7 @@
 package graphics
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
@@ -191,7 +191,7 @@ func NewQuadPrimitive(position mgl32.Vec3, size mgl32.Vec2) *Primitive2D {
 func NewRegularPolygonPrimitive(center mgl32.Vec3, radius float32, numSegments int, filled bool) *Primitive2D {
 	circlePoints, err := utils.CircleToPolygon(mgl32.Vec2{0, 0}, radius, numSegments, 0)
 	if err != nil {
-		log.Panic(err)
+		fmt.Println(err)
 		return nil
 	}
 
