@@ -37,6 +37,7 @@ type B2DBodyData struct {
 	MassDataI       float64     `json:"massData-I"`
 	MassDataMass    float64     `json:"massData-mass"`
 	MassDataCenter  B2DVector2D `json:"massData-center"`
+	GravityScale    *float64    `json:"gravityScale"`
 	Position        B2DVector2D `json:"position"`
 
 	Fixture          []B2DFixtureData        `json:"fixture"`
