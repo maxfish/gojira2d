@@ -236,10 +236,6 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.MaxMotorTorque = data.MaxMotorTorque
 		jointInterface = s.World.CreateJoint(&j)
 	} else if data.Type == "prismatic" {
-		// TODO: This works only with fixed rotation set to true!
-		s.bodies[bodyIndexA].SetFixedRotation(true)
-		s.bodies[bodyIndexB].SetFixedRotation(true)
-
 		j := box2d.MakeB2PrismaticJointDef()
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
