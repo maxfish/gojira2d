@@ -113,6 +113,9 @@ func (s *B2DJsonScene) buildBody(data *B2DBodyData) *box2d.B2Body {
 	b2BodyDef.Awake = data.Awake
 	b2BodyDef.FixedRotation = data.FixedRotation
 	b2BodyDef.Bullet = data.Bullet
+	if data.GravityScale != nil {
+		b2BodyDef.GravityScale = *data.GravityScale
+	}
 
 	b2Body := s.World.CreateBody(&b2BodyDef)
 	if data.Name != "" {
