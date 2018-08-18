@@ -37,6 +37,10 @@
   branch = "master"
   name = "github.com/go-gl/mathgl"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/maxfish/box2d"
+
 [prune]
   go-tests = true
 
