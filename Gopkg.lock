@@ -27,6 +27,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:a15b00f1ae3507f76d983c8439b5fced814845bf46d1f5febdec0ffe852e4745"
+  name = "github.com/maxfish/box2d"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "548c3f6f9a993978b8cdd25e840616649c2185d4"
+
+[[projects]]
+  branch = "master"
   digest = "1:be8830e3280a74ddbaa6b57ea0f431dac2c6aba7f91456073dc14171791d7b50"
   name = "golang.org/x/image"
   packages = ["math/f32"]
@@ -40,6 +48,7 @@
     "github.com/go-gl/gl/v4.1-core/gl",
     "github.com/go-gl/glfw/v3.2/glfw",
     "github.com/go-gl/mathgl/mgl32",
+    "github.com/maxfish/box2d",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
