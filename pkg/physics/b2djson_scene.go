@@ -78,6 +78,29 @@ func (s *B2DJsonScene) JointForName(name string) box2d.B2JointInterface {
 	return s.nameToJoint[name]
 }
 
+func (s *B2DJsonScene) SceneBoundingBox() box2d.B2AABB {
+	bb := box2d.MakeB2AABB()
+	bp := s.World.M_contactManager.M_broadPhase
+	for b := s.World.GetBodyList(); b != nil; b = b.GetNext() {
+		for f := b.GetFixtureList(); f != nil; f = f.GetNext() {
+			for i := 0; i < f.M_proxyCount; i++ {
+				proxy := f.M_proxies[i]
+				bb.CombineInPlace(bp.GetFatAABB(proxy.ProxyId))
+			}
+		}
+	}
+	return bb
+}
+
+func (s *B2DJsonScene) SceneBoundingBoxInPixels(pixelPerMeter float64) box2d.B2AABB {
+	bb := s.SceneBoundingBox()
+	bb.LowerBound.X *= pixelPerMeter
+	bb.LowerBound.Y *= pixelPerMeter
+	bb.UpperBound.X *= pixelPerMeter
+	bb.UpperBound.Y *= pixelPerMeter
+	return bb
+}
+
 func (s *B2DJsonScene) buildWorld() *box2d.B2World {
 	w := s.loadedData
 	b2World := box2d.MakeB2World(box2d.MakeB2Vec2(w.Gravity.X, w.Gravity.Y))
