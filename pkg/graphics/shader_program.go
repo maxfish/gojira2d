@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 )
 
 // ShaderType Type of the shader
@@ -149,6 +150,14 @@ func (s *ShaderProgram) SetUniform(name string, val interface{}) {
 		gl.UniformMatrix4fv(uniform, 1, false, &(*v)[0])
 	case *Color:
 		gl.Uniform4fv(uniform, 1, &(*v)[0])
+	case *float64:
+	case *mgl64.Vec2:
+	case *mgl64.Vec3:
+	case *mgl64.Vec4:
+	case *mgl64.Mat2:
+	case *mgl64.Mat3:
+	case *mgl64.Mat4:
+		fmt.Printf("Error: this method accepts only float32 values. Value type: %T %+v", val, val)
 	default:
 		fmt.Printf("Error: unknown value type: %T %+v", val, val)
 	}
