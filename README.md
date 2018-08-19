@@ -11,7 +11,7 @@ Gojira2D is licensed under the terms of the MIT License. See LICENSE for details
 
 ## HIGHLIGHTS
 
-* It uses [GLFW](https://github.com/go-gl/glfw) as window manager
+* It uses modern OpenGL - Core Profile 4.1
 * Super easy setup: create a window and a game loop in less than 10 lines of code
 * Shader support: Vertex, Geometry, Fragment
 * Input handling:
@@ -24,7 +24,13 @@ Gojira2D is licensed under the terms of the MIT License. See LICENSE for details
 * Physics support:
   * 2D rigid body physics via Box2D
   * [R.U.B.E](https://www.iforce2d.net/rube/) ([JSON format](https://www.iforce2d.net/rube/json-structure)) scene loader
-* Developed and tested on MacOS using OpenGL 4.1
+* Developed and tested on MacOS
+
+## Dependencies
+
+* [GLFW](https://github.com/go-gl/glfw) as window manager
+* [MathGL](https://github.com/go-gl/mathgl) as math library
+* [Box2D](https://github.com/ByteArena/box2d) for 2D physics
 
 ## Installation
 
