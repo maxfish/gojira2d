@@ -73,10 +73,13 @@ func (c *Camera2D) SetVisibleArea(x1 float32, y1 float32, x2 float32, y2 float32
 	height := float32(math.Abs(float64(y2 - y1)))
 	zoom := float32(math.Min(float64(c.width/width), float64(c.height/height)))
 	c.SetZoom(zoom)
+
+	x := float32(math.Min(float64(x1), float64(x2)))
+	y := float32(math.Min(float64(y1), float64(y2)))
 	if c.centered {
-		c.SetPosition(x1+width/2, y1+height/2)
+		c.SetPosition(x+width/2, y+height/2)
 	} else {
-		c.SetPosition(x1, y1)
+		c.SetPosition(x, y)
 	}
 }
 
