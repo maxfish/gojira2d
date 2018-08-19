@@ -2,6 +2,7 @@ package graphics
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
+	"math"
 )
 
 // Camera2D a Camera based on an orthogonal projection
@@ -64,6 +65,22 @@ func (c *Camera2D) SetCentered(centered bool) {
 func (c *Camera2D) SetFlipVertical(flip bool) {
 	c.flipVertical = flip
 	c.matrixDirty = true
+}
+
+// SetVisibleArea configures the camera to make the specified area completely visible, position and zoom are changed accordingly
+func (c *Camera2D) SetVisibleArea(x1 float32, y1 float32, x2 float32, y2 float32) {
+	width := float32(math.Abs(float64(x2 - x1)))
+	height := float32(math.Abs(float64(y2 - y1)))
+	zoom := float32(math.Min(float64(c.width/width), float64(c.height/height)))
+	c.SetZoom(zoom)
+
+	x := float32(math.Min(float64(x1), float64(x2)))
+	y := float32(math.Min(float64(y1), float64(y2)))
+	if c.centered {
+		c.SetPosition(x+width/2, y+height/2)
+	} else {
+		c.SetPosition(x, y)
+	}
 }
 
 func (c *Camera2D) rebuildMatrix() {
