@@ -13,13 +13,14 @@ func main() {
 
 	app.SetFPSCounterVisible(true)
 
-	// Use a cartesian coordinates system
-	app.Context.Camera2D.SetFlipVertical(true)
-	app.Context.Camera2D.SetPosition(50, 0)
-
 	// Load the scene from a Rube file
-	scene := physics.NewB2DJsonSceneFromFile("examples/assets/test_scene.json")
+	scene := physics.NewB2DJsonSceneFromFile("examples/assets/physics/scene_joints.json")
 	b2World := scene.World
+
+	// Set up the camera
+	bb := scene.SceneBoundingBoxInPixels(pixelsPerMeter)
+	app.Context.Camera2D.SetFlipVertical(true)
+	app.Context.Camera2D.SetVisibleArea(float32(bb.LowerBound.X), float32(bb.LowerBound.Y), float32(bb.UpperBound.X), float32(bb.UpperBound.Y))
 
 	debugDraw := physics.NewBox2DDebugDraw(b2World, pixelsPerMeter)
 
