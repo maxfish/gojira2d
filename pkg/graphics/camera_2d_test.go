@@ -72,4 +72,24 @@ func TestCamera2D(t *testing.T) {
 	if !c.ProjectionMatrix().ApproxEqual(expected) {
 		t.Errorf("SetVisibleArea failed\nexpected\n%s received\n%s", expected.String(), c.projectionMatrix.String())
 	}
+
+	// Translate
+	c.Translate(50, 50)
+	expected = mgl64.Mat4FromRows(mgl64.Vec4{0.02, 0, 0, -3}, mgl64.Vec4{0, -0.02, 0, 2.5}, mgl64.Vec4{0, 0, 0.5, 0}, mgl64.Vec4{0, 0, 0, 1})
+	if !c.ProjectionMatrix().ApproxEqual(expected) {
+		t.Errorf("Translate failed\nexpected\n%s received\n%s", expected.String(), c.projectionMatrix.String())
+	}
+	c.SetFlipVertical(true)
+	c.Translate(50, 50)
+	expected = mgl64.Mat4FromRows(mgl64.Vec4{0.02, 0, 0, -4}, mgl64.Vec4{0, 0.02, 0, -1.5}, mgl64.Vec4{0, 0, 0.5, 0}, mgl64.Vec4{0, 0, 0, 1})
+	if !c.ProjectionMatrix().ApproxEqual(expected) {
+		t.Errorf("Translate failed\nexpected\n%s received\n%s", expected.String(), c.projectionMatrix.String())
+	}
+
+	// Zoom
+	c.SetZoom(15)
+	var expectedZoom float64 = 15
+	if !mgl64.FloatEqual(c.Zoom(), expectedZoom) {
+		t.Errorf("Zoom() failed\nexpected\n%f received\n%f", expectedZoom, c.Zoom())
+	}
 }
