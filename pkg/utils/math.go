@@ -52,3 +52,24 @@ func GetBoundingBox(points []mgl32.Vec2) (mgl32.Vec2, mgl32.Vec2) {
 
 	return mgl32.Vec2{minX, minY}, mgl32.Vec2{maxX, maxY}
 }
+
+func Mat4From64to32Bits(mat mgl64.Mat4) mgl32.Mat4 {
+	return mgl32.Mat4{
+		float32(mat[0]),
+		float32(mat[1]),
+		float32(mat[2]),
+		float32(mat[3]),
+		float32(mat[4]),
+		float32(mat[5]),
+		float32(mat[6]),
+		float32(mat[7]),
+		float32(mat[8]),
+		float32(mat[9]),
+		float32(mat[10]),
+		float32(mat[11]),
+		float32(mat[12]),
+		float32(mat[13]),
+		float32(mat[14]),
+		float32(mat[15]),
+	}
+}

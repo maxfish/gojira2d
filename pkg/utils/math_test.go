@@ -68,3 +68,18 @@ func TestGetBoundingBox(t *testing.T) {
 		}
 	}
 }
+
+func TestMatrixConversion(t *testing.T) {
+	matrix64 := mgl64.Mat4FromRows(mgl64.Vec4{6, -7.5, 8, -9}, mgl64.Vec4{10, -11, 12.5, -13}, mgl64.Vec4{14, -15, 16, -17.5}, mgl64.Vec4{18.5, -19, 20, -21})
+	matrix32 := Mat4From64to32Bits(matrix64)
+	matrix64From32 := mgl64.Mat4{
+		float64(matrix32[0]), float64(matrix32[1]), float64(matrix32[2]), float64(matrix32[3]),
+		float64(matrix32[4]), float64(matrix32[5]), float64(matrix32[6]), float64(matrix32[7]),
+		float64(matrix32[8]), float64(matrix32[9]), float64(matrix32[10]), float64(matrix32[11]),
+		float64(matrix32[12]), float64(matrix32[13]), float64(matrix32[14]), float64(matrix32[15]),
+	}
+
+	if !matrix64.ApproxEqual(matrix64From32) {
+		t.Errorf("Mat4From64to32Bits failed\nexpected\n%s received\n%s", matrix32.String(), matrix64.String())
+	}
+}
