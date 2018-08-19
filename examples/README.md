@@ -20,6 +20,10 @@ Some regular polygons and polylines.
 Test for the vectorial text rendering system.
 ![](https://raw.githubusercontent.com/maxfish/gojira2d/master/examples/assets/screenshots/texts.png?raw=true)
 
-## Scene loader
-Loads a R.U.B.E scene and starts the Box2D simulation
-![](https://raw.githubusercontent.com/maxfish/gojira2d/master/examples/assets/screenshots/scene_loader.png?raw=true)
+## Physics: bodies
+Loads a R.U.B.E scene with some basic bodies and starts the Box2D simulation
+![](https://raw.githubusercontent.com/maxfish/gojira2d/master/examples/assets/screenshots/scene_bodies.png?raw=true)
+
+## Physics: joints
+Loads a more complex R.U.B.E scene with all the supported joints and starts the Box2D simulation
+![](https://raw.githubusercontent.com/maxfish/gojira2d/master/examples/assets/screenshots/scene_joints.png?raw=true)
