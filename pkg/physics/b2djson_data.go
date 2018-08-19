@@ -17,9 +17,10 @@ type B2DJsonWorld struct {
 	ContinuousPhysics  bool                      `json:"continuousPhysics"`
 	Collisionbitplanes B2DCollisionBitplanesData `json:"collisionbitplanes"`
 
-	Body  []B2DBodyData  `json:"body"`
-	Image []B2DImageData `json:"image"`
-	Joint []B2DJointData `json:"joint"`
+	Body             []B2DBodyData            `json:"body"`
+	Image            []B2DImageData           `json:"image"`
+	Joint            []B2DJointData           `json:"joint"`
+	CustomProperties *[]B2DCustomPropertyData `json:"customProperties"`
 }
 
 // B2DBodyData a Box2D body
@@ -40,8 +41,8 @@ type B2DBodyData struct {
 	GravityScale    *float64    `json:"gravityScale"`
 	Position        B2DVector2D `json:"position"`
 
-	Fixture          []B2DFixtureData        `json:"fixture"`
-	CustomProperties []B2DCustomPropertyData `json:"customProperties"`
+	Fixture          []B2DFixtureData         `json:"fixture"`
+	CustomProperties *[]B2DCustomPropertyData `json:"customProperties"`
 }
 
 // B2DFixtureData a Box2D fixture
@@ -59,7 +60,7 @@ type B2DFixtureData struct {
 	Polygon *B2DPolygonFixtureData `json:"polygon"`
 	Chain   *B2DChainFixtureData   `json:"chain"`
 
-	CustomProperties []B2DCustomPropertyData `json:"customProperties"`
+	CustomProperties *[]B2DCustomPropertyData `json:"customProperties"`
 }
 
 // B2DJointData a Box2D joint
@@ -93,7 +94,7 @@ type B2DJointData struct {
 	UpperLimit         float64     `json:"upperLimit"`         // Revolute, Prismatic
 	LinearOffset       B2DVector2D `json:"linearOffset"`       // Motor
 
-	CustomProperties []B2DCustomPropertyData `json:"customProperties"`
+	CustomProperties *[]B2DCustomPropertyData `json:"customProperties"`
 }
 
 // B2DImageData an image added to the bodies
@@ -111,11 +112,11 @@ type B2DImageData struct {
 	Filter      int             `json:"filter"`      // texture magnification filter, 0 = linear, 1 = nearest
 	Flip        bool            `json:"flip"`        // true if the texture should be reversed horizontally
 
-	ColorTint         []int                   `json:"colorTint"`         // RGBA values for color tint, if not 255,255,255,255
-	GlDrawElements    []int                   `json:"glDrawElements"`    //Indices for drawing GL_TRIANGLES with the glDrawElements function and the other glXXX properties below
-	GlTexCoordPointer []float64               `json:"glTexCoordPointer"` //Texture coordinates for use with glTexCoordPointer (the 'flip' property has already been taken into account)
-	GlVertexPointer   []float64               `json:"glVertexPointer"`   // Vertex positions for use with glVertexPointer
-	CustomProperties  []B2DCustomPropertyData `json:"customProperties"`
+	ColorTint         []int                    `json:"colorTint"`         // RGBA values for color tint, if not 255,255,255,255
+	GlDrawElements    []int                    `json:"glDrawElements"`    //Indices for drawing GL_TRIANGLES with the glDrawElements function and the other glXXX properties below
+	GlTexCoordPointer []float64                `json:"glTexCoordPointer"` //Texture coordinates for use with glTexCoordPointer (the 'flip' property has already been taken into account)
+	GlVertexPointer   []float64                `json:"glVertexPointer"`   // Vertex positions for use with glVertexPointer
+	CustomProperties  *[]B2DCustomPropertyData `json:"customProperties"`
 }
 
 // B2DVerticesData a list of 2D vertices
@@ -151,6 +152,17 @@ type B2DCircleFixtureData struct {
 	Radius float64     `json:"radius"`
 }
 
+// B2DCustomPropertyData custom parameters specified within R.U.B.E
+type B2DCustomPropertyData struct {
+	Name        string       `json:"name"`
+	ValueInt    *int         `json:"int"`
+	ValueFloat  *float64     `json:"float"`
+	ValueBool   *bool        `json:"bool"`
+	ValueString *string      `json:"string"`
+	ValueVec2   *B2DVector2D `json:"vec2"`
+	//ValueColor *B2DVector2D `json:"color"` // Not supported yet
+}
+
 // B2DVector2D a 2D vector
 type B2DVector2D struct {
 	X float64 `json:"x"`
@@ -172,9 +184,4 @@ func (a *B2DVector2D) UnmarshalJSON(b []byte) (err error) {
 		a.Y = n
 	}
 	return
-}
-
-// B2DCustomPropertyData custom parameters specified within R.U.B.E
-type B2DCustomPropertyData struct {
-	// TODO Implement
 }

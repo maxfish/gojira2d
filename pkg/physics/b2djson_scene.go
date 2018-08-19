@@ -20,6 +20,8 @@ type B2DJsonScene struct {
 	nameToJoint   map[string]box2d.B2JointInterface
 	bodies        []*box2d.B2Body
 	joints        []box2d.B2JointInterface
+	// This includes the properties for all the objects, include the world
+	objectToProperties map[interface{}]map[string]interface{}
 
 	// Engine parameters
 	PositionIterations int
@@ -35,6 +37,7 @@ func NewB2DJsonSceneFromFile(fileName string) *B2DJsonScene {
 	scene.nameToBody = make(map[string]*box2d.B2Body)
 	scene.nameToFixture = make(map[string]*box2d.B2Fixture)
 	scene.nameToJoint = make(map[string]box2d.B2JointInterface)
+	scene.objectToProperties = make(map[interface{}]map[string]interface{})
 
 	// Open the json file
 	jsonFile, err := os.Open(fileName)
@@ -109,8 +112,35 @@ func (s *B2DJsonScene) buildWorld() *box2d.B2World {
 	b2World.M_warmStarting = w.WarmStarting
 	b2World.M_continuousPhysics = w.ContinuousPhysics
 	b2World.M_subStepping = w.SubStepping
+	s.loadCustomProperties(b2World, w.CustomProperties)
 
 	return &b2World
+}
+
+func (s *B2DJsonScene) loadCustomProperties(object interface{}, jsonData *[]B2DCustomPropertyData) {
+	if jsonData == nil {
+		return
+	}
+	if s.objectToProperties[object] == nil {
+		s.objectToProperties[object] = make(map[string]interface{})
+	}
+
+	properties := *jsonData
+	for i := 0; i < len(properties); i++ {
+		p := properties[i]
+		if p.ValueInt != nil {
+			s.objectToProperties[object][p.Name] = p.ValueInt
+		} else if p.ValueFloat != nil {
+			s.objectToProperties[object][p.Name] = p.ValueFloat
+		} else if p.ValueBool != nil {
+			s.objectToProperties[object][p.Name] = p.ValueBool
+		} else if p.ValueString != nil {
+			s.objectToProperties[object][p.Name] = p.ValueString
+		} else if p.ValueVec2 != nil {
+			s.objectToProperties[object][p.Name] = box2d.B2Vec2{X: p.ValueVec2.X, Y: p.ValueVec2.Y}
+		}
+		// TODO: Vector2 and Color
+	}
 }
 
 func (s *B2DJsonScene) loadWorld() {
@@ -119,7 +149,7 @@ func (s *B2DJsonScene) loadWorld() {
 	for i := 0; i < len(w.Body); i++ {
 		bodyData := w.Body[i]
 		body := s.buildBody(&bodyData)
-		// TODO: Read the custom properties
+		s.loadCustomProperties(body, bodyData.CustomProperties)
 
 		// Get the body's name and handles duplicates
 		name := bodyData.Name
@@ -141,7 +171,7 @@ func (s *B2DJsonScene) loadWorld() {
 	for i := 0; i < len(w.Joint); i++ {
 		jointData := w.Joint[i]
 		joint := s.buildJoint(&jointData)
-		// TODO: Read the custom properties
+		s.loadCustomProperties(joint, jointData.CustomProperties)
 
 		// Get the joint's name and handles duplicates
 		name := jointData.Name
@@ -179,8 +209,9 @@ func (s *B2DJsonScene) buildBody(data *B2DBodyData) *box2d.B2Body {
 	}
 
 	for i := 0; i < len(data.Fixture); i++ {
-		_ = s.buildFixture(b2Body, &data.Fixture[i])
-		// TODO: Read the custom properties
+		fixtureData := data.Fixture[i]
+		fixture := s.buildFixture(b2Body, &fixtureData)
+		s.loadCustomProperties(fixture, fixtureData.CustomProperties)
 	}
 
 	b2MassData := box2d.MakeMassData()
