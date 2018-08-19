@@ -11,14 +11,15 @@ import (
 
 // B2DJsonScene A scene produced by R.U.B.E
 type B2DJsonScene struct {
-	World       *box2d.B2World
-	loadedData  B2DJsonWorld
-	indexToBody map[int]*box2d.B2Body
-	bodyToName  map[*box2d.B2Body]string
-	nameToBody  map[string]*box2d.B2Body
-	nameToJoint map[string]box2d.B2JointInterface
-	bodies      []*box2d.B2Body
-	joints      []box2d.B2JointInterface
+	World         *box2d.B2World
+	loadedData    B2DJsonWorld
+	indexToBody   map[int]*box2d.B2Body
+	bodyToName    map[*box2d.B2Body]string
+	nameToBody    map[string]*box2d.B2Body
+	nameToFixture map[string]*box2d.B2Fixture
+	nameToJoint   map[string]box2d.B2JointInterface
+	bodies        []*box2d.B2Body
+	joints        []box2d.B2JointInterface
 
 	// Engine parameters
 	PositionIterations int
@@ -32,6 +33,7 @@ func NewB2DJsonSceneFromFile(fileName string) *B2DJsonScene {
 	scene.indexToBody = make(map[int]*box2d.B2Body)
 	scene.bodyToName = make(map[*box2d.B2Body]string)
 	scene.nameToBody = make(map[string]*box2d.B2Body)
+	scene.nameToFixture = make(map[string]*box2d.B2Fixture)
 	scene.nameToJoint = make(map[string]box2d.B2JointInterface)
 
 	// Open the json file
@@ -68,6 +70,14 @@ func (s *B2DJsonScene) BodyForName(name string) *box2d.B2Body {
 	return s.nameToBody[name]
 }
 
+func (s *B2DJsonScene) FixtureForName(name string) *box2d.B2Fixture {
+	return s.nameToFixture[name]
+}
+
+func (s *B2DJsonScene) JointForName(name string) box2d.B2JointInterface {
+	return s.nameToJoint[name]
+}
+
 func (s *B2DJsonScene) buildWorld() *box2d.B2World {
 	w := s.loadedData
 	b2World := box2d.MakeB2World(box2d.MakeB2Vec2(w.Gravity.X, w.Gravity.Y))
@@ -86,8 +96,19 @@ func (s *B2DJsonScene) loadWorld() {
 	for i := 0; i < len(w.Body); i++ {
 		bodyData := w.Body[i]
 		body := s.buildBody(&bodyData)
+		// TODO: Read the custom properties
+
+		// Get the body's name and handles duplicates
+		name := bodyData.Name
+		if name != "" {
+			if _, ok := s.nameToBody[name]; ok {
+				fmt.Printf("Warning: a body named \"%s\" already exist in the scene\n", name)
+			} else {
+				s.nameToBody[name] = body
+			}
+		}
+
 		s.indexToBody[i] = body
-		s.nameToBody[bodyData.Name] = body
 		s.bodies = append(s.bodies, body)
 	}
 
@@ -149,14 +170,14 @@ func (s *B2DJsonScene) buildBody(data *B2DBodyData) *box2d.B2Body {
 }
 
 func (s *B2DJsonScene) buildFixture(b2Body *box2d.B2Body, data *B2DFixtureData) *box2d.B2Fixture {
+	// NOTE: 'edge' and 'loop' shapes are not exported by the R.U.B.E format
+
 	var b2Fixture *box2d.B2Fixture
 	b2FixtureDef := box2d.MakeB2FixtureDef()
 	b2FixtureDef.Restitution = data.Restitution
 	b2FixtureDef.Friction = data.Friction
 	b2FixtureDef.Density = data.Density
 	b2FixtureDef.IsSensor = data.Sensor
-
-	// TODO: Read the name of the fixture and store it
 
 	filter := box2d.MakeB2Filter()
 	if data.FilterCategoryBits != nil {
@@ -217,8 +238,15 @@ func (s *B2DJsonScene) buildFixture(b2Body *box2d.B2Body, data *B2DFixtureData) 
 		b2Fixture = b2Body.CreateFixtureFromDef(&b2FixtureDef)
 	}
 
-	// TODO: Read the custom properties
-	// NOTE: these shapes are not exported by R.U.B.E -> edge, loop
+	// Get the fixture's name and handles duplicates
+	name := data.Name
+	if name != "" {
+		if _, ok := s.nameToFixture[name]; ok {
+			fmt.Printf("Warning: a fixture named \"%s\" already exist in the scene\n", name)
+		} else {
+			s.nameToFixture[name] = b2Fixture
+		}
+	}
 
 	return b2Fixture
 }
