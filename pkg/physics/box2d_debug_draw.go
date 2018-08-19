@@ -1,7 +1,7 @@
 package physics
 
 import (
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/maxfish/box2d"
 	"github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/utils"
@@ -97,33 +97,33 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 	switch fixture.GetType() {
 	case box2d.B2Shape_Type.E_circle:
 		circle := fixture.GetShape().(*box2d.B2CircleShape)
-		circlePoints, _ := utils.CircleToPolygon(mgl32.Vec2{float32(circle.M_p.X), float32(circle.M_p.Y)}, float32(circle.M_radius), numSegmentsPerCircle, 0)
-		var vertices []mgl32.Vec2
+		circlePoints, _ := utils.CircleToPolygon(mgl64.Vec2{circle.M_p.X, circle.M_p.Y}, circle.M_radius, numSegmentsPerCircle, 0)
+		var vertices []mgl64.Vec2
 		for i := 0; i < len(circlePoints); i++ {
-			vertices = append(vertices, mgl32.Vec2{float32(circlePoints[i].X()), float32(circlePoints[i].Y())})
+			vertices = append(vertices, mgl64.Vec2{circlePoints[i].X(), circlePoints[i].Y()})
 		}
-		c := graphics.NewPolylinePrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, true)
-		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
+		c := graphics.NewPolylinePrimitive(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0}, vertices, true)
+		c.SetScale(mgl64.Vec2{d.PTM, d.PTM})
 		fixture.SetUserData(c)
 	case box2d.B2Shape_Type.E_polygon:
 		b2Shape := fixture.GetShape().(*box2d.B2PolygonShape)
 		numVertices := b2Shape.M_count
-		var vertices []mgl32.Vec2
+		var vertices []mgl64.Vec2
 		for i := 0; i < numVertices; i++ {
-			vertices = append(vertices, mgl32.Vec2{float32(b2Shape.M_vertices[i].X), float32(b2Shape.M_vertices[i].Y)})
+			vertices = append(vertices, mgl64.Vec2{b2Shape.M_vertices[i].X, b2Shape.M_vertices[i].Y})
 		}
-		c := graphics.NewPolylinePrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, true)
-		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
+		c := graphics.NewPolylinePrimitive(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0}, vertices, true)
+		c.SetScale(mgl64.Vec2{d.PTM, d.PTM})
 		fixture.SetUserData(c)
 	case box2d.B2Shape_Type.E_chain:
 		b2Shape := fixture.GetShape().(*box2d.B2ChainShape)
 		numVertices := b2Shape.M_count
-		var vertices []mgl32.Vec2
+		var vertices []mgl64.Vec2
 		for i := 0; i < numVertices; i++ {
-			vertices = append(vertices, mgl32.Vec2{float32(b2Shape.M_vertices[i].X), float32(b2Shape.M_vertices[i].Y)})
+			vertices = append(vertices, mgl64.Vec2{b2Shape.M_vertices[i].X, b2Shape.M_vertices[i].Y})
 		}
-		c := graphics.NewPolylinePrimitive(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0}, vertices, false)
-		c.SetScale(mgl32.Vec2{float32(d.PTM), float32(d.PTM)})
+		c := graphics.NewPolylinePrimitive(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0}, vertices, false)
+		c.SetScale(mgl64.Vec2{d.PTM, d.PTM})
 		fixture.SetUserData(c)
 
 		// 			if (chain.m_hasPrevVertex)
@@ -156,13 +156,13 @@ func (d *Box2DDebugDraw) updateShape(body *box2d.B2Body, fixture *box2d.B2Fixtur
 	switch fixture.GetType() {
 	case box2d.B2Shape_Type.E_circle, box2d.B2Shape_Type.E_polygon:
 		c := fixture.GetUserData().(*graphics.Primitive2D)
-		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
-		c.SetAngle(float32(body.GetAngle()))
+		c.SetPosition(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0})
+		c.SetAngle(body.GetAngle())
 		c.SetColor(color)
 	case box2d.B2Shape_Type.E_chain:
 		c := fixture.GetUserData().(*graphics.Primitive2D)
-		c.SetPosition(mgl32.Vec3{float32(body.GetPosition().X * d.PTM), float32(body.GetPosition().Y * d.PTM), 0})
-		c.SetAngle(float32(body.GetAngle()))
+		c.SetPosition(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0})
+		c.SetAngle(body.GetAngle())
 		c.SetColor(color)
 		// TODO: Chain is not complete yet
 	default:
