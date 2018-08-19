@@ -16,9 +16,9 @@ type B2DJsonScene struct {
 	indexToBody map[int]*box2d.B2Body
 	bodyToName  map[*box2d.B2Body]string
 	nameToBody  map[string]*box2d.B2Body
-	jointToName map[*box2d.B2Joint]string
+	nameToJoint map[string]box2d.B2JointInterface
 	bodies      []*box2d.B2Body
-	joints      []*box2d.B2Joint
+	joints      []box2d.B2JointInterface
 
 	// Engine parameters
 	PositionIterations int
@@ -32,7 +32,7 @@ func NewB2DJsonSceneFromFile(fileName string) *B2DJsonScene {
 	scene.indexToBody = make(map[int]*box2d.B2Body)
 	scene.bodyToName = make(map[*box2d.B2Body]string)
 	scene.nameToBody = make(map[string]*box2d.B2Body)
-	scene.jointToName = make(map[*box2d.B2Joint]string)
+	scene.nameToJoint = make(map[string]box2d.B2JointInterface)
 
 	// Open the json file
 	jsonFile, err := os.Open(fileName)
@@ -96,8 +96,20 @@ func (s *B2DJsonScene) loadWorld() {
 	// only the gears. Gear joints reference other joins.
 	for i := 0; i < len(w.Joint); i++ {
 		jointData := w.Joint[i]
-		_ = s.buildJoint(&jointData)
-		//s.joints = append(s.joints, joint)
+		joint := s.buildJoint(&jointData)
+		// TODO: Read the custom properties
+
+		// Get the joint's name and handles duplicates
+		name := jointData.Name
+		if name != "" {
+			if _, ok := s.nameToJoint[name]; ok {
+				fmt.Printf("Warning: a joint named \"%s\" already exist in the scene\n", name)
+			} else {
+				s.nameToJoint[name] = joint
+			}
+		}
+
+		s.joints = append(s.joints, joint)
 	}
 }
 
@@ -212,18 +224,18 @@ func (s *B2DJsonScene) buildFixture(b2Body *box2d.B2Body, data *B2DFixtureData) 
 }
 
 func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
-	var jointInterface box2d.B2JointInterface
 	bodyIndexA := data.BodyA
 	bodyIndexB := data.BodyB
 
 	if bodyIndexA >= len(s.bodies) || bodyIndexB >= len(s.bodies) {
-		fmt.Println("Error: couldn't create the joint. Bodies indices wrong")
+		fmt.Println("Error: couldn't create the joint. Bodies indices are wrong")
 		return nil
 	}
 
-	// TODO: Read the name of the joint and store it
+	var jointInterface box2d.B2JointInterface
 
-	if data.Type == "revolute" {
+	switch data.Type {
+	case "revolute":
 		j := box2d.MakeB2RevoluteJointDef()
 		j.BodyA = s.bodies[bodyIndexA]
 		j.BodyB = s.bodies[bodyIndexB]
@@ -238,7 +250,7 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.MotorSpeed = data.MotorSpeed
 		j.MaxMotorTorque = data.MaxMotorTorque
 		jointInterface = s.World.CreateJoint(&j)
-	} else if data.Type == "prismatic" {
+	case "prismatic":
 		j := box2d.MakeB2PrismaticJointDef()
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
@@ -254,7 +266,7 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.LowerTranslation = data.LowerLimit
 		j.UpperTranslation = data.UpperLimit
 		jointInterface = s.World.CreateJoint(&j)
-	} else if data.Type == "distance" {
+	case "distance":
 		j := box2d.MakeB2DistanceJointDef()
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
@@ -265,7 +277,7 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.FrequencyHz = data.Frequency
 		j.DampingRatio = data.DampingRatio
 		jointInterface = s.World.CreateJoint(&j)
-	} else if data.Type == "wheel" {
+	case "wheel":
 		j := box2d.MakeB2WheelJointDef()
 		j.BodyA = s.bodies[bodyIndexA]
 		j.BodyB = s.bodies[bodyIndexB]
@@ -279,7 +291,7 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.FrequencyHz = data.SpringFrequency
 		j.DampingRatio = data.SpringDampingRatio
 		jointInterface = s.World.CreateJoint(&j)
-	} else if data.Type == "weld" {
+	case "weld":
 		j := box2d.MakeB2WeldJointDef()
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
@@ -290,7 +302,7 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.FrequencyHz = data.Frequency
 		j.DampingRatio = data.DampingRatio
 		jointInterface = s.World.CreateJoint(&j)
-	} else if data.Type == "rope" {
+	case "rope":
 		j := box2d.MakeB2RopeJointDef()
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
@@ -299,7 +311,7 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.LocalAnchorB = box2d.B2Vec2{X: data.AnchorB.X, Y: data.AnchorB.Y}
 		j.MaxLength = data.MaxLength
 		jointInterface = s.World.CreateJoint(&j)
-	} else if data.Type == "motor" {
+	case "motor":
 		j := box2d.MakeB2MotorJointDef()
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
@@ -310,7 +322,7 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.MaxTorque = data.MaxTorque
 		j.CorrectionFactor = data.CorrectionFactor
 		jointInterface = s.World.CreateJoint(&j)
-	} else if data.Type == "friction" {
+	case "friction":
 		j := box2d.MakeB2FrictionJointDef()
 		j.SetBodyA(s.bodies[bodyIndexA])
 		j.SetBodyB(s.bodies[bodyIndexB])
@@ -320,6 +332,9 @@ func (s *B2DJsonScene) buildJoint(data *B2DJointData) box2d.B2JointInterface {
 		j.MaxForce = data.MaxForce
 		j.MaxTorque = data.MaxTorque
 		jointInterface = s.World.CreateJoint(&j)
+	default:
+		fmt.Printf("Error: joint type \"%s\" is not supported!\n", data.Type)
+		return nil
 	}
 
 	return jointInterface
