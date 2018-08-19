@@ -2,7 +2,7 @@ package graphics
 
 import (
 	"github.com/go-gl/gl/v4.1-core/gl"
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 )
 
 // Drawable ...
@@ -16,7 +16,7 @@ type Drawable interface {
 // Context ...
 type Context struct {
 	Camera2D             *Camera2D
-	viewMatrix           mgl32.Mat4
+	viewMatrix           mgl64.Mat4
 	currentTexture       *Texture
 	currentShaderProgram *ShaderProgram
 }

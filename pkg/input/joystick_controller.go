@@ -115,12 +115,12 @@ func (c *JoystickController) Update() {
 	c.axes = glfw.GetJoystickAxes(c.joystick)
 }
 
-func (c *JoystickController) AxisValue(axis ControllerAxis) float32 {
+func (c *JoystickController) AxisValue(axis ControllerAxis) float64 {
 	if int(axis) >= c.numAxes {
 		return 0
 	}
 	axisIndex := c.axisFromMapping(axis)
-	return c.axes[axisIndex]
+	return float64(c.axes[axisIndex])
 }
 
 func (c *JoystickController) AxisDigitalValue(axis ControllerAxis) int {

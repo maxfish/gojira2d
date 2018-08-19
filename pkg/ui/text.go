@@ -4,19 +4,19 @@ import (
 	"fmt"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/maxfish/gojira2d/pkg/graphics"
 )
 
 // Text is a UI element that just renders a string
 type Text struct {
 	drawable *graphics.Primitive2D
-	position mgl32.Vec3
-	size     mgl32.Vec2
+	position mgl64.Vec3
+	size     mgl64.Vec2
 	color    graphics.Color
 	text     string
 	font     *Font
-	paddings mgl32.Vec4
+	paddings mgl64.Vec4
 }
 
 const charVertices = 12
@@ -48,7 +48,7 @@ func (t *Text) makeNewQuads() ([]float32, []float32) {
 	for _, char := range t.text {
 		if char == 0x0a {
 			cursorX = 0
-			cursorY += 1 + t.paddings[1]
+			cursorY += 1 + float32(t.paddings[1])
 			lastChar = 0
 			continue
 		}
@@ -69,8 +69,8 @@ func (t *Text) makeNewQuads() ([]float32, []float32) {
 		copy(
 			vertices[idx:],
 			charQuad(
-				cursorX+bmc.f32offsetX+kerning+t.paddings[2],
-				cursorY+bmc.f32offsetY+t.paddings[0],
+				cursorX+bmc.f32offsetX+kerning+float32(t.paddings[2]),
+				cursorY+bmc.f32offsetY+float32(t.paddings[0]),
 				bmc.f32lineWidth,
 				bmc.f32lineHeight,
 			),
@@ -85,7 +85,7 @@ func (t *Text) makeNewQuads() ([]float32, []float32) {
 			),
 		)
 		idx += charVertices
-		cursorX += bmc.f32advanceX + t.paddings[3]
+		cursorX += bmc.f32advanceX + float32(t.paddings[3])
 		lastChar = char
 	}
 
@@ -98,10 +98,10 @@ var textShaderProgram *graphics.ShaderProgram
 func NewText(
 	txt string,
 	font *Font,
-	position mgl32.Vec3,
-	size mgl32.Vec2,
+	position mgl64.Vec3,
+	size mgl64.Vec2,
 	color graphics.Color,
-	paddings mgl32.Vec4,
+	paddings mgl64.Vec4,
 ) *Text {
 	if textShaderProgram == nil {
 		textShaderProgram = graphics.NewShaderProgram(
@@ -150,7 +150,7 @@ func (t *Text) SetColor(color graphics.Color) {
 // are allowed.
 //
 // Padding order: top, bottom, left, right
-func (t *Text) SetPaddings(paddings mgl32.Vec4) {
+func (t *Text) SetPaddings(paddings mgl64.Vec4) {
 	t.paddings = paddings
 	t.uploadNewQuads()
 }

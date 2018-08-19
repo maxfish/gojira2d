@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/maxfish/gojira2d/pkg/app"
 	"github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/ui"
@@ -33,9 +33,9 @@ func main() {
 	var f *ui.Font
 
 	tc := [20]*ui.Text{}
-	vo := float32(0)
+	vo := float64(0)
 	for i := range tc {
-		j := float32(i)
+		j := float64(i)
 		if i%2 == 0 {
 			f = font
 		} else {
@@ -50,10 +50,10 @@ func main() {
 		tc[i] = ui.NewText(
 			"The quick brown fox jumps over the lazy dog",
 			f,
-			mgl32.Vec3{0, 0 + vo, 0},
-			mgl32.Vec2{j * 8, j * 8},
+			mgl64.Vec3{0, 0 + vo, 0},
+			mgl64.Vec2{j * 8, j * 8},
 			color,
-			mgl32.Vec4{0, 0, 0, -.17},
+			mgl64.Vec4{0, 0, 0, -.17},
 		)
 		vo += j * 6
 	}

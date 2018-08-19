@@ -96,11 +96,11 @@ func (c *KeyboardController) Update() {
 }
 
 // AxisValue returns the current value, from -1 to 1, of the axis
-func (c *KeyboardController) AxisValue(axis ControllerAxis) float32 {
+func (c *KeyboardController) AxisValue(axis ControllerAxis) float64 {
 	if int(axis) >= c.numAxes {
 		return 0
 	}
-	return c.axes[axis]
+	return float64(c.axes[axis])
 }
 
 // AxisDigitalValue returns a digital value for the axis

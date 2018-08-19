@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	g "github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/ui"
 	"github.com/maxfish/gojira2d/pkg/utils"
@@ -109,10 +109,10 @@ func SetFPSCounterVisible(visible bool) {
 			FpsCounterText = ui.NewText(
 				"0",
 				font,
-				mgl32.Vec3{float32(windowWidth - 30), 10, -1},
-				mgl32.Vec2{25, 25},
+				mgl64.Vec3{float64(windowWidth - 30), 10, -1},
+				mgl64.Vec2{25, 25},
 				g.Color{1, 0, 0, 1},
-				mgl32.Vec4{0, 0, 0, -.17},
+				mgl64.Vec4{0, 0, 0, -.17},
 			)
 		}
 	} else {

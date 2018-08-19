@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/maxfish/gojira2d/pkg/app"
 	g "github.com/maxfish/gojira2d/pkg/graphics"
 )
@@ -13,7 +13,7 @@ func main() {
 	app.SetFPSCounterVisible(true)
 	app.Context.Camera2D.SetCentered(true)
 
-	Quad := g.NewQuadPrimitive(mgl32.Vec3{0, 0, 0}, mgl32.Vec2{200, 200})
+	Quad := g.NewQuadPrimitive(mgl64.Vec3{0, 0, 0}, mgl64.Vec2{200, 200})
 	Quad.SetAnchorToCenter()
 	Quad.SetTexture(g.NewTextureFromFile("examples/assets/texture.png"))
 
