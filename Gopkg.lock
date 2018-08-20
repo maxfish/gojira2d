@@ -3,7 +3,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:10085e488c61b17285342e8b5a92b70da74a262b8ebb95e44faa75af28c62fbd"
+  digest = "1:0551e74bbfb375a8e77410a146fc6f7a37e133fb058b0d7187d7ea7f3464f014"
+  name = "github.com/ByteArena/box2d"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "f2dce76a2bc7af8ed9d8ad3b88ef213482782e8a"
+
+[[projects]]
+  branch = "master"
+  digest = "1:355fd61339c300d8ce36495d278855893220bac8283d65a04b94fe4db201952e"
   name = "github.com/go-gl/gl"
   packages = ["v4.1-core/gl"]
   pruneopts = "T"
@@ -11,7 +19,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0194a10bc9d7dc918af501507a1ebbf595d807a8367fd070023e9f18f530efef"
+  digest = "1:de831c589224e912662a0334495df23b7619796e9bbede6b8a44eaaffc635272"
   name = "github.com/go-gl/glfw"
   packages = ["v3.2/glfw"]
   pruneopts = "T"
@@ -19,25 +27,23 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:96efbf2dc2ea4bfbf05f7495c74d242876ab1fcc2ff1c82b9c33cd07c4017e67"
+  digest = "1:d9a28ab10799bbb0ae29c7ad010083f05cafb81593b104783c871586fade3a56"
   name = "github.com/go-gl/mathgl"
-  packages = ["mgl32"]
+  packages = [
+    "mgl32",
+    "mgl64",
+  ]
   pruneopts = "T"
   revision = "cdf14b6b8f8a4a1bfb003dd5119205c5f711d85a"
 
 [[projects]]
   branch = "master"
-  digest = "1:a15b00f1ae3507f76d983c8439b5fced814845bf46d1f5febdec0ffe852e4745"
-  name = "github.com/maxfish/box2d"
-  packages = ["."]
-  pruneopts = "T"
-  revision = "548c3f6f9a993978b8cdd25e840616649c2185d4"
-
-[[projects]]
-  branch = "master"
-  digest = "1:be8830e3280a74ddbaa6b57ea0f431dac2c6aba7f91456073dc14171791d7b50"
+  digest = "1:d3d40b0b54590e8128f50f10e8840c176276742b2b61906e8c757db25fa556f6"
   name = "golang.org/x/image"
-  packages = ["math/f32"]
+  packages = [
+    "math/f32",
+    "math/f64",
+  ]
   pruneopts = "T"
   revision = "c73c2afc3b812cdd6385de5a50616511c4a3d458"
 
@@ -45,10 +51,11 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/ByteArena/box2d",
     "github.com/go-gl/gl/v4.1-core/gl",
     "github.com/go-gl/glfw/v3.2/glfw",
     "github.com/go-gl/mathgl/mgl32",
-    "github.com/maxfish/box2d",
+    "github.com/go-gl/mathgl/mgl64",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

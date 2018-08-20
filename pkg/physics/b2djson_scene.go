@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/maxfish/box2d"
+	"github.com/ByteArena/box2d"
 )
 
 // B2DJsonScene A scene produced by R.U.B.E

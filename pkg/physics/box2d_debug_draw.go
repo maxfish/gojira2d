@@ -1,8 +1,8 @@
 package physics
 
 import (
+	"github.com/ByteArena/box2d"
 	"github.com/go-gl/mathgl/mgl64"
-	"github.com/maxfish/box2d"
 	"github.com/maxfish/gojira2d/pkg/graphics"
 	"github.com/maxfish/gojira2d/pkg/utils"
 )

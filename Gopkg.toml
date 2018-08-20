@@ -39,7 +39,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/maxfish/box2d"
+  name = "github.com/ByteArena/box2d"
 
 [prune]
   go-tests = true
