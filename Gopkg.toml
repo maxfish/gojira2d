@@ -41,6 +41,10 @@
   branch = "master"
   name = "github.com/ByteArena/box2d"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/maxfish/go-b2djson"
+
 [prune]
   go-tests = true
 

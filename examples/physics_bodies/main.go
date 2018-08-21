@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/maxfish/go-b2dJson"
 	"github.com/maxfish/gojira2d/pkg/app"
 	"github.com/maxfish/gojira2d/pkg/physics"
 )
@@ -14,7 +15,7 @@ func main() {
 	app.SetFPSCounterVisible(true)
 
 	// Load the scene from a Rube file
-	scene := physics.NewB2DJsonSceneFromFile("examples/assets/physics/scene_bodies.json")
+	scene := b2djson.NewB2DJsonSceneFromFile("examples/assets/physics/scene_bodies.json")
 	b2World := scene.World
 
 	// Set up the camera

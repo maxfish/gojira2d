@@ -38,6 +38,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:2345043c4644e9768dd167146699b0e13b955b7f743273abe0480c46bffb342e"
+  name = "github.com/maxfish/go-b2dJson"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "fa122cd6c4a0e6d6727110bb2649eb222a321c92"
+
+[[projects]]
+  branch = "master"
   digest = "1:d3d40b0b54590e8128f50f10e8840c176276742b2b61906e8c757db25fa556f6"
   name = "golang.org/x/image"
   packages = [
@@ -56,6 +64,7 @@
     "github.com/go-gl/glfw/v3.2/glfw",
     "github.com/go-gl/mathgl/mgl32",
     "github.com/go-gl/mathgl/mgl64",
+    "github.com/maxfish/go-b2dJson",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
