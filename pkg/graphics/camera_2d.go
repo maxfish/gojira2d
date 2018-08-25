@@ -7,6 +7,9 @@ import (
 	"math"
 )
 
+const MinZoom float64 = 0.01
+const MaxZoom float64 = 20
+
 // Camera2D a Camera based on an orthogonal projection
 type Camera2D struct {
 	x                  float64
@@ -57,8 +60,24 @@ func (c *Camera2D) SetPosition(x float64, y float64) {
 	c.matrixDirty = true
 }
 
+// Translate move the camera position by the specified amount
+func (c *Camera2D) Translate(x float64, y float64) {
+	if c.flipVertical {
+		y = -y
+	}
+	c.x += x
+	c.y += y
+	c.matrixDirty = true
+}
+
+// Zoom returns the current zoom level
+func (c *Camera2D) Zoom() float64 {
+	return c.zoom
+}
+
 // SetZoom sets the zoom factor
 func (c *Camera2D) SetZoom(zoom float64) {
+	zoom = mgl64.Clamp(zoom, MinZoom, MaxZoom)
 	c.zoom = zoom
 	c.matrixDirty = true
 }
