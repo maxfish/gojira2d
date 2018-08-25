@@ -47,6 +47,11 @@ func (p *Primitive2D) SetPosition(position mgl64.Vec3) {
 	p.modelMatrix.dirty = true
 }
 
+// Position gets X,Y,Z of the primitive.
+func (p *Primitive2D) Position() mgl64.Vec3 {
+	return p.position
+}
+
 // SetAnchor sets the anchor point of the primitive, this will be the point placed at Position
 func (p *Primitive2D) SetAnchor(anchor mgl64.Vec2) {
 	p.anchor = anchor
