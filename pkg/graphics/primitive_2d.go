@@ -48,7 +48,7 @@ func (p *Primitive2D) SetPosition(position mgl64.Vec3) {
 }
 
 // Position gets X,Y,Z of the primitive.
-func (p *Primitive2D) Position() mgl32.Vec3 {
+func (p *Primitive2D) Position() mgl64.Vec3 {
 	return p.position
 }
 
