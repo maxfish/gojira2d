@@ -31,6 +31,7 @@ Gojira2D is licensed under the terms of the MIT License. See LICENSE for details
 * [GLFW](https://github.com/go-gl/glfw) as window manager
 * [MathGL](https://github.com/go-gl/mathgl) as math library
 * [Box2D](https://github.com/ByteArena/box2d) for 2D physics
+* [B2DJson](https://github.com/maxfish/go-b2dJson) for loading R.U.B.E scenes
 
 ## Installation
 
