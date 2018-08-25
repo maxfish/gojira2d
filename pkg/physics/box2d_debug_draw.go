@@ -17,6 +17,8 @@ type Box2DDebugDraw struct {
 
 	b2World *box2d.B2World
 	PTM     float64
+	// Stores a primitive2D for each fixture
+	fixtureToPrimitive2D map[*box2d.B2Fixture]*graphics.Primitive2D
 }
 
 const numSegmentsPerCircle = 12
@@ -25,6 +27,8 @@ func NewBox2DDebugDraw(w *box2d.B2World, PTM float64) *Box2DDebugDraw {
 	d := &Box2DDebugDraw{}
 	d.b2World = w
 	d.PTM = PTM
+
+	d.fixtureToPrimitive2D = make(map[*box2d.B2Fixture]*graphics.Primitive2D)
 
 	d.colorNormal = graphics.Color{0.9, 0.7, 0.7, 1}
 	d.colorInactive = graphics.Color{0.5, 0.5, 0.3, 1}
@@ -85,7 +89,7 @@ func (d *Box2DDebugDraw) Draw(context *graphics.Context) {
 	for body != nil {
 		fixture := body.GetFixtureList()
 		for fixture != nil {
-			primitive := fixture.GetUserData().(*graphics.Primitive2D)
+			primitive := d.fixtureToPrimitive2D[fixture]
 			primitive.Draw(context)
 			fixture = fixture.GetNext()
 		}
@@ -104,7 +108,7 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		}
 		c := graphics.NewPolylinePrimitive(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0}, vertices, true)
 		c.SetScale(mgl64.Vec2{d.PTM, d.PTM})
-		fixture.SetUserData(c)
+		d.fixtureToPrimitive2D[fixture] = c
 	case box2d.B2Shape_Type.E_polygon:
 		b2Shape := fixture.GetShape().(*box2d.B2PolygonShape)
 		numVertices := b2Shape.M_count
@@ -114,7 +118,7 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		}
 		c := graphics.NewPolylinePrimitive(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0}, vertices, true)
 		c.SetScale(mgl64.Vec2{d.PTM, d.PTM})
-		fixture.SetUserData(c)
+		d.fixtureToPrimitive2D[fixture] = c
 	case box2d.B2Shape_Type.E_chain:
 		b2Shape := fixture.GetShape().(*box2d.B2ChainShape)
 		numVertices := b2Shape.M_count
@@ -124,7 +128,7 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 		}
 		c := graphics.NewPolylinePrimitive(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0}, vertices, false)
 		c.SetScale(mgl64.Vec2{d.PTM, d.PTM})
-		fixture.SetUserData(c)
+		d.fixtureToPrimitive2D[fixture] = c
 
 		// 			if (chain.m_hasPrevVertex)
 		// 			{
@@ -155,12 +159,12 @@ func (d *Box2DDebugDraw) buildShape(body *box2d.B2Body, fixture *box2d.B2Fixture
 func (d *Box2DDebugDraw) updateShape(body *box2d.B2Body, fixture *box2d.B2Fixture, transform box2d.B2Transform, color graphics.Color) {
 	switch fixture.GetType() {
 	case box2d.B2Shape_Type.E_circle, box2d.B2Shape_Type.E_polygon:
-		c := fixture.GetUserData().(*graphics.Primitive2D)
+		c := d.fixtureToPrimitive2D[fixture]
 		c.SetPosition(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0})
 		c.SetAngle(body.GetAngle())
 		c.SetColor(color)
 	case box2d.B2Shape_Type.E_chain:
-		c := fixture.GetUserData().(*graphics.Primitive2D)
+		c := d.fixtureToPrimitive2D[fixture]
 		c.SetPosition(mgl64.Vec3{body.GetPosition().X * d.PTM, body.GetPosition().Y * d.PTM, 0})
 		c.SetAngle(body.GetAngle())
 		c.SetColor(color)
