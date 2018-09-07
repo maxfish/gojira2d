@@ -59,7 +59,7 @@ func main() {
 	}
 
 	app.MainLoop(
-		func(speed float64) {
+		func(deltaTimeMs float64) {
 			tc[4].SetText(fmt.Sprintf("%v", time.Now()))
 		},
 		func() {

@@ -121,21 +121,21 @@ func SetFPSCounterVisible(visible bool) {
 }
 
 func MainLoop(
-	update func(float64),
+	update func(deltaTimeMs float64),
 	render func(),
 ) {
-	var newTime, oldTime, deltaTime float64
+	var newTime, oldTime, deltaTimeMs float64
 	for !window.ShouldClose() {
 		newTime = glfw.GetTime()
-		deltaTime = newTime - oldTime
+		deltaTimeMs = newTime - oldTime
 		oldTime = newTime
 
-		update(deltaTime)
+		update(deltaTimeMs)
 		Clear()
 		render()
 
 		if FpsCounter != nil {
-			FpsCounter.Update(deltaTime, 1)
+			FpsCounter.Update(deltaTimeMs, 1)
 			FpsCounterText.SetText(fmt.Sprintf("%v", FpsCounter.FPS()))
 			FpsCounterText.Draw(UIContext)
 		}

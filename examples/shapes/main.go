@@ -30,8 +30,8 @@ func main() {
 
 	var animationAngle float64 = 0
 
-	app.MainLoop(func(speed float64) {
-		animationAngle += speed
+	app.MainLoop(func(deltaTimeMs float64) {
+		animationAngle += deltaTimeMs
 		animationScale := math.Abs(math.Sin(float64(animationAngle)))
 		primitives[1].SetScale(mgl64.Vec2{animationScale, animationScale})
 		primitives[2].SetAngle(animationAngle)

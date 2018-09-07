@@ -22,6 +22,6 @@ func main() {
 	kbd.Open(-1)
 
 	game := newSnakeGame(cellSize, gridSize, worldSize, worldSize)
-	update := func(speed float64) { game.update(kbd, speed) }
+	update := func(deltaTimeMs float64) { game.update(kbd, deltaTimeMs) }
 	app.MainLoop(update, game.draw)
 }
