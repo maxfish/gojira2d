@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0551e74bbfb375a8e77410a146fc6f7a37e133fb058b0d7187d7ea7f3464f014"
+  digest = "1:695dbbcfe13b9c49619e1b31c27e2e3575b233d5d01924271ec4a20d9d0801c7"
   name = "github.com/ByteArena/box2d"
   packages = ["."]
   pruneopts = "T"
-  revision = "f2dce76a2bc7af8ed9d8ad3b88ef213482782e8a"
+  revision = "05f3eabc3755dd654f11a368cec066e0a3a0c3a8"
 
 [[projects]]
   branch = "master"
@@ -38,11 +38,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:2345043c4644e9768dd167146699b0e13b955b7f743273abe0480c46bffb342e"
+  digest = "1:1e57b08615d36ed72d5e7ddc6930f744f443a0c36b78ec07a80e0ad491e41c2f"
   name = "github.com/maxfish/go-b2dJson"
   packages = ["."]
   pruneopts = "T"
-  revision = "fa122cd6c4a0e6d6727110bb2649eb222a321c92"
+  revision = "05fa8316c6ff1c320e9b82277c7c78f9d78a0dcb"
 
 [[projects]]
   branch = "master"

@@ -15,7 +15,7 @@ func main() {
 	app.SetFPSCounterVisible(true)
 
 	// Load the scene from a Rube file
-	scene := b2djson.NewB2DJsonSceneFromFile("examples/assets/physics/scene_bodies.json")
+	scene := b2djson.NewB2DJsonSceneFromFile("examples/assets/physics/scene_bodies.json", nil)
 	b2World := scene.World
 
 	// Set up the camera
