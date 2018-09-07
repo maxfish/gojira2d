@@ -17,7 +17,7 @@ func main() {
 	Quad.SetAnchorToCenter()
 	Quad.SetTexture(g.NewTextureFromFile("examples/assets/texture.png"))
 
-	app.MainLoop(func(deltaTimeMs float64) {
+	app.MainLoop(func(deltaTime float64) {
 		// NOP
 	}, func() {
 		Quad.Draw(app.Context)

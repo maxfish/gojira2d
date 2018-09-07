@@ -47,8 +47,8 @@ func main() {
 
 	var animationAngle float64 = 0
 
-	app.MainLoop(func(deltaTimeMs float64) {
-		animationAngle += deltaTimeMs
+	app.MainLoop(func(deltaTime float64) {
+		animationAngle += deltaTime
 		animationScale := math.Abs(math.Sin(float64(animationAngle * 2)))
 		quads[9].SetScale(mgl64.Vec2{animationScale, animationScale})
 		quads[10].SetAngle(animationAngle)

@@ -25,7 +25,7 @@ func main() {
 
 	debugDraw := physics.NewBox2DDebugDraw(b2World, pixelsPerMeter)
 
-	app.MainLoop(func(deltaTimeMs float64) {
+	app.MainLoop(func(deltaTime float64) {
 		b2World.Step(1/scene.StepsPerSecond, scene.VelocityIterations, scene.PositionIterations)
 		debugDraw.Update()
 	}, func() {

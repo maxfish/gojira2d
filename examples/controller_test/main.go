@@ -40,7 +40,7 @@ func main() {
 		parts = append(parts, button)
 	}
 
-	app.MainLoop(func(deltaTimeMs float64) {
+	app.MainLoop(func(deltaTime float64) {
 		joy.Update()
 		for _, p := range parts {
 			p.Update(joy)
