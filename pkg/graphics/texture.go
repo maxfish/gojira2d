@@ -105,3 +105,13 @@ func NewEmptyTexture(width int, height int) (*Texture, error) {
 func (t *Texture) ID() uint32 {
 	return t.id
 }
+
+// Width returns the texture width in pixels
+func (t *Texture) Width() int32 {
+	return t.width
+}
+
+// Height returns the texture width in pixels
+func (t *Texture) Height() int32 {
+	return t.height
+}
