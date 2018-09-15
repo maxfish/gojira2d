@@ -93,3 +93,33 @@ func TestCamera2D(t *testing.T) {
 		t.Errorf("Zoom() failed\nexpected\n%f received\n%f", expectedZoom, c.Zoom())
 	}
 }
+
+func TestCamera2DCoordsConversion(t *testing.T) {
+	c := NewCamera2D(100, 100, 10)
+
+	screen := mgl64.Vec2{37, 25}
+	worldExpected := mgl64.Vec3{3.7, 7.5, 0}
+	world := c.ScreenToWorld(screen)
+	if !world.ApproxEqual(worldExpected) {
+		t.Errorf("ScreenToWorld() failed\nexpected\n%f received\n%f", worldExpected, world)
+	}
+
+	screen2 := c.WorldToScreen(world)
+	if !screen2.ApproxEqual(screen) {
+		t.Errorf("WorldToScreen() failed\nexpected\n%f received\n%f", screen, screen2)
+	}
+
+	c.SetFlipVertical(true)
+	screen = mgl64.Vec2{137, 85}
+	worldExpected = mgl64.Vec3{13.7, 8.5, 0}
+	world = c.ScreenToWorld(screen)
+	if !world.ApproxEqual(worldExpected) {
+		t.Errorf("ScreenToWorld() failed\nexpected\n%f received\n%f", worldExpected, world)
+	}
+
+	screen2 = c.WorldToScreen(world)
+	if !screen2.ApproxEqual(screen) {
+		t.Errorf("WorldToScreen() failed\nexpected\n%f received\n%f", screen, screen2)
+	}
+
+}

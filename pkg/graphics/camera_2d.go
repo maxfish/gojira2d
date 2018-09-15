@@ -15,13 +15,16 @@ type Camera2D struct {
 	x                  float64
 	y                  float64
 	width              float64
+	halfWidth          float64
 	height             float64
+	halfHeight         float64
 	zoom               float64
 	centered           bool
 	flipVertical       bool
 	near               float64
 	far                float64
 	projectionMatrix   mgl64.Mat4
+	inverseMatrix      mgl64.Mat4
 	projectionMatrix32 mgl32.Mat4
 	matrixDirty        bool
 }
@@ -29,9 +32,11 @@ type Camera2D struct {
 // NewCamera2D sets up an orthogonal projection camera
 func NewCamera2D(width int, height int, zoom float64) *Camera2D {
 	c := &Camera2D{
-		width:  float64(width),
-		height: float64(height),
-		zoom:   zoom,
+		width:      float64(width),
+		halfWidth:  float64(width) / 2,
+		height:     float64(height),
+		halfHeight: float64(height) / 2,
+		zoom:       zoom,
 	}
 	c.far = -2
 	c.near = 2
@@ -117,8 +122,8 @@ func (c *Camera2D) rebuildMatrix() {
 	var left, right, top, bottom float64
 
 	if c.centered {
-		halfWidth := c.width / 2 / c.zoom
-		halfHeight := c.height / 2 / c.zoom
+		halfWidth := c.halfWidth / c.zoom
+		halfHeight := c.halfHeight / c.zoom
 		left = -halfWidth
 		right = halfWidth
 		top = halfHeight
@@ -134,13 +139,31 @@ func (c *Camera2D) rebuildMatrix() {
 	bottom += c.y
 
 	if c.flipVertical {
-		tmp := bottom
-		bottom = top
-		top = tmp
+		bottom, top = top, bottom
 	}
 
 	c.projectionMatrix = mgl64.Ortho(left, right, top, bottom, c.near, c.far)
+	c.inverseMatrix = c.projectionMatrix.Inv()
 	// updates the float32 version
 	c.projectionMatrix32 = utils.Mat4From64to32Bits(c.projectionMatrix)
 	c.matrixDirty = false
+}
+
+func (c *Camera2D) ScreenToWorld(vec mgl64.Vec2) mgl64.Vec3 {
+	if c.flipVertical {
+		vec[1] = c.height - vec[1]
+	}
+	x := (vec[0] - c.halfWidth) / c.halfWidth
+	y := (vec[1] - c.halfHeight) / c.halfHeight
+	return mgl64.TransformCoordinate(mgl64.Vec3{x, y, 0}, c.inverseMatrix)
+}
+
+func (c *Camera2D) WorldToScreen(vec mgl64.Vec3) mgl64.Vec2 {
+	ret := mgl64.TransformCoordinate(vec, c.projectionMatrix)
+	ret[0] = ret[0]*c.halfWidth + c.halfWidth
+	ret[1] = ret[1]*c.halfHeight + c.halfHeight
+	if c.flipVertical {
+		ret[1] = c.height - ret[1]
+	}
+	return mgl64.Vec2{ret[0], ret[1]}
 }
