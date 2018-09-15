@@ -24,14 +24,14 @@ type Texture struct {
 func NewTextureFromFile(filePath string) *Texture {
 	file, err := os.Open(filePath)
 	if err != nil {
-		fmt.Printf("Error loading texture. %s", err)
+		fmt.Printf("Error loading texture. %s\n", err)
 		return nil
 	}
 	defer file.Close()
 
 	decodedImage, format, err := image.Decode(file)
 	if err != nil {
-		fmt.Printf("Error decoding <%s> image: '%s'", format, filePath)
+		fmt.Printf("Error decoding <%s> image: '%s'\n", format, filePath)
 		return nil
 	}
 	return NewTextureFromImage(decodedImage)
@@ -44,7 +44,7 @@ func NewTextureFromImage(imageData image.Image) *Texture {
 	default:
 		rgba := image.NewRGBA(imageData.Bounds())
 		if rgba.Stride != rgba.Rect.Size().X*4 {
-			fmt.Printf("Error creating texture: unsupported stride")
+			fmt.Println("Error creating texture: unsupported stride")
 			return nil
 		}
 		draw.Draw(rgba, rgba.Bounds(), imageData, image.Point{0, 0}, draw.Src)
