@@ -1,0 +1,14 @@
+github.com/ByteArena/box2d v1.0.2 h1:f7f9KEQWhCs1n516DMLzi5w6u0MeeE78Mes4fWMcj9k=
+github.com/ByteArena/box2d v1.0.2/go.mod h1:LzEuxY9iCz+tskfWCY3o0ywYBRafDDugdSj+/YGI6sE=
+github.com/go-gl/gl v0.0.0-20180407155706-68e253793080 h1:pNxZva3052YM+z2p1aP08FgaTE2NzrRJZ5BHJCmKLzE=
+github.com/go-gl/gl v0.0.0-20180407155706-68e253793080/go.mod h1:482civXOzJJCPzJ4ZOX/pwvXBWSnzD4OKMdH4ClKGbk=
+github.com/go-gl/glfw v0.0.0-20200420212212-258d9bec320e h1:d/6iiszw8nt7mrUmkD/zaMj2I4mOcKYsxmkL+vTGWYc=
+github.com/go-gl/glfw v0.0.0-20200420212212-258d9bec320e/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
+github.com/go-gl/mathgl v0.0.0-20180804195959-cdf14b6b8f8a h1:2n5w2v3knlspzjJWyQPC0j88Mwvq0SZV0Jdws34GJwc=
+github.com/go-gl/mathgl v0.0.0-20180804195959-cdf14b6b8f8a/go.mod h1:dvrdneKbyWbK2skTda0nM4B9zSlS2GZSnjX7itr/skQ=
+github.com/maxfish/go-b2dJson v0.0.0-20180824183323-05fa8316c6ff h1:0Yg6kk5ttooKxtq5Ub1I1NsnTM9OyioBqfGzbP2MukI=
+github.com/maxfish/go-b2dJson v0.0.0-20180824183323-05fa8316c6ff/go.mod h1:dCGr2IqgXJU8Ypg6KgOHeHxCu3VuTCoDH0vqPyxmGOU=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81 h1:00VmoueYNlNz/aHIilyyQz/MHSqGoWJzpFv/HW8xpzI=
+golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81/go.mod h1:ux5Hcp/YLpHSI86hEcLt0YII63i6oz57MZXIpbrjZUs=
