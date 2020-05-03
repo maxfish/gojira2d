@@ -18,16 +18,16 @@ func main() {
 
 	app.SetFPSCounterVisible(true)
 
-	font := ui.NewFontFromFiles(
-		"mono",
-		"examples/assets/fonts/roboto-mono-regular.fnt",
-		"examples/assets/fonts/roboto-mono-regular.png",
+	font2 := ui.NewFontFromFiles(
+		"bold",
+		"examples/assets/fonts/Roboto-Bold.fnt",
+		"examples/assets/fonts/Roboto-Bold.png",
 	)
 
-	font2 := ui.NewFontFromFiles(
+	font := ui.NewFontFromFiles(
 		"regular",
-		"examples/assets/fonts/roboto-regular.fnt",
-		"examples/assets/fonts/roboto-regular.png",
+		"examples/assets/fonts/Roboto-Regular.fnt",
+		"examples/assets/fonts/Roboto-Regular.png",
 	)
 
 	var f *ui.Font
@@ -53,7 +53,6 @@ func main() {
 			mgl64.Vec3{0, 0 + vo, 0},
 			mgl64.Vec2{j * 8, j * 8},
 			color,
-			mgl64.Vec4{0, 0, 0, -.17},
 		)
 		vo += j * 6
 	}

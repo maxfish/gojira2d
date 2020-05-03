@@ -16,7 +16,6 @@ type Text struct {
 	color    graphics.Color
 	text     string
 	font     *Font
-	paddings mgl64.Vec4
 }
 
 const charVertices = 12
@@ -44,48 +43,53 @@ func (t *Text) makeNewQuads() ([]float32, []float32) {
 
 	vertices := make([]float32, vnum)
 	uvCoords := make([]float32, vnum)
+	bmf := t.font.bm
 
 	for _, char := range t.text {
 		if char == 0x0a {
 			cursorX = 0
-			cursorY += 1 + float32(t.paddings[1])
+			cursorY += float32(t.font.bm.lineHeight) + float32(t.font.bm.padding[1])
 			lastChar = 0
 			continue
 		}
 		bmc, ok := t.font.bm.Characters[char]
 		if !ok {
-			fmt.Printf(
-				"ERR: char %v (%v) not found in font map",
-				string(char), char,
-			)
+			fmt.Printf("ERR: char %v (%v) not found in font map\n", string(char), char)
 			continue
 		}
 
-		kerning, ok := bmc.f32kernings[lastChar]
+		kerning, ok := bmc.kernings[lastChar]
 		if !ok {
 			kerning = 0
 		}
 
+		var scale = 1 / float32(bmf.lineHeight)
+
+		deltaX := float32(bmc.offsetX+kerning+bmf.padding[2]) * scale
+		deltaY := float32(bmc.offsetY+bmf.padding[0]) * scale
+		width := float32(bmc.width) * scale
+		height := float32(bmc.height) * scale
+
 		copy(
 			vertices[idx:],
 			charQuad(
-				cursorX+bmc.f32offsetX+kerning+float32(t.paddings[2]),
-				cursorY+bmc.f32offsetY+float32(t.paddings[0]),
-				bmc.f32lineWidth,
-				bmc.f32lineHeight,
+				cursorX+deltaX,
+				cursorY+deltaY,
+				width,
+				height,
 			),
 		)
 		copy(
 			uvCoords[idx:],
 			charQuad(
-				bmc.f32x,
-				bmc.f32y,
-				bmc.f32width,
-				bmc.f32height,
+				float32(bmc.x)/float32(bmf.pageWidth),
+				float32(bmc.y)/float32(bmf.pageHeight),
+				float32(bmc.width)/float32(bmf.pageWidth),
+				float32(bmc.height)/float32(bmf.pageHeight),
 			),
 		)
 		idx += charVertices
-		cursorX += bmc.f32advanceX + float32(t.paddings[3])
+		cursorX += float32(bmc.advanceX+bmf.padding[1]) * scale
 		lastChar = char
 	}
 
@@ -101,7 +105,6 @@ func NewText(
 	position mgl64.Vec3,
 	size mgl64.Vec2,
 	color graphics.Color,
-	paddings mgl64.Vec4,
 ) *Text {
 	if textShaderProgram == nil {
 		textShaderProgram = graphics.NewShaderProgram(
@@ -116,7 +119,6 @@ func NewText(
 	t.size = size
 	t.text = txt
 	t.font = font
-	t.paddings = paddings
 
 	charVertices, charUVCoords := t.makeNewQuads()
 	t.drawable = graphics.NewTriangles(
@@ -142,17 +144,6 @@ func (t *Text) SetText(txt string) {
 // SetColor ...
 func (t *Text) SetColor(color graphics.Color) {
 	t.color = color
-}
-
-// SetPaddings sets paddings, regenerates and uploads new vertices and coords.
-//
-// Paddings are relative to line height and are 1 by default. Negative values
-// are allowed.
-//
-// Padding order: top, bottom, left, right
-func (t *Text) SetPaddings(paddings mgl64.Vec4) {
-	t.paddings = paddings
-	t.uploadNewQuads()
 }
 
 // SetUniforms uploads relevant uniforms
@@ -191,19 +182,17 @@ func (t *Text) DrawInBatch(context *graphics.Context) {
 
 var (
 	fragmentDistanceFieldFont = `
-        #version 410 core
-
-        in vec2 uv_out;
-        out vec4 color;
-
-        uniform sampler2D tex;
-        uniform vec4 textColor;
-
-        void main() {
-          float dist = texture(tex, uv_out).a;
-          float width = fwidth(dist);
-					float alpha = smoothstep(0.5-width, 0.5+width, dist);
-          color = vec4(vec3(textColor),alpha*textColor.a);
-        }
+		#version 410 core
+		in vec2 uv_out;
+		out vec4 color;
+		uniform sampler2D tex;
+		uniform vec4 textColor;
+		
+		void main() {
+			float dist = texture(tex, uv_out).a;
+			float width = fwidth(dist);
+			float alpha = smoothstep(0.5-width, 0.5+width, dist);
+			color = vec4(vec3(textColor), alpha*textColor.a);
+		}
         ` + "\x00"
 )

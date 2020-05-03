@@ -102,17 +102,16 @@ func SetFPSCounterVisible(visible bool) {
 		if FpsCounter == nil {
 			FpsCounter = &utils.FPSCounter{}
 			font := ui.NewFontFromFiles(
-				"mono",
-				"examples/assets/fonts/roboto-mono-regular.fnt",
-				"examples/assets/fonts/roboto-mono-regular.png",
+				"roboto-regular",
+				"pkg/assets/Roboto-Regular.fnt",
+				"pkg/assets/Roboto-Regular.png",
 			)
 			FpsCounterText = ui.NewText(
 				"0",
 				font,
 				mgl64.Vec3{float64(windowWidth - 30), 10, -1},
-				mgl64.Vec2{25, 25},
+				mgl64.Vec2{20, 20},
 				g.Color{1, 0, 0, 1},
-				mgl64.Vec4{0, 0, 0, -.17},
 			)
 		}
 	} else {
